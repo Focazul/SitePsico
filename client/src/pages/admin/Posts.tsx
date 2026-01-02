@@ -8,6 +8,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { trpc } from "@/lib/trpc";
 import DashboardLayout from "@/components/DashboardLayout";
 import { toast } from "sonner";
+import { generateSlug } from "@/lib/slugUtils";
 
 type PostStatus = "draft" | "published" | "scheduled";
 
@@ -279,15 +280,6 @@ export default function Posts() {
     deleteMutation.mutate({ id: Number(id) });
   };
 
-  const generateSlug = (title: string) => {
-    return title
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-|-$/g, "");
-  };
-
   const handleTitleChange = (title: string) => {
     setFormData((prev) => ({
       ...prev,
@@ -318,12 +310,7 @@ export default function Posts() {
 
     createTagMutation.mutate({
       name: newTagName,
-      slug: newTagName
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-|-$/g, ""),
+      slug: generateSlug(newTagName),
     });
   };
 
@@ -340,12 +327,7 @@ export default function Posts() {
 
     createCategoryMutation.mutate({
       name: newCategoryName,
-      slug: newCategoryName
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-|-$/g, ""),
+      slug: generateSlug(newCategoryName),
     });
   };
 
