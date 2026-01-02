@@ -1,0 +1,41 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1767052695267,
+      "tag": "0000_lucky_big_bertha",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1767052738587,
+      "tag": "0001_blue_loki",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1767227113407,
+      "tag": "0002_puzzling_wild_pack",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1767306331850,
+      "tag": "0003_absurd_cargill",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1767307786671,
+      "tag": "0004_awesome_paladin",
+      "breakpoints": true
+    }
+  ]
+}

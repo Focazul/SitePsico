@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <title>Site Profissional - Psicólogo SP</title>    
+    
+    <!-- Preconnect to external domains -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" as="image" href="/images/hero-psychologist.jpg" fetchpriority="high" />
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Lora:wght@400;500;600&display=swap" />
+    
+    <!-- Load fonts with media trick for faster rendering -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Lora:wght@400;500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+    <noscript>
+      <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Lora:wght@400;500;600&display=swap" rel="stylesheet" />
+    </noscript>
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- GA4 Script Tag - Injetado Dinamicamente -->
+    <script id="ga-init">
+      (function() {
+        try {
+          // Aguardar o React carregar para acessar configurações
+          const checkGAConfig = setInterval(function() {
+            // Verificar se há configuração via localStorage (será salva pelo React)
+            const gaConfig = window.__GA_CONFIG__;
+            
+            if (gaConfig && gaConfig.measurement_id && gaConfig.enabled) {
+              clearInterval(checkGAConfig);
+              
+              // Injetar script do Google Tag Manager
+              const script = document.createElement('script');
+              script.src = `https://www.googletagmanager.com/gtag/js?id=${gaConfig.measurement_id}`;
+              script.async = true;
+              document.head.appendChild(script);
+              
+              // Inicializar gtag
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              window.gtag = gtag;
+              gtag('js', new Date());
+              gtag('config', gaConfig.measurement_id, {
+                'anonymize_ip': true,
+                'allow_google_signals': false,
+                'allow_ad_personalization_signals': false
+              });
+              
+              console.log('✅ GA4 loaded successfully:', gaConfig.measurement_id);
+            }
+          }, 100);
+          
+          // Timeout após 5s para não ficar esperando indefinidamente
+          setTimeout(() => clearInterval(checkGAConfig), 5000);
+        } catch (error) {
+          console.error('❌ GA4 initialization error:', error);
+        }
+      })();
+    </script>
+  </body>
+
+</html>
