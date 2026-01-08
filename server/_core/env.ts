@@ -14,3 +14,10 @@ export const ENV = {
     ? Number.parseInt(process.env.APPOINTMENTS_PER_DAY_LIMIT as string, 10)
     : null,
 };
+
+console.log("[ENV] Loaded configuration:", {
+  hasResendKey: !!ENV.resendApiKey,
+  resendKeyLength: ENV.resendApiKey?.length ?? 0,
+  resendFromEmail: ENV.resendFromEmail,
+  ownerNotificationEmail: ENV.ownerNotificationEmail,
+});

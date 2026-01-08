@@ -43,9 +43,27 @@ const trpcClient = trpc.createClient({
       url: "/api/trpc",
       transformer: superjson,
       fetch(input, init) {
+        console.log("[tRPC Client] Fetching:", input);
         return globalThis.fetch(input, {
           ...(init ?? {}),
           credentials: "include",
+        }).then(async (response) => {
+          console.log("[tRPC Client] Response status:", response.status, response.statusText);
+          if (!response.ok) {
+            // Clone the response to read body without consuming it
+            const clonedResponse = response.clone();
+            console.error("[tRPC] Error response:", response.status, response.statusText);
+            try {
+              const text = await clonedResponse.text();
+              console.error("[tRPC] Response body:", text);
+            } catch (e) {
+              console.error("[tRPC] Could not read response body:", e);
+            }
+          }
+          return response;
+        }).catch((error) => {
+          console.error("[tRPC] Fetch error:", error);
+          throw error;
         });
       },
     }),

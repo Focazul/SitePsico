@@ -5,7 +5,7 @@ import {
   generateToken, 
   isValidEmail, 
   isValidPassword 
-} from "../_core/auth";
+} from "../server/_core/auth";
 
 describe("Authentication Functions", () => {
   describe("hashPassword", () => {

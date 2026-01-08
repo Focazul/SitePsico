@@ -1,15 +1,19 @@
-import { FormEvent, useMemo, useState } from 'react';
+import { FormEvent, useEffect, useMemo, useState } from 'react';
+import { format } from 'date-fns';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import OrganicDivider from '@/components/OrganicDivider';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
+import { useSiteConfig } from '@/hooks/useSiteConfig';
+import { Calendar as CalendarPicker } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { ArrowLeft, ArrowRight, Calendar, CheckCircle2, Clock, Home, Laptop, Mail, Phone, Shield, User } from 'lucide-react';
 import { trackFormSubmission, trackAppointmentCompleted } from '@/lib/analytics';
+import { trpc } from '@/lib/trpc';
 
 type BookingState = {
   modality: 'Presencial' | 'Online' | '';
@@ -28,15 +32,40 @@ const steps = [
   { id: 4, title: 'Confirmação' },
 ];
 
-const timeSlots = ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00', '17:00'];
-
 export default function Booking() {
   const heroRef = useScrollReveal<HTMLDivElement>({ threshold: 0.2 });
   const wizardRef = useScrollReveal<HTMLDivElement>({ threshold: 0.2 });
+  const { config } = useSiteConfig();
+  const sessionDuration = config.sessionDuration || '50';
+  const enabledWeekdays = useMemo(() => {
+    const dayMap: Record<string, number> = {
+      sunday: 0,
+      monday: 1,
+      tuesday: 2,
+      wednesday: 3,
+      thursday: 4,
+      friday: 5,
+      saturday: 6,
+    };
+    const enabled = new Set<number>();
+    if (config.availability?.length) {
+      config.availability.forEach((slot) => {
+        if (slot.enabled !== false && slot.day && dayMap[slot.day] !== undefined) {
+          enabled.add(dayMap[slot.day]);
+        }
+      });
+    }
+    // If nothing configured, allow all days
+    if (enabled.size === 0) {
+      [0, 1, 2, 3, 4, 5, 6].forEach((d) => enabled.add(d));
+    }
+    return enabled;
+  }, [config.availability]);
 
   const [step, setStep] = useState(1);
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success'>('idle');
   const [errors, setErrors] = useState<Partial<BookingState>>({});
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [data, setData] = useState<BookingState>({
     modality: '',
     date: '',
@@ -47,7 +76,31 @@ export default function Booking() {
     notes: '',
   });
 
+  const slotsQuery = trpc.booking.getAvailableSlots.useQuery(
+    { date: data.date },
+    { enabled: !!data.date, staleTime: 5 * 60 * 1000 }
+  );
+
+  useEffect(() => {
+    // Reset selected time when the date changes to avoid stale selections
+    setData((prev) => {
+      if (prev.time === '') return prev;
+      return { ...prev, time: '' };
+    });
+    setErrors((prev) => (prev.time ? { ...prev, time: undefined } : prev));
+  }, [data.date]);
+
+  useEffect(() => {
+    if (!selectedDate) return;
+    const iso = format(selectedDate, 'yyyy-MM-dd');
+    setData((prev) => (prev.date === iso ? prev : { ...prev, date: iso }));
+  }, [selectedDate]);
+
   const progress = useMemo(() => (step / steps.length) * 100, [step]);
+
+  const availableSlots = slotsQuery.data?.slots ?? [];
+  const isLoadingSlots = slotsQuery.isFetching;
+  const noSlots = !!data.date && !isLoadingSlots && availableSlots.length === 0;
 
   const setField = (field: keyof BookingState, value: string) => {
     setData((prev) => ({ ...prev, [field]: value }));
@@ -92,6 +145,8 @@ export default function Booking() {
     }, 700);
   };
 
+  // Already loaded above; keep single source of sessionDuration
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
@@ -130,7 +185,7 @@ export default function Booking() {
                   Este fluxo é um protótipo. Na fase de backend, horários serão verificados para evitar double-booking e você receberá email de confirmação automático.
                 </p>
                 <div className="grid grid-cols-2 gap-3 text-sm text-muted-foreground">
-                  <div className="p-3 rounded-lg bg-accent/10 border border-accent/20">Duração 50 min</div>
+                  <div className="p-3 rounded-lg bg-accent/10 border border-accent/20">Duração {sessionDuration} min</div>
                   <div className="p-3 rounded-lg bg-accent/10 border border-accent/20">Retorno em até 24h</div>
                 </div>
               </Card>
@@ -203,7 +258,27 @@ export default function Booking() {
                       <label className="text-sm font-medium text-foreground flex items-center gap-1">
                         <Calendar className="w-4 h-4 text-accent" /> Data preferencial
                       </label>
-                      <Input type="date" value={data.date} onChange={(e) => setField('date', e.target.value)} />
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            className="w-full justify-between"
+                          >
+                            {data.date ? format(new Date(`${data.date}T00:00:00`), 'dd/MM/yyyy') : 'Selecione uma data'}
+                            <Calendar className="w-4 h-4 opacity-70" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="p-0" align="start">
+                          <CalendarPicker
+                            mode="single"
+                            selected={selectedDate}
+                            onSelect={(day) => setSelectedDate(day ?? undefined)}
+                            disabled={(day) => !enabledWeekdays.has(day.getDay())}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
                       {errors.date && <p className="text-xs text-destructive">{errors.date}</p>}
                     </div>
 
@@ -211,23 +286,29 @@ export default function Booking() {
                       <label className="text-sm font-medium text-foreground flex items-center gap-1">
                         <Clock className="w-4 h-4 text-accent" /> Horário preferencial
                       </label>
-                      <div className="flex flex-wrap gap-2">
-                        {timeSlots.map((slot) => (
+                      <div className="flex flex-wrap gap-2 min-h-[48px]">
+                        {!data.date && <p className="text-sm text-muted-foreground">Escolha uma data para ver horários.</p>}
+                        {data.date && isLoadingSlots && <p className="text-sm text-muted-foreground">Carregando horários disponíveis…</p>}
+                        {data.date && !isLoadingSlots && availableSlots.map(({ time }) => (
                           <Button
-                            key={slot}
+                            key={time}
                             type="button"
-                            variant={data.time === slot ? 'default' : 'outline'}
-                            className={data.time === slot ? 'bg-accent text-accent-foreground' : ''}
-                            onClick={() => setField('time', slot)}
+                            variant={data.time === time ? 'default' : 'outline'}
+                            className={data.time === time ? 'bg-accent text-accent-foreground' : ''}
+                            onClick={() => setField('time', time)}
                           >
-                            {slot}
+                            {time}
                           </Button>
                         ))}
+                        {noSlots && <p className="text-sm text-muted-foreground">Nenhum horário disponível para esta data.</p>}
+                        {slotsQuery.error && (
+                          <p className="text-sm text-destructive">Não foi possível carregar horários. Tente novamente.</p>
+                        )}
                       </div>
                       {errors.time && <p className="text-xs text-destructive">{errors.time}</p>}
                     </div>
                   </div>
-                  <p className="text-xs text-muted-foreground">Horários reais e bloqueios serão tratados na integração com backend.</p>
+                  <p className="text-xs text-muted-foreground">Horários refletem a disponibilidade configurada no painel e bloqueios aplicados.</p>
                 </Card>
               )}
 

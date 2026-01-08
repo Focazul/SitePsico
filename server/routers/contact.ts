@@ -73,7 +73,7 @@ export const contactRouter = router({
   getMessages: adminProcedure
     .input(
       z.object({
-        status: z.enum(["novo", "lido", "respondido"]).optional(),
+        status: z.enum(["novo", "lido", "respondido", "arquivado"]).optional(),
       })
     )
     .query(async ({ input }) => {
@@ -104,6 +104,17 @@ export const contactRouter = router({
     .input(z.object({ id: z.number().int() }))
     .mutation(async ({ input }) => {
       await updateMessageStatus(input.id, "respondido");
+      return { success: true } as const;
+    }),
+
+  // Admin endpoint: update message status
+  updateStatus: adminProcedure
+    .input(z.object({ 
+      id: z.number().int(),
+      status: z.enum(["novo", "lido", "respondido", "arquivado"])
+    }))
+    .mutation(async ({ input }) => {
+      await updateMessageStatus(input.id, input.status);
       return { success: true } as const;
     }),
 

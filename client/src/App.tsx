@@ -9,14 +9,15 @@ import NotFound from "@/pages/NotFound";
 import Services from "@/pages/Services";
 import Home from "./pages/Home";
 import Login from "@/pages/Login";
-import Dashboard from "@/pages/Dashboard";
 import AdminDashboard from "@/pages/admin/Dashboard";
 import AdminAppointments from "@/pages/admin/Appointments";
 import AdminPosts from "@/pages/admin/Posts";
 import AdminMessages from "@/pages/admin/Messages";
 import AdminSettings from "@/pages/admin/Settings";
 import AdminEmails from "@/pages/admin/Emails";
+import AdminCommunication from "@/pages/admin/Communication";
 import AdminCalendar from "@/pages/admin/Calendar";
+import AdminPages from "@/pages/admin/Pages";
 import ErrorBoundary from "./components/ErrorBoundary";
 import FloatingWhatsApp from "./components/FloatingWhatsApp";
 import CookieConsent from "./components/CookieConsent";
@@ -54,13 +55,14 @@ function Router() {
           <Route path={"/contato"} component={Contact} />
           <Route path={"/agendamento"} component={Booking} />
           <Route path={"/login"} component={Login} />
-          <Route path={"/dashboard"} component={Dashboard} />
           <Route path={"/admin/dashboard"} component={AdminDashboard} />
           <Route path={"/admin/appointments"} component={AdminAppointments} />
           <Route path={"/admin/posts"} component={AdminPosts} />
           <Route path={"/admin/messages"} component={AdminMessages} />
           <Route path={"/admin/emails"} component={AdminEmails} />
+          <Route path={"/admin/communication"} component={AdminCommunication} />
           <Route path={"/admin/calendar"} component={AdminCalendar} />
+          <Route path={"/admin/pages"} component={AdminPages} />
           <Route path={"/admin/settings"} component={AdminSettings} />
           <Route path={"/404"} component={NotFound} />
           {/* Final fallback route */}

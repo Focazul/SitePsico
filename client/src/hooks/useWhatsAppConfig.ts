@@ -7,14 +7,14 @@ interface WhatsAppConfig {
 }
 
 /**
- * Hook para obter configurações do WhatsApp
+ * Hook para obter configurações do WhatsApp do banco de dados
  */
 export function useWhatsAppConfig() {
   const { data: settings, isLoading } = trpc.settings.getPublic.useQuery();
 
   const config: WhatsAppConfig = {
-    enabled: settings?.find((s) => s.key === "whatsapp_enabled")?.value === "true" || true,
-    phoneNumber: settings?.find((s) => s.key === "social_whatsapp")?.value ?? "5511999999999",
+    enabled: settings?.find((s) => s.key === "whatsapp_button_enabled")?.value !== "false",
+    phoneNumber: settings?.find((s) => s.key === "whatsapp_number")?.value ?? "5511999999999",
     defaultMessage: settings?.find((s) => s.key === "whatsapp_default_message")?.value ?? "Olá! Gostaria de saber mais sobre os atendimentos.",
   };
 

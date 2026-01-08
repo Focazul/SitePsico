@@ -1,5 +1,6 @@
 import { and, asc, desc, eq, gte, inArray, lte, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
+import mysql from "mysql2/promise";
 import {
   appointments,
   availability,
@@ -8,6 +9,7 @@ import {
   tags,
   posts,
   postTags,
+  pages,
   messages,
   settings,
   emailLogs,
@@ -26,6 +28,8 @@ import {
   InsertPost,
   PostTag,
   InsertPostTag,
+  Page,
+  InsertPage,
   Message,
   InsertMessage,
   Setting,
@@ -37,15 +41,39 @@ import {
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
+let _connection: mysql.Pool | null = null;
 
 // Lazily create the drizzle instance so local tooling can run without a DB.
 export async function getDb() {
   if (!_db && process.env.DATABASE_URL) {
     try {
-      _db = drizzle(process.env.DATABASE_URL);
+      console.log("[Database] Creating connection pool...");
+      _connection = mysql.createPool({
+        uri: process.env.DATABASE_URL,
+        connectionLimit: 10,
+      });
+      _db = drizzle(_connection, {
+        schema: {
+          users,
+          appointments,
+          availability,
+          blockedDates,
+          categories,
+          tags,
+          posts,
+          postTags,
+          pages,
+          messages,
+          settings,
+          emailLogs,
+        },
+        mode: 'default',
+      });
+      console.log("[Database] Connection established successfully!");
     } catch (error) {
-      console.warn("[Database] Failed to connect:", error);
+      console.error("[Database] Failed to connect:", error);
       _db = null;
+      _connection = null;
     }
   }
   return _db;
@@ -394,10 +422,84 @@ export async function getAvailableSlots(dateStr: string): Promise<AvailableSlot[
   if (Number.isNaN(dateValue.getTime())) return fallback;
   const dayOfWeek = dateValue.getUTCDay();
 
-  if (!db) return fallback;
+  // Prefer availability saved via settings (admin "Horários" tab)
+  const availabilitySetting = await getSettingValue("availability");
+  const dayKeys = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"] as const;
+  const dayKey = dayKeys[dayOfWeek];
 
-  const avail = await getAvailabilityByDay(dayOfWeek);
-  if (!avail || !avail.isAvailable) return [];
+  let availabilityConfig: Array<{ day?: string; enabled?: boolean; start?: string; end?: string }> | null = null;
+  if (Array.isArray(availabilitySetting)) {
+    availabilityConfig = availabilitySetting as typeof availabilityConfig;
+  } else if (typeof availabilitySetting === "string") {
+    try {
+      const parsed = JSON.parse(availabilitySetting);
+      if (Array.isArray(parsed)) availabilityConfig = parsed as typeof availabilityConfig;
+    } catch {
+      // ignore parse errors and fall through
+    }
+  }
+
+  const settingsAvail = availabilityConfig?.find((slot) => slot.day === dayKey);
+  if (settingsAvail && settingsAvail.enabled === false) return [];
+
+  const parseTime = (t: string | undefined): number | null => {
+    if (!t) return null;
+    const [h, m] = t.split(":").map(Number);
+    if (Number.isNaN(h) || Number.isNaN(m)) return null;
+    return h * 60 + m;
+  };
+
+  const formatTime = (minutes: number): string => {
+    const h = Math.floor(minutes / 60);
+    const m = minutes % 60;
+    return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+  };
+
+  const slotIntervalSetting = Number(await getSettingValue("slot_interval"));
+  const slotMinutesFromSettings = Number.isFinite(slotIntervalSetting) && slotIntervalSetting > 0 ? slotIntervalSetting : null;
+
+  // Helper to build slots from a start/end window
+  const buildSlots = (start: number, end: number, slotMinutes: number, booked?: Set<string>) => {
+    const list: AvailableSlot[] = [];
+    const taken = booked ?? new Set<string>();
+    for (let m = start; m + slotMinutes <= end; m += slotMinutes) {
+      const label = formatTime(m);
+      if (!taken.has(label)) list.push({ time: label });
+    }
+    return list;
+  };
+
+  // If DB is unavailable, generate slots only from settings (no booking/blocked checks)
+  if (!db) {
+    if (settingsAvail && settingsAvail.enabled !== false) {
+      const startM = parseTime(settingsAvail.start);
+      const endM = parseTime(settingsAvail.end);
+      const slotMinutes = slotMinutesFromSettings ?? 60;
+      if (startM !== null && endM !== null && startM < endM) {
+        return buildSlots(startM, endM, slotMinutes);
+      }
+    }
+    return fallback;
+  }
+
+  // When settings are present, honor them; otherwise fall back to table availability
+  let startM: number | null = null;
+  let endM: number | null = null;
+  let slotMinutes = slotMinutesFromSettings ?? null;
+
+  if (settingsAvail && settingsAvail.enabled !== false) {
+    startM = parseTime(settingsAvail.start);
+    endM = parseTime(settingsAvail.end);
+  } else {
+    const avail = await getAvailabilityByDay(dayOfWeek);
+    if (!avail || !avail.isAvailable) return [];
+    startM = parseTime(String(avail.startTime).slice(0, 5));
+    endM = parseTime(String(avail.endTime).slice(0, 5));
+    slotMinutes = slotMinutes ?? avail.slotDurationMinutes ?? 60;
+  }
+
+  if (startM === null || endM === null || startM >= endM) return [];
+  slotMinutes = slotMinutes ?? 60;
 
   const blocked = await getBlockedDate(dateValue);
   if (blocked) return [];
@@ -420,29 +522,7 @@ export async function getAvailableSlots(dateStr: string): Promise<AvailableSlot[
     })
   );
 
-  const slots: AvailableSlot[] = [];
-  const slotMinutes = avail.slotDurationMinutes ?? 60;
-
-  const parseTime = (t: string) => {
-    const [h, m] = t.split(":").map(Number);
-    return h * 60 + m;
-  };
-
-  const formatTime = (minutes: number): string => {
-    const h = Math.floor(minutes / 60);
-    const m = minutes % 60;
-    return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
-  };
-
-  const startM = parseTime(String(avail.startTime).slice(0, 5));
-  const endM = parseTime(String(avail.endTime).slice(0, 5));
-
-  for (let m = startM; m + slotMinutes <= endM; m += slotMinutes) {
-    const label = formatTime(m);
-    if (!bookedTimes.has(label)) slots.push({ time: label });
-  }
-
-  return slots;
+  return buildSlots(startM, endM, slotMinutes, bookedTimes);
 }
 // --- Blog domain helpers ---
 
@@ -660,15 +740,85 @@ export async function deletePost(id: number): Promise<void> {
   await db.delete(posts).where(eq(posts.id, id));
 }
 
+// --- Pages domain helpers ---
+
+export async function getPages(): Promise<Page[]> {
+  const db = await ensureDb();
+  return await db
+    .select()
+    .from(pages)
+    .orderBy(desc(pages.order), desc(pages.createdAt));
+}
+
+export async function getPageById(id: number): Promise<Page | null> {
+  const db = await ensureDb();
+  const result = await db.select().from(pages).where(eq(pages.id, id)).limit(1);
+  return result[0] || null;
+}
+
+export async function getPageBySlug(slug: string): Promise<Page | null> {
+  const db = await ensureDb();
+  const result = await db.select().from(pages).where(eq(pages.slug, slug)).limit(1);
+  return result[0] || null;
+}
+
+export async function createPage(data: InsertPage): Promise<Page> {
+  const db = await ensureDb();
+  const result = await db.insert(pages).values(data);
+  const id = Number(result[0].insertId);
+  
+  const page = await getPageById(id);
+  if (!page) throw new Error("Failed to create page");
+  
+  return page;
+}
+
+export async function updatePage(id: number, data: Partial<InsertPage>): Promise<void> {
+  const db = await ensureDb();
+  await db.update(pages)
+    .set({ ...data, updatedAt: new Date() })
+    .where(eq(pages.id, id));
+}
+
+export async function deletePage(id: number): Promise<void> {
+  const db = await ensureDb();
+  await db.delete(pages).where(eq(pages.id, id));
+}
+
+export async function pageExists(slug: string, excludeId?: number): Promise<boolean> {
+  const db = await ensureDb();
+  
+  let query = db.select({ count: sql<number>`count(*)` })
+    .from(pages)
+    .where(eq(pages.slug, slug));
+  
+  if (excludeId) {
+    query = query.where(sql`${pages.id} != ${excludeId}`) as any;
+  }
+  
+  const result = await query;
+  return (result[0]?.count || 0) > 0;
+}
+
 // --- Contact domain helpers ---
 
 export async function createMessage(data: InsertMessage): Promise<Message> {
   const db = await ensureDb();
-  const [created] = await db.insert(messages).values(data).returning();
-  return created;
+  // MySQL não suporta .returning(); usamos insertId e depois buscamos o registro
+  const insertResult = await db.insert(messages).values(data);
+  const insertId = (Array.isArray(insertResult) ? (insertResult[0] as any)?.insertId : (insertResult as any)?.insertId) as number | undefined;
+
+  if (insertId) {
+    const [created] = await db.select().from(messages).where(eq(messages.id, insertId)).limit(1);
+    return created;
+  }
+
+  // fallback: retorna o último registro inserido (deve ser raro)
+  const [last] = await db.select().from(messages).orderBy(desc(messages.id)).limit(1);
+  return last;
 }
 
-export async function getMessages(status?: "novo" | "lido" | "respondido"): Promise<Message[]> {
+export async function getMessages(status?: "novo" | "lido" | "respondido" | "arquivado"): Promise<Message[]> {
   const db = await ensureDb();
   const whereClause = status ? eq(messages.status, status) : undefined;
   return await db
@@ -686,7 +836,7 @@ export async function getMessageById(id: number): Promise<Message | null> {
 
 export async function updateMessageStatus(
   id: number,
-  status: "novo" | "lido" | "respondido"
+  status: "novo" | "lido" | "respondido" | "arquivado"
 ): Promise<void> {
   const db = await ensureDb();
   await db.update(messages).set({ status }).where(eq(messages.id, id));
@@ -709,14 +859,27 @@ export async function getUnreadMessageCount(): Promise<number> {
 // --- Settings domain helpers ---
 
 export async function getSetting(key: string): Promise<Setting | null> {
-  const db = await ensureDb();
-  const [row] = await db.select().from(settings).where(eq(settings.key, key)).limit(1);
-  return row ?? null;
+  try {
+    const db = await ensureDb();
+    const [row] = await db.select().from(settings).where(eq(settings.key, key)).limit(1);
+    return row ?? null;
+  } catch (error) {
+    console.warn(`[Database] getSetting(${key}) failed:`, error);
+    return null;
+  }
 }
 
 export async function getAllSettings(): Promise<Setting[]> {
-  const db = await ensureDb();
-  return await db.select().from(settings).orderBy(asc(settings.key));
+  try {
+    console.log("[Database] getAllSettings called");
+    const db = await ensureDb();
+    const result = await db.select().from(settings).orderBy(asc(settings.key));
+    console.log("[Database] getAllSettings result:", result?.length || 0, "rows");
+    return result;
+  } catch (error) {
+    console.warn("[Database] getAllSettings failed, returning empty array:", error);
+    return [];
+  }
 }
 
 export async function getSettingValue(key: string): Promise<unknown> {
@@ -734,33 +897,72 @@ export async function getSettingValue(key: string): Promise<unknown> {
 }
 
 export async function updateSetting(key: string, value: unknown, type?: string): Promise<Setting> {
-  const db = await ensureDb();
-  const stringValue = typeof value === "string" ? value : JSON.stringify(value);
-  const resolvedType = type ?? (typeof value === "string" ? "string" : typeof value === "number" ? "number" : "json");
+  try {
+    const db = await ensureDb();
+    const stringValue = typeof value === "string" ? value : JSON.stringify(value);
+    const resolvedType = type ?? (typeof value === "string" ? "string" : typeof value === "number" ? "number" : "json");
 
-  const [updated] = await db
-    .insert(settings)
-    .values({ key, value: stringValue, type: resolvedType as any })
-    .onDuplicateKeyUpdate({
-      set: { value: stringValue, type: resolvedType as any },
-    })
-    .returning();
+    console.log(`[Database] Updating setting: ${key} = ${stringValue.substring(0, 50)}...`);
 
-  return updated;
+    // Verifica se existe
+    const existing = await db.query.settings.findFirst({
+      where: eq(settings.key, key),
+    });
+
+    if (existing) {
+      // Atualiza
+      console.log(`[Database] Updating existing setting: ${key}`);
+      await db
+        .update(settings)
+        .set({ value: stringValue, type: resolvedType as any, updatedAt: new Date() })
+        .where(eq(settings.key, key));
+    } else {
+      // Insere novo
+      console.log(`[Database] Inserting new setting: ${key}`);
+      await db
+        .insert(settings)
+        .values({ key, value: stringValue, type: resolvedType as any, createdAt: new Date(), updatedAt: new Date() });
+    }
+
+    // Busca o valor atualizado
+    const updated = await db.query.settings.findFirst({
+      where: eq(settings.key, key),
+    });
+
+    if (!updated) {
+      throw new Error(`Setting ${key} not found after update`);
+    }
+
+    console.log(`[Database] Setting updated successfully: ${key}`);
+    return updated;
+  } catch (error) {
+    console.error(`[Database] updateSetting(${key}) failed:`, error);
+    throw new Error(`Failed to update setting ${key}: ${error instanceof Error ? error.message : String(error)}`);
+  }
 }
 
 export async function bulkUpdateSettings(
   updates: Array<{ key: string; value: unknown; type?: string }>
 ): Promise<void> {
-  const db = await ensureDb();
-  for (const update of updates) {
-    await updateSetting(update.key, update.value, update.type);
+  try {
+    const db = await ensureDb();
+    for (const update of updates) {
+      await updateSetting(update.key, update.value, update.type);
+    }
+  } catch (error) {
+    console.error("[Database] bulkUpdateSettings failed:", error);
+    throw new Error("Failed to update settings: Database not available");
   }
 }
 
 export async function deleteSetting(key: string): Promise<void> {
-  const db = await ensureDb();
-  await db.delete(settings).where(eq(settings.key, key));
+  try {
+    const db = await ensureDb();
+    await db.delete(settings).where(eq(settings.key, key));
+  } catch (error) {
+    console.warn(`[Database] deleteSetting(${key}) failed:`, error);
+    // Non-critical, don't throw
+  }
 }
 
 // ========================================
@@ -775,8 +977,27 @@ export async function insertEmailLog(data: {
   sentAt?: Date | null;
 }): Promise<EmailLog> {
   const db = await ensureDb();
-  const [created] = await db.insert(emailLogs).values(data).returning();
-  return created;
+  try {
+    // MySQL não suporta .returning(), então fazemos insert e depois buscamos o registro
+    await db.insert(emailLogs).values(data);
+    
+    // Buscar o registro mais recente que foi inserido
+    const [created] = await db
+      .select()
+      .from(emailLogs)
+      .where(eq(emailLogs.recipientEmail, data.recipientEmail))
+      .orderBy(desc(emailLogs.createdAt))
+      .limit(1);
+    
+    if (!created) {
+      throw new Error("Failed to retrieve inserted email log");
+    }
+    
+    return created;
+  } catch (error) {
+    console.error("[DB] Error in insertEmailLog:", error);
+    throw error;
+  }
 }
 
 export async function getEmailLogs(
@@ -845,4 +1066,28 @@ export async function getEmailLogStats(): Promise<{
   }
   
   return stats;
+}
+
+// --- Auth helpers for password change ---
+import { verifyPassword, hashPassword } from "./_core/auth";
+
+export async function changeUserPassword(userId: number, currentPassword: string, newPassword: string): Promise<void> {
+  const db = await ensureDb();
+  
+  // Get user
+  const user = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+  if (!user || user.length === 0) {
+    throw new Error("Usuário não encontrado");
+  }
+  
+  // Verify current password
+  if (!user[0].password || !verifyPassword(currentPassword, user[0].password)) {
+    throw new Error("Senha atual incorreta");
+  }
+  
+  // Hash new password
+  const hashedPassword = hashPassword(newPassword);
+  
+  // Update password
+  await db.update(users).set({ password: hashedPassword }).where(eq(users.id, userId));
 }

@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
+import { useSiteConfig } from '@/hooks/useSiteConfig';
 import { ArrowRight, Calendar, MessageCircle, Shield, Stethoscope } from 'lucide-react';
 
 const areas = [
@@ -73,6 +74,9 @@ export default function Services() {
   const areasRef = useScrollReveal<HTMLDivElement>({ threshold: 0.2 });
   const modalitiesRef = useScrollReveal<HTMLDivElement>({ threshold: 0.2 });
   const galleryRef = useScrollReveal<HTMLDivElement>({ threshold: 0.2 });
+  
+  const { config: siteConfig } = useSiteConfig();
+  const sessionDuration = siteConfig.sessionDuration || '50';
 
   const goToBooking = () => {
     window.location.href = '/#agendamento';
@@ -148,7 +152,7 @@ export default function Services() {
                   </p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-muted-foreground">
                     <div className="p-3 rounded-lg bg-accent/10 border border-accent/20">
-                      <p className="font-semibold text-foreground">Sessões de 50 min</p>
+                      <p className="font-semibold text-foreground">Sessões de {sessionDuration} min</p>
                       <p>Duração padrão, com foco e estrutura.</p>
                     </div>
                     <div className="p-3 rounded-lg bg-accent/10 border border-accent/20">
@@ -249,13 +253,13 @@ export default function Services() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-muted-foreground">
+                 <div className="p-4 rounded-lg bg-background border border-border/60">
+                   <p className="font-semibold text-foreground">Duração e Frequência</p>
+                   <p>Sessões de {sessionDuration} minutos; frequência semanal ou quinzenal, a combinar.</p>
+                 </div>
                 <div className="p-4 rounded-lg bg-background border border-border/60">
-                  <p className="font-semibold text-foreground">Duração e Frequência</p>
-                  <p>Sessões de 50 minutos; frequência semanal ou quinzenal, a combinar.</p>
-                </div>
-                <div className="p-4 rounded-lg bg-background border border-border/60">
-                  <p className="font-semibold text-foreground">Valores (placeholder)</p>
-                  <p>Informados no primeiro contato; condições avaliadas caso a caso.</p>
+                  <p className="font-semibold text-foreground">Valores</p>
+                  <p>{siteConfig.consultationPrice || 'Informados no primeiro contato'}; condições avaliadas caso a caso.</p>
                 </div>
               </div>
             </div>

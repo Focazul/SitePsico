@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { getUserByEmail } from "../db";
+import { getUserByEmail, changeUserPassword } from "../db";
 import { users } from "../../drizzle/schema";
 import { hashPassword, verifyPassword } from "../_core/auth";
-import { publicProcedure, protectedProcedure, router } from "../_core/trpc";
+import { publicProcedure, protectedProcedure, adminProcedure, router } from "../_core/trpc";
 import { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
 import { getSessionCookieOptions } from "../_core/cookies";
 import { sdk } from "../_core/sdk";
@@ -54,4 +54,30 @@ export const authRouter = router({
 
     return { id: user.id, email: user.email, name: user.name };
   }),
+
+  // Change password (admin only)
+  changePassword: adminProcedure
+    .input(
+      z.object({
+        currentPassword: z.string().min(1, "Senha atual é obrigatória"),
+        newPassword: z.string().min(8, "Nova senha deve ter pelo menos 8 caracteres"),
+        confirmPassword: z.string().min(8, "Confirmação de senha é obrigatória"),
+      }).refine((data) => data.newPassword === data.confirmPassword, {
+        message: "Senhas não coincidem",
+        path: ["confirmPassword"],
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      if (!ctx.user?.email) {
+        throw new Error("Não autenticado");
+      }
+
+      const user = await getUserByEmail(ctx.user.email);
+      if (!user || !user.id) {
+        throw new Error("Usuário não encontrado");
+      }
+
+      await changeUserPassword(user.id, input.currentPassword, input.newPassword);
+      return { success: true };
+    }),
 });

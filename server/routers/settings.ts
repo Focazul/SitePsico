@@ -7,9 +7,11 @@ import {
   bulkUpdateSettings,
   deleteSetting,
 } from "../db";
+import { clearConfigCache } from "../_core/psychologistConfig";
 import { adminProcedure, publicProcedure, router } from "../_core/trpc";
 
-const settingKey = z.string().regex(/^[a-z_]+$/, "Chave deve conter apenas letras minúsculas e underscores");
+// Allow digits too (e.g., consultation_price_package5)
+const settingKey = z.string().regex(/^[a-z0-9_]+$/, "Chave deve conter apenas letras minúsculas, números e underscores");
 const settingType = z.enum(["string", "number", "boolean", "json"]);
 
 export const settingsRouter = router({
@@ -22,16 +24,24 @@ export const settingsRouter = router({
       "site_description",
       "psychologist_name",
       "psychologist_crp",
+      "psychologist_specialty",
+      "psychologist_bio",
       "phone",
       "email",
       "address",
       "opening_hours",
       "consultation_price",
+      "session_duration",
+      "availability",
+      "slot_interval",
       "about_text",
       "services_text",
       "instagram_url",
       "linkedin_url",
+      "website",
       "whatsapp_number",
+      "whatsapp_button_enabled",
+      "whatsapp_default_message",
     ];
 
     return all.filter((s) => safeKeys.includes(s.key)).map((s) => ({ key: s.key, value: s.value }));
@@ -99,7 +109,19 @@ export const settingsRouter = router({
 
   // Admin endpoint: get all settings
   getAll: adminProcedure.query(async () => {
-    return await getAllSettings();
+    console.log("[Settings Router] getAll called");
+    try {
+      const settings = await getAllSettings();
+      console.log("[Settings Router] Retrieved settings:", settings?.length || 0, "items");
+      if (!settings) {
+        console.log("[Settings Router] No settings found, returning empty array");
+        return [];
+      }
+      return settings;
+    } catch (error) {
+      console.error("[Settings Router] getAll failed:", error);
+      return [];
+    }
   }),
 
   // Admin endpoint: get single setting
@@ -148,6 +170,7 @@ export const settingsRouter = router({
     )
     .mutation(async ({ input }) => {
       await bulkUpdateSettings(input.updates);
+      clearConfigCache();
       return { success: true } as const;
     }),
 

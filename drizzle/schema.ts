@@ -138,6 +138,29 @@ export const posts = mysqlTable(
 );
 
 /**
+ * Páginas estáticas do site (Sobre, Serviços, etc).
+ */
+export const pages = mysqlTable(
+  "pages",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    title: varchar("title", { length: 255 }).notNull(),
+    slug: varchar("slug", { length: 255 }).notNull().unique(),
+    content: text("content").notNull(),
+    metaTitle: varchar("metaTitle", { length: 255 }),
+    metaDescription: text("metaDescription"),
+    status: mysqlEnum("status", ["draft", "published"]).default("draft").notNull(),
+    order: int("order").default(0).notNull(),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  },
+  (table) => ({
+    idxSlug: index("idx_page_slug").on(table.slug),
+    idxStatus: index("idx_page_status").on(table.status),
+  })
+);
+
+/**
  * Associação muitos-para-muitos entre posts e tags.
  */
 export const postTags = mysqlTable(
@@ -164,7 +187,7 @@ export const messages = mysqlTable(
     phone: varchar("phone", { length: 20 }),
     subject: varchar("subject", { length: 255 }).notNull(),
     content: text("content").notNull(),
-    status: mysqlEnum("status", ["novo", "lido", "respondido"]).default("novo").notNull(),
+    status: mysqlEnum("status", ["novo", "lido", "respondido", "arquivado"]).default("novo").notNull(),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
     updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   },
@@ -233,6 +256,8 @@ export type Tag = typeof tags.$inferSelect;
 export type InsertTag = typeof tags.$inferInsert;
 export type Post = typeof posts.$inferSelect;
 export type InsertPost = typeof posts.$inferInsert;
+export type Page = typeof pages.$inferSelect;
+export type InsertPage = typeof pages.$inferInsert;
 export type PostTag = typeof postTags.$inferSelect;
 export type InsertPostTag = typeof postTags.$inferInsert;
 export type Message = typeof messages.$inferSelect;

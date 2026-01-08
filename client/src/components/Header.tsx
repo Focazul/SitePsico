@@ -13,6 +13,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useQuickBooking } from '@/contexts/QuickBookingContext';
+import { useSiteConfig } from '@/hooks/useSiteConfig';
 
 /**
  * Header Component
@@ -27,6 +28,7 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [location, navigate] = useLocation();
   const { openModal } = useQuickBooking();
+  const { config } = useSiteConfig();
 
   const navItems = useMemo(() => ([
     { label: 'Home', href: '/' },
@@ -91,9 +93,9 @@ export default function Header() {
           <div className="hidden sm:block text-left">
             <p className="text-[13px] uppercase tracking-[0.2em] text-muted-foreground">Psicologia</p>
             <h1 className="text-lg md:text-xl font-bold text-foreground leading-tight">
-              [Nome do Psicólogo]
+              {config.psychologistName}
             </h1>
-            <p className="text-xs text-muted-foreground">CRP 06/[Número]</p>
+            <p className="text-xs text-muted-foreground">{config.psychologistCrp || 'CRP'}</p>
           </div>
         </Link>
 

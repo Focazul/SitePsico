@@ -6,7 +6,7 @@ import {
   sanitizeContent,
   sanitizeUrl,
   escapeHtml,
-} from "../_core/sanitize";
+} from "../server/_core/sanitize";
 
 describe("Input Sanitization", () => {
   describe("sanitizeInput", () => {

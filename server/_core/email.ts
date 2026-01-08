@@ -10,6 +10,7 @@ import {
 } from "./emailTemplates";
 import { insertEmailLog } from "../db";
 import { emailLogs } from "../../drizzle/schema";
+import { getSettingValue } from "../db";
 
 export type EmailPayload = {
   to: string;
@@ -80,6 +81,7 @@ async function sendEmailRaw(payload: EmailPayload): Promise<boolean> {
 
 // Função principal de envio com templates
 export async function sendEmail(options: SendEmailOptions): Promise<boolean> {
+  console.log(`[Email] sendEmail called with to=${options.to}, type=${options.type}`);
   let html = options.customHtml;
   let text = options.customText;
 
@@ -190,13 +192,27 @@ export async function sendNewContactNotification(data: {
   subject: string;
   message: string;
 }): Promise<boolean> {
-  if (!ENV.ownerNotificationEmail) {
+  console.log("[Email] sendNewContactNotification called from", data.senderEmail);
+  // Prioridade: ENV.ownerNotificationEmail, senão pegar email configurado no painel
+  let target = ENV.ownerNotificationEmail;
+  if (!target) {
+    try {
+      const configured = (await getSettingValue("email")) ?? (await getSettingValue("psychologist_email"));
+      if (typeof configured === "string" && configured.includes("@")) {
+        target = configured;
+      }
+    } catch (error) {
+      console.warn("[Email] Failed to resolve notification email from settings", error);
+    }
+  }
+
+  if (!target) {
     console.warn("[Email] Owner notification email not configured");
     return false;
   }
 
   return sendEmail({
-    to: ENV.ownerNotificationEmail,
+    to: target,
     subject: `📬 Novo contato: ${data.senderName}`,
     type: "newContactNotification",
     templateData: {
@@ -217,6 +233,7 @@ export async function sendContactAutoReply(data: {
   senderName: string;
   psychologistName: string;
 }): Promise<boolean> {
+  console.log("[Email] sendContactAutoReply called for", data.recipientEmail);
   return sendEmail({
     to: data.recipientEmail,
     subject: "✅ Recebi sua mensagem!",

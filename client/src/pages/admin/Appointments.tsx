@@ -9,27 +9,27 @@ import DashboardLayout from "@/components/DashboardLayout";
 import { AdminBreadcrumb } from "@/components/AdminBreadcrumb";
 import { toast } from "sonner";
 
-type AppointmentStatus = "pending" | "confirmed" | "completed" | "cancelled";
+type AppointmentStatus = "pendente" | "confirmado" | "concluido" | "cancelado";
 type AppointmentType = "presencial" | "online";
 
 interface Appointment {
-  id: string;
-  patient_name: string;
-  email: string;
-  phone: string;
-  date: string;
-  time: string;
-  type: AppointmentType;
+  id: number;
+  clientName: string;
+  clientEmail: string;
+  clientPhone: string;
+  appointmentDate: string;
+  appointmentTime: string;
+  modality: AppointmentType;
   status: AppointmentStatus;
   notes?: string;
-  created_at?: string;
+  createdAt?: string;
 }
 
 const statusConfig: Record<AppointmentStatus, { label: string; color: string; bgColor: string }> = {
-  pending: { label: "Pendente", color: "text-yellow-700", bgColor: "bg-yellow-100" },
-  confirmed: { label: "Confirmado", color: "text-blue-700", bgColor: "bg-blue-100" },
-  completed: { label: "Realizado", color: "text-green-700", bgColor: "bg-green-100" },
-  cancelled: { label: "Cancelado", color: "text-red-700", bgColor: "bg-red-100" },
+  pendente: { label: "Pendente", color: "text-yellow-700", bgColor: "bg-yellow-100" },
+  confirmado: { label: "Confirmado", color: "text-blue-700", bgColor: "bg-blue-100" },
+  concluido: { label: "Realizado", color: "text-green-700", bgColor: "bg-green-100" },
+  cancelado: { label: "Cancelado", color: "text-red-700", bgColor: "bg-red-100" },
 };
 
 const typeConfig: Record<AppointmentType, { label: string; icon: typeof MapPin }> = {
@@ -87,15 +87,15 @@ export default function Appointments() {
   // Agendamentos do mês selecionado
   const monthAppointments = useMemo(() => {
     const monthStr = currentDate.toISOString().slice(0, 7); // "2025-12"
-    return filteredAppointments.filter((apt) => apt.date.startsWith(monthStr));
+    return filteredAppointments.filter((apt) => apt.appointmentDate.startsWith(monthStr));
   }, [filteredAppointments, currentDate]);
 
   // Agrupar agendamentos por data (para view de calendário)
   const appointmentsByDate = useMemo(() => {
     const grouped: Record<string, Appointment[]> = {};
     monthAppointments.forEach((apt) => {
-      if (!grouped[apt.date]) grouped[apt.date] = [];
-      grouped[apt.date].push(apt);
+      if (!grouped[apt.appointmentDate]) grouped[apt.appointmentDate] = [];
+      grouped[apt.appointmentDate].push(apt);
     });
     return grouped;
   }, [monthAppointments]);
@@ -108,12 +108,12 @@ export default function Appointments() {
     nextWeek.setDate(nextWeek.getDate() + 7);
 
     return filteredAppointments.filter((apt) => {
-      const aptDate = new Date(apt.date);
+      const aptDate = new Date(apt.appointmentDate);
       return aptDate >= today && aptDate <= nextWeek;
     }).sort((a, b) => {
-      const dateCompare = a.date.localeCompare(b.date);
+      const dateCompare = a.appointmentDate.localeCompare(b.appointmentDate);
       if (dateCompare !== 0) return dateCompare;
-      return a.time.localeCompare(b.time);
+      return a.appointmentTime.localeCompare(b.appointmentTime);
     }).slice(0, 5);
   }, [filteredAppointments]);
 
@@ -121,9 +121,9 @@ export default function Appointments() {
   const stats = useMemo(() => {
     return {
       total: filteredAppointments.length,
-      pending: filteredAppointments.filter((a) => a.status === "pending").length,
-      confirmed: filteredAppointments.filter((a) => a.status === "confirmed").length,
-      completed: filteredAppointments.filter((a) => a.status === "completed").length,
+      pending: filteredAppointments.filter((a) => a.status === "pendente").length,
+      confirmed: filteredAppointments.filter((a) => a.status === "confirmado").length,
+      completed: filteredAppointments.filter((a) => a.status === "concluido").length,
     };
   }, [filteredAppointments]);
 
@@ -165,7 +165,7 @@ export default function Appointments() {
                 key={apt.id}
                 className={`text-xs px-2 py-1 rounded truncate cursor-pointer ${statusConfig[apt.status].bgColor} ${statusConfig[apt.status].color}`}
               >
-                {apt.time} - {apt.patient_name}
+                {apt.appointmentTime} - {apt.clientName}
               </div>
             ))}
             {dayAppointments.length > 2 && (
@@ -242,10 +242,10 @@ export default function Appointments() {
               className="px-3 py-2 border rounded-lg text-sm bg-white"
             >
               <option value="all">Todos os Status</option>
-              <option value="pending">Pendentes</option>
-              <option value="confirmed">Confirmados</option>
-              <option value="completed">Realizados</option>
-              <option value="cancelled">Cancelados</option>
+              <option value="pendente">Pendentes</option>
+              <option value="confirmado">Confirmados</option>
+              <option value="concluido">Realizados</option>
+              <option value="cancelado">Cancelados</option>
             </select>
 
             <select
@@ -272,7 +272,7 @@ export default function Appointments() {
                     <div key={apt.id} className="flex items-center justify-between bg-white p-3 rounded-lg border">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
-                          <div className="font-semibold text-gray-900">{apt.patient_name}</div>
+                          <div className="font-semibold text-gray-900">{apt.clientName}</div>
                           <Badge className={statusConfig[apt.status].bgColor}>
                             <span className={statusConfig[apt.status].color}>{statusConfig[apt.status].label}</span>
                           </Badge>
@@ -280,19 +280,19 @@ export default function Appointments() {
                         <div className="text-sm text-gray-600 flex gap-3">
                           <span className="flex items-center gap-1">
                             <Calendar size={14} />
-                            {new Date(apt.date).toLocaleDateString("pt-BR")}
+                            {new Date(apt.appointmentDate).toLocaleDateString("pt-BR")}
                           </span>
                           <span className="flex items-center gap-1">
                             <Clock size={14} />
-                            {apt.time}
+                            {apt.appointmentTime}
                           </span>
                           <span className="flex items-center gap-1">
-                            {typeConfig[apt.type].icon === MapPin ? (
+                            {typeConfig[apt.modality].icon === MapPin ? (
                               <MapPin size={14} />
                             ) : (
                               <Calendar size={14} />
                             )}
-                            {typeConfig[apt.type].label}
+                            {typeConfig[apt.modality].label}
                           </span>
                         </div>
                       </div>
@@ -323,19 +323,19 @@ export default function Appointments() {
                         <tr key={apt.id} className="hover:bg-gray-50 transition-colors">
                           <td className="px-6 py-4">
                             <div>
-                              <div className="font-medium text-gray-900">{apt.patient_name}</div>
-                              <div className="text-sm text-gray-600">{apt.email}</div>
+                              <div className="font-medium text-gray-900">{apt.clientName}</div>
+                              <div className="text-sm text-gray-600">{apt.clientEmail}</div>
                             </div>
                           </td>
                           <td className="px-6 py-4">
                             <div className="text-sm text-gray-900">
-                              {new Date(apt.date).toLocaleDateString("pt-BR")}
+                              {new Date(apt.appointmentDate).toLocaleDateString("pt-BR")}
                             </div>
-                            <div className="text-sm text-gray-600">{apt.time}</div>
+                            <div className="text-sm text-gray-600">{apt.appointmentTime}</div>
                           </td>
                           <td className="px-6 py-4">
                             <Badge variant="outline">
-                              {typeConfig[apt.type].label}
+                              {typeConfig[apt.modality].label}
                             </Badge>
                           </td>
                           <td className="px-6 py-4">
@@ -367,27 +367,27 @@ export default function Appointments() {
                                       <div>
                                         <label className="text-sm font-medium text-gray-700">Paciente</label>
                                         <div className="mt-1 text-gray-900 font-medium">
-                                          {selectedAppointment.patient_name}
+                                          {selectedAppointment.clientName}
                                         </div>
                                       </div>
                                       <div>
                                         <label className="text-sm font-medium text-gray-700">Email</label>
-                                        <div className="mt-1 text-gray-900">{selectedAppointment.email}</div>
+                                        <div className="mt-1 text-gray-900">{selectedAppointment.clientEmail}</div>
                                       </div>
                                       <div>
                                         <label className="text-sm font-medium text-gray-700">Telefone</label>
-                                        <div className="mt-1 text-gray-900">{selectedAppointment.phone}</div>
+                                        <div className="mt-1 text-gray-900">{selectedAppointment.clientPhone}</div>
                                       </div>
                                       <div className="grid grid-cols-2 gap-4">
                                         <div>
                                           <label className="text-sm font-medium text-gray-700">Data</label>
                                           <div className="mt-1 text-gray-900">
-                                            {new Date(selectedAppointment.date).toLocaleDateString("pt-BR")}
+                                            {new Date(selectedAppointment.appointmentDate).toLocaleDateString("pt-BR")}
                                           </div>
                                         </div>
                                         <div>
                                           <label className="text-sm font-medium text-gray-700">Hora</label>
-                                          <div className="mt-1 text-gray-900">{selectedAppointment.time}</div>
+                                          <div className="mt-1 text-gray-900">{selectedAppointment.appointmentTime}</div>
                                         </div>
                                       </div>
                                       <div>
@@ -400,12 +400,12 @@ export default function Appointments() {
                                         />
                                       </div>
                                       <div className="flex gap-2">
-                                        {selectedAppointment.status === "pending" && (
+                                        {selectedAppointment.status === "pendente" && (
                                           <Button 
                                             className="flex-1 bg-green-600 hover:bg-green-700 gap-2"
                                             onClick={() => {
                                               confirmMutation.mutate({ 
-                                                id: Number(selectedAppointment.id), 
+                                                id: selectedAppointment.id, 
                                                 status: "confirmado" 
                                               });
                                             }}
@@ -415,12 +415,12 @@ export default function Appointments() {
                                             {confirmMutation.isPending ? "..." : "Confirmar"}
                                           </Button>
                                         )}
-                                        {["pending", "confirmed"].includes(selectedAppointment.status) && (
+                                        {["pendente", "confirmado"].includes(selectedAppointment.status) && (
                                           <Button 
                                             variant="outline" 
                                             className="flex-1 gap-2 text-red-600 border-red-300 hover:bg-red-50"
                                             onClick={() => {
-                                              cancelMutation.mutate({ id: Number(selectedAppointment.id) });
+                                              cancelMutation.mutate({ id: selectedAppointment.id });
                                             }}
                                             disabled={cancelMutation.isPending}
                                           >
@@ -428,12 +428,12 @@ export default function Appointments() {
                                             {cancelMutation.isPending ? "..." : "Cancelar"}
                                           </Button>
                                         )}
-                                        {selectedAppointment.status === "confirmed" && (
+                                        {selectedAppointment.status === "confirmado" && (
                                           <Button 
                                             className="flex-1 bg-purple-600 hover:bg-purple-700 gap-2"
                                             onClick={() => {
                                               confirmMutation.mutate({ 
-                                                id: Number(selectedAppointment.id), 
+                                                id: selectedAppointment.id, 
                                                 status: "concluido" 
                                               });
                                             }}

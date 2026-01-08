@@ -2,9 +2,11 @@ import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Instagram, Linkedin, Mail, Phone, ShieldCheck, MapPin } from "lucide-react";
+import { useSiteConfig } from "@/hooks/useSiteConfig";
 
 // Footer completo com links, contato, redes sociais, selo CRP e newsletter placeholder
 export default function Footer() {
+  const { config } = useSiteConfig();
   return (
     <footer 
       role="contentinfo"
@@ -16,8 +18,8 @@ export default function Footer() {
           <div className="space-y-4">
             <div>
               <p className="text-[13px] uppercase tracking-[0.2em] text-muted-foreground">Psicologia</p>
-              <h3 className="text-xl font-bold text-foreground leading-tight">[Nome do Psicólogo]</h3>
-              <p className="text-sm text-muted-foreground">CRP 06/[Número]</p>
+              <h3 className="text-xl font-bold text-foreground leading-tight">{config.psychologistName}</h3>
+              <p className="text-sm text-muted-foreground">{config.psychologistCrp || 'CRP'}</p>
             </div>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <ShieldCheck className="h-4 w-4 text-accent" />
@@ -51,24 +53,28 @@ export default function Footer() {
           <div className="space-y-4">
             <h4 className="font-semibold text-foreground">Contato</h4>
             <div className="space-y-3 text-sm text-muted-foreground">
-              <a href="tel:[Telefone]" className="flex items-center gap-2 hover:text-accent transition-colors">
-                <Phone className="h-4 w-4 text-accent" /> [Telefone]
+              <a href={`tel:${config.phone}`} className="flex items-center gap-2 hover:text-accent transition-colors">
+                <Phone className="h-4 w-4 text-accent" /> {config.phone || '(11) 99999-9999'}
               </a>
-              <a href="mailto:[Email]" className="flex items-center gap-2 hover:text-accent transition-colors">
-                <Mail className="h-4 w-4 text-accent" /> [Email]
+              <a href={`mailto:${config.email}`} className="flex items-center gap-2 hover:text-accent transition-colors">
+                <Mail className="h-4 w-4 text-accent" /> {config.email || 'contato@exemplo.com'}
               </a>
               <div className="flex items-start gap-2">
                 <MapPin className="h-4 w-4 text-accent mt-0.5" />
-                <p className="leading-snug">[Endereço do consultório ou Atendimento online]</p>
+                <p className="leading-snug">{config.address || 'Atendimento online'}</p>
               </div>
             </div>
             <div className="flex items-center gap-3 pt-2">
-              <a href="#" className="p-2 rounded-full border border-border hover:border-accent hover:text-accent transition-colors" aria-label="Instagram">
-                <Instagram className="h-4 w-4" />
-              </a>
-              <a href="#" className="p-2 rounded-full border border-border hover:border-accent hover:text-accent transition-colors" aria-label="LinkedIn">
-                <Linkedin className="h-4 w-4" />
-              </a>
+              {config.instagramUrl && (
+                <a href={config.instagramUrl} target="_blank" rel="noreferrer" className="p-2 rounded-full border border-border hover:border-accent hover:text-accent transition-colors" aria-label="Instagram">
+                  <Instagram className="h-4 w-4" />
+                </a>
+              )}
+              {config.linkedinUrl && (
+                <a href={config.linkedinUrl} target="_blank" rel="noreferrer" className="p-2 rounded-full border border-border hover:border-accent hover:text-accent transition-colors" aria-label="LinkedIn">
+                  <Linkedin className="h-4 w-4" />
+                </a>
+              )}
             </div>
           </div>
 

@@ -12,6 +12,8 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Heart, Shield, BookOpen, MessageCircle, ArrowRight, CheckCircle, Calendar } from 'lucide-react';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
+import { useSiteConfig } from '@/hooks/useSiteConfig';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 /**
  * Home Page - Site Psicólogo SP
@@ -32,6 +34,12 @@ export default function Home() {
   const servicesRef = useScrollReveal<HTMLElement>({ threshold: 0.2 });
   const contentRef = useScrollReveal<HTMLElement>({ threshold: 0.2 });
   const { openModal } = useQuickBooking();
+  
+  // Get site configuration from database
+  const { config, isLoading } = useSiteConfig();
+  
+  // Update document title
+  useDocumentTitle();
 
   // Smooth scroll handler
   const scrollToSection = (sectionId: string) => {
@@ -67,12 +75,7 @@ export default function Home() {
                   </h1>
                 </div>
                 <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-xl">
-                  Sou psicólogo(a) graduado(a) pela{' '}
-                  <strong className="text-foreground">[Universidade]</strong> e
-                  registrado(a) no{' '}
-                  <strong className="text-foreground">CRP-SP</strong>. Ofereço um
-                  espaço acolhedor onde você pode explorar seus pensamentos, emoções e
-                  desafios com confiança e sigilo profissional.
+                  {config.aboutText || 'Sou psicólogo(a) graduado(a) e ofereço um espaço acolhedor onde você pode explorar seus pensamentos, emoções e desafios com confiança e sigilo profissional.'}
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 pt-4">
                   <Button
@@ -97,7 +100,7 @@ export default function Home() {
                 <div className="flex flex-wrap gap-4 pt-6 text-sm text-muted-foreground">
                   <div className="flex items-center gap-2">
                     <CheckCircle className="w-5 h-5 text-accent" />
-                    <span>CRP-SP Ativo</span>
+                    <span>{config.psychologistCrp || 'CRP-SP'} Ativo</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle className="w-5 h-5 text-accent" />
@@ -160,10 +163,10 @@ export default function Home() {
                   />
                   <div className="text-center">
                     <p className="font-bold text-lg text-foreground">
-                      [Seu Nome]
+                      {config.psychologistName}
                     </p>
                     <p className="text-sm text-accent font-semibold">
-                      CRP 06/[Número]
+                      {config.psychologistCrp || 'CRP'}
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
                       Psicólogo(a) Clínico(a)
@@ -173,51 +176,14 @@ export default function Home() {
 
                 {/* Bio Column */}
                 <div className="md:col-span-2 prose prose-lg max-w-none text-muted-foreground space-y-6">
-                  <p>
-                    Olá, sou{' '}
-                    <strong className="text-foreground">[Seu Nome]</strong>,
-                    psicólogo(a) graduado(a) pela{' '}
-                    <strong className="text-foreground">
-                      [Nome da Instituição]
-                    </strong>{' '}
-                    em <strong className="text-foreground">[Ano]</strong> e
-                    registrado(a) no Conselho Regional de Psicologia de São Paulo sob
-                    o número{' '}
-                    <strong className="text-foreground">CRP 06/[Número]</strong>.
-                  </p>
-
-                  <p>
-                    Minha trajetória na psicologia é guiada pelo compromisso com a
-                    ética, o acolhimento e o respeito à singularidade de cada
-                    indivíduo. Como profissional em desenvolvimento contínuo, dedico-me
-                    a uma prática clínica fundamentada em evidências científicas e em
-                    um processo constante de aprofundamento teórico.
-                  </p>
-
-                  <p>
-                    Atuo de forma{' '}
-                    <strong className="text-foreground">
-                      integrativa e generalista
-                    </strong>
-                    , o que significa que utilizo os conhecimentos sólidos da minha
-                    formação para oferecer um espaço de escuta qualificada e segura.
-                    Acredito que a psicoterapia é um processo colaborativo, onde o
-                    objetivo principal é promover a saúde mental e o bem-estar,
-                    respeitando sempre o tempo e a história de quem busca atendimento.
-                  </p>
-
-                  <p>
-                    Estou em constante atualização para oferecer o melhor suporte
-                    possível, sempre pautado pelo sigilo profissional e pelas
-                    diretrizes do nosso Código de Ética.
-                  </p>
+                  <div dangerouslySetInnerHTML={{ __html: config.aboutText || '<p>Olá, sou psicólogo(a) graduado(a) e registrado(a) no Conselho Regional de Psicologia. Minha trajetória na psicologia é guiada pelo compromisso com a ética, o acolhimento e o respeito à singularidade de cada indivíduo.</p>' }} />
                 </div>
               </div>
 
               {/* Credentials */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-8">
                 <Card className="p-4 text-center border-accent/30">
-                  <p className="text-2xl font-bold text-accent">CRP-SP</p>
+                  <p className="text-2xl font-bold text-accent">{config.psychologistCrp || 'CRP-SP'}</p>
                   <p className="text-sm text-muted-foreground">
                     Registro Profissional
                   </p>

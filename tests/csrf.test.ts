@@ -4,7 +4,7 @@ import {
   validateCsrfToken,
   clearCsrfToken,
   getCsrfToken,
-} from "../_core/csrf";
+} from "../server/_core/csrf";
 
 describe("CSRF Protection", () => {
   const sessionId = "test_session_123";

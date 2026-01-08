@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
+import { format } from "date-fns";
 import { CalendarIcon, Clock, Mail, Phone, User } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -14,6 +16,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { trpc } from "@/lib/trpc";
+import { useSiteConfig } from "@/hooks/useSiteConfig";
+import { Calendar as CalendarPicker } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 type Modality = "presencial" | "online";
 
@@ -50,6 +56,25 @@ export function ManusDialog({ open = false, onOpenChange, onSuccess }: ManusDial
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const { config } = useSiteConfig();
+  const sendMessageMutation = trpc.contact.sendMessage.useMutation({
+    onSuccess: () => {
+      toast.success("Pedido de agendamento enviado com sucesso!");
+      setSubmitted(true);
+      setLoading(false);
+      onSuccess?.();
+    },
+    onError: (err) => {
+      toast.error(err.message || "Erro ao enviar pedido. Tente novamente.");
+      setLoading(false);
+    },
+  });
+
+  const slotsQuery = trpc.booking.getAvailableSlots.useQuery(
+    { date: data.date },
+    { enabled: !!data.date, staleTime: 5 * 60 * 1000 }
+  );
 
   const isRequiredMissing = useMemo(() => {
     return !data.name || !data.email || !data.date || !data.time;
@@ -73,7 +98,17 @@ export function ManusDialog({ open = false, onOpenChange, onSuccess }: ManusDial
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    setData((prev) => (prev.time ? { ...prev, time: "" } : prev));
+  }, [data.date]);
+
+  useEffect(() => {
+    if (!selectedDate) return;
+    const iso = format(selectedDate, "yyyy-MM-dd");
+    setData((prev) => (prev.date === iso ? prev : { ...prev, date: iso }));
+  }, [selectedDate]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     if (isRequiredMissing) {
@@ -81,15 +116,63 @@ export function ManusDialog({ open = false, onOpenChange, onSuccess }: ManusDial
       return;
     }
     setLoading(true);
-    // Placeholder: integração real virá na fase backend
-    setTimeout(() => {
+
+    const subject = `Agendamento rápido - ${format(new Date(`${data.date}T00:00:00`), "dd/MM/yyyy")} ${data.time}`;
+    const contentLines = [
+      `Pedido de agendamento rápido`,
+      `Nome: ${data.name}`,
+      `Email: ${data.email}`,
+      data.phone ? `Telefone: ${data.phone}` : null,
+      `Data: ${format(new Date(`${data.date}T00:00:00`), "dd/MM/yyyy")}`,
+      `Horário: ${data.time}`,
+      `Modalidade: ${data.modality}`,
+      data.note ? `Observações: ${data.note}` : null,
+    ].filter(Boolean).join("\n");
+
+    try {
+      await sendMessageMutation.mutateAsync({
+        name: data.name.trim(),
+        email: data.email.trim(),
+        phone: data.phone.trim() || undefined,
+        subject,
+        content: contentLines,
+      });
+    } catch (err) {
+      setError("Não foi possível enviar. Tente novamente.");
       setLoading(false);
-      setSubmitted(true);
-      onSuccess?.();
-    }, 600);
+    }
   };
 
-  const timeOptions = ["08:00", "09:00", "10:00", "11:00", "14:00", "15:00", "16:00", "17:00"];
+  const slotOptions = slotsQuery.data?.slots ?? [];
+  const isLoadingSlots = slotsQuery.isFetching;
+  const noSlots = !!data.date && !isLoadingSlots && slotOptions.length === 0;
+
+  const availabilityEnabledDays = useMemo(() => {
+    const dayMap: Record<string, number> = {
+      sunday: 0,
+      monday: 1,
+      tuesday: 2,
+      wednesday: 3,
+      thursday: 4,
+      friday: 5,
+      saturday: 6,
+    };
+    const enabled = new Set<number>();
+    if (config.availability?.length) {
+      config.availability.forEach((slot) => {
+        if (slot.enabled !== false && slot.day && dayMap[slot.day] !== undefined) {
+          enabled.add(dayMap[slot.day]);
+        }
+      });
+    }
+    if (enabled.size === 0) [0, 1, 2, 3, 4, 5, 6].forEach((d) => enabled.add(d));
+    return enabled;
+  }, [config.availability]);
+  const availabilityDisabledDays = useMemo(() => {
+    const all = new Set([0, 1, 2, 3, 4, 5, 6]);
+    availabilityEnabledDays.forEach((d) => all.delete(d));
+    return all;
+  }, [availabilityEnabledDays]);
 
   const dialogOpen = onOpenChange ? open : internalOpen;
 
@@ -176,19 +259,27 @@ export function ManusDialog({ open = false, onOpenChange, onSuccess }: ManusDial
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div className="space-y-1">
               <Label htmlFor="date">Data</Label>
-              <div className="relative">
-                <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="date"
-                  type="date"
-                  name="date"
-                  className="pl-9"
-                  value={data.date}
-                  onChange={(e) => setData((d) => ({ ...d, date: e.target.value }))}
-                  aria-invalid={Boolean(error) && !data.date}
-                  required
-                />
-              </div>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full justify-between"
+                  >
+                    {data.date ? format(new Date(`${data.date}T00:00:00`), "dd/MM/yyyy") : "Selecione"}
+                    <CalendarIcon className="w-4 h-4 opacity-70" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="p-0" align="start">
+                  <CalendarPicker
+                    mode="single"
+                    selected={selectedDate}
+                    onSelect={(day) => setSelectedDate(day ?? undefined)}
+                    disabled={(day) => !!(availabilityDisabledDays && availabilityDisabledDays.has(day.getDay()))}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
             <div className="space-y-1">
               <Label htmlFor="time">Horário</Label>
@@ -203,10 +294,14 @@ export function ManusDialog({ open = false, onOpenChange, onSuccess }: ManusDial
                   aria-invalid={Boolean(error) && !data.time}
                   required
                 >
-                  <option value="">Selecione</option>
-                  {timeOptions.map((t) => (
-                    <option key={t} value={t}>{t}</option>
+                  {!data.date && <option value="">Escolha uma data para ver horários</option>}
+                  {data.date && <option value="">Selecione</option>}
+                  {data.date && isLoadingSlots && <option value="" disabled>Carregando horários...</option>}
+                  {data.date && slotOptions.map(({ time }) => (
+                    <option key={time} value={time}>{time}</option>
                   ))}
+                  {noSlots && <option value="" disabled>Nenhum horário disponível</option>}
+                  {slotsQuery.error && <option value="" disabled>Erro ao carregar horários</option>}
                 </select>
               </div>
             </div>
@@ -225,7 +320,7 @@ export function ManusDialog({ open = false, onOpenChange, onSuccess }: ManusDial
           </div>
 
           {error ? <p className="text-sm text-red-600" role="alert" aria-live="assertive">{error}</p> : null}
-          {submitted ? <p className="text-sm text-green-600" role="status" aria-live="polite">Pedido registrado (placeholder). Confirmaremos por email quando o backend estiver ativo.</p> : null}
+          {submitted ? <p className="text-sm text-green-600" role="status" aria-live="polite">Pedido enviado! Você verá na Comunicação &gt; Mensagens.</p> : null}
         </form>
 
         <DialogFooter className="px-6 pb-6 gap-3">

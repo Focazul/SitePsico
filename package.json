@@ -14,7 +14,7 @@
     "test": "vitest run",
     "db:push": "drizzle-kit generate && drizzle-kit migrate",
     "seed": "tsx server/seed.ts",
-    "setup:admin": "node insert_admin_final.mjs"
+    "setup:admin": "node scripts/insert_admin_final.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.693.0",

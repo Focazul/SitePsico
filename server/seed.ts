@@ -29,10 +29,7 @@ async function seed() {
     });
 
     // Verificar se admin já existe
-    const [rows] = await connection.execute(
-      'SELECT id FROM users WHERE email = ? AND role = ?',
-      [adminEmail, 'admin']
-    );
+    const [rows] = await connection.execute('SELECT id FROM users WHERE email = ?', [adminEmail]);
 
     if ((rows as any[]).length > 0) {
       console.log('✅ Admin já existe no banco de dados');
@@ -45,9 +42,9 @@ async function seed() {
 
     // Inserir admin
     await connection.execute(
-      `INSERT INTO users (email, password, name, role, createdAt, updatedAt) 
-       VALUES (?, ?, ?, ?, NOW(), NOW())`,
-      [adminEmail, hashedPassword, 'Psicólogo', 'admin']
+      `INSERT INTO users (email, password, name, createdAt, updatedAt) 
+       VALUES (?, ?, ?, NOW(), NOW())`,
+      [adminEmail, hashedPassword, 'Psicólogo']
     );
 
     console.log('✅ Admin criado com sucesso!');

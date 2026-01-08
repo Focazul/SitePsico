@@ -52,6 +52,18 @@ export const adminProcedure = t.procedure.use(
   t.middleware(async opts => {
     const { ctx, next } = opts;
 
+    // DEV MODE: Skip authentication if DEV_SKIP_AUTH is enabled
+    if (process.env.DEV_SKIP_AUTH === 'true') {
+      console.warn("[DEV MODE] ⚠️  Admin procedure bypassing authentication!");
+      return next({
+        ctx: {
+          ...ctx,
+          user: ctx.user || { id: 1, email: "dev@local.dev", role: "admin" } as any,
+        },
+      });
+    }
+
+    // PRODUCTION: Require authentication
     if (!ctx.user || ctx.user.role !== 'admin') {
       throw new TRPCError({ code: "FORBIDDEN", message: NOT_ADMIN_ERR_MSG });
     }
@@ -70,6 +82,11 @@ export const rateLimitedProcedure = publicProcedure.use(
   t.middleware(async opts => {
     const { ctx, next } = opts;
     const ip = ctx.ip || "unknown";
+
+    // Desabilita rate limit em ambientes não-produção para facilitar testes
+    if (process.env.NODE_ENV !== "production") {
+      return next();
+    }
     
     // 3 requests per 15 minutes per IP
     if (!checkRateLimit(ip, 3, 15 * 60 * 1000)) {

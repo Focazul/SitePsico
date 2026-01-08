@@ -65,9 +65,9 @@ export const adminMenuConfig: AdminMenuSection[] = [
         description: "Escrever e gerenciar artigos",
       },
       {
-        icon: Settings,
+        icon: FileText,
         label: "Páginas",
-        path: "/admin/settings?tab=pages",
+        path: "/admin/pages",
         description: "Editar conteúdo das páginas",
       },
     ],
@@ -78,15 +78,9 @@ export const adminMenuConfig: AdminMenuSection[] = [
     items: [
       {
         icon: MessageSquare,
-        label: "Mensagens",
-        path: "/admin/messages",
-        description: "Mensagens de contato recebidas",
-      },
-      {
-        icon: Send,
-        label: "Emails",
-        path: "/admin/emails",
-        description: "Log de emails enviados",
+        label: "Comunicação",
+        path: "/admin/communication",
+        description: "Mensagens e emails",
       },
     ],
   },

@@ -10,8 +10,11 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import { useMapConfig } from '@/hooks/useMapConfig';
+import { useSiteConfig } from '@/hooks/useSiteConfig';
 import { BookOpen, CheckCircle2, Clock, Info, Mail, MapPin, Phone, Send, Shield, User } from 'lucide-react';
 import { trackFormSubmission } from '@/lib/analytics';
+import { trpc } from '@/lib/trpc';
+import { toast } from 'sonner';
 
 type FormState = {
   name: string;
@@ -29,6 +32,7 @@ export default function Contact() {
   const mapRef = useScrollReveal<HTMLDivElement>({ threshold: 0.2 });
 
   const { config: mapConfig } = useMapConfig();
+  const { config: siteConfig } = useSiteConfig();
 
   const [form, setForm] = useState<FormState>({
     name: '',
@@ -56,7 +60,19 @@ export default function Contact() {
     return newErrors;
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    const sendMessageMutation = trpc.contact.sendMessage.useMutation({
+      onSuccess: () => {
+        toast.success('Mensagem enviada com sucesso! Retornaremos em breve.');
+        setStatus('success');
+        setForm({ name: '', email: '', phone: '', subject: '', message: '', captcha: false });
+      },
+      onError: (error) => {
+        toast.error(error.message || 'Erro ao enviar mensagem. Tente novamente.');
+        setStatus('idle');
+      },
+    });
+
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const newErrors = validate();
     setErrors(newErrors);
@@ -66,10 +82,14 @@ export default function Contact() {
     // Track form submission
     trackFormSubmission('contact', true);
 
-    // Simula envio; integrar backend na fase apropriada.
-    setTimeout(() => {
-      setStatus('success');
-    }, 600);
+      // Enviar para o backend
+      await sendMessageMutation.mutateAsync({
+        name: form.name.trim(),
+        email: form.email.trim(),
+        phone: form.phone.trim() || undefined,
+        subject: form.subject.trim(),
+        content: form.message.trim(),
+      });
   };
 
   const handleChange = (field: keyof FormState) => (value: string | boolean) => {
@@ -138,7 +158,7 @@ export default function Contact() {
                   <MapPin className="w-4 h-4" />
                   <p className="font-semibold text-foreground">Endereço</p>
                 </div>
-                <p className="text-sm text-muted-foreground">[Rua Placeholder, 123] - [Bairro], São Paulo - SP</p>
+                <p className="text-sm text-muted-foreground">{siteConfig.address || 'São Paulo - SP'}</p>
                 <p className="text-xs text-muted-foreground">Endereço completo informado no agendamento.</p>
               </Card>
 
@@ -147,7 +167,7 @@ export default function Contact() {
                   <Mail className="w-4 h-4" />
                   <p className="font-semibold text-foreground">Email</p>
                 </div>
-                <p className="text-sm text-muted-foreground">contato@seudominio.com</p>
+                <p className="text-sm text-muted-foreground">{siteConfig.email || 'contato@seudominio.com'}</p>
                 <p className="text-xs text-muted-foreground">Retorno em até 24 horas úteis.</p>
               </Card>
 
@@ -156,7 +176,7 @@ export default function Contact() {
                   <Phone className="w-4 h-4" />
                   <p className="font-semibold text-foreground">Telefone / WhatsApp</p>
                 </div>
-                <p className="text-sm text-muted-foreground">(11) 99999-9999</p>
+                <p className="text-sm text-muted-foreground">{siteConfig.phone || '(11) 99999-9999'}</p>
                 <p className="text-xs text-muted-foreground">Preferencialmente WhatsApp para agilizar.</p>
               </Card>
 
@@ -165,7 +185,7 @@ export default function Contact() {
                   <Clock className="w-4 h-4" />
                   <p className="font-semibold text-foreground">Horários</p>
                 </div>
-                <p className="text-sm text-muted-foreground">Seg a Sex — 8h às 19h</p>
+                <p className="text-sm text-muted-foreground">{siteConfig.openingHours || 'Seg a Sex — 8h às 19h'}</p>
                 <p className="text-xs text-muted-foreground">Consulte disponibilidade no agendamento.</p>
               </Card>
             </div>

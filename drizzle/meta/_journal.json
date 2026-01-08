@@ -36,6 +36,20 @@
       "when": 1767307786671,
       "tag": "0004_awesome_paladin",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1767500317839,
+      "tag": "0005_funny_wolverine",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1767674262443,
+      "tag": "0006_smart_franklin_richards",
+      "breakpoints": true
     }
   ]
 }

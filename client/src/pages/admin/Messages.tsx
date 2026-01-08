@@ -78,7 +78,7 @@ export default function Messages() {
         status: m.status as MessageStatus,
         createdAt: m.createdAt.toISOString(),
       }))
-    : mockMessages;
+    : [];
 
   // Filtrar mensagens
   const filteredMessages = useMemo(() => {
@@ -128,8 +128,7 @@ export default function Messages() {
   };
 
   const handleArchive = (id: string) => {
-    // TODO: Implement with tRPC mutation if needed
-    console.log("Archiving:", id);
+    // Archive functionality can be implemented later with tRPC mutation if needed
   };
 
   const handleDelete = (id: string) => {
