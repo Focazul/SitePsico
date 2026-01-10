@@ -36,7 +36,8 @@ export function generateToken(length: number = 32): string {
  */
 export function isValidEmail(email: string): boolean {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email) && email.length <= 320;
+  // Practical max email length is commonly 254 characters
+  return emailRegex.test(email) && email.length <= 254;
 }
 
 /**

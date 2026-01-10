@@ -8,7 +8,7 @@ import {
   getAppointmentsInRange,
   getAvailableSlots,
 } from "../db";
-import { adminProcedure, publicProcedure, router } from "../_core/trpc";
+import { adminProcedure, publicProcedure, router, rateLimitedProcedure } from "../_core/trpc";
 
 const dateStr = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Data deve estar no formato AAAA-MM-DD");
 const timeStr = z.string().regex(/^\d{2}:\d{2}$/, "Horário deve estar no formato HH:mm");
@@ -23,7 +23,7 @@ export const bookingRouter = router({
       return { slots };
     }),
 
-  create: publicProcedure
+  create: rateLimitedProcedure
     .input(z.object({
       clientName: z.string().min(2),
       clientEmail: z.string().email(),

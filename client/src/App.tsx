@@ -18,6 +18,8 @@ import AdminEmails from "@/pages/admin/Emails";
 import AdminCommunication from "@/pages/admin/Communication";
 import AdminCalendar from "@/pages/admin/Calendar";
 import AdminPages from "@/pages/admin/Pages";
+import ForgotPassword from "@/pages/ForgotPassword";
+import ResetPassword from "@/pages/ResetPassword";
 import ErrorBoundary from "./components/ErrorBoundary";
 import FloatingWhatsApp from "./components/FloatingWhatsApp";
 import CookieConsent from "./components/CookieConsent";
@@ -55,6 +57,8 @@ function Router() {
           <Route path={"/contato"} component={Contact} />
           <Route path={"/agendamento"} component={Booking} />
           <Route path={"/login"} component={Login} />
+          <Route path={"/forgot-password"} component={ForgotPassword} />
+          <Route path={"/reset-password"} component={ResetPassword} />
           <Route path={"/admin/dashboard"} component={AdminDashboard} />
           <Route path={"/admin/appointments"} component={AdminAppointments} />
           <Route path={"/admin/posts"} component={AdminPosts} />

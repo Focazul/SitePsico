@@ -34,9 +34,24 @@ export function sanitizeEmail(email: string): string {
  */
 export function sanitizePhone(phone: string): string {
   if (!phone || typeof phone !== "string") return "";
+  // Normalize to digits with optional leading '+' and remove separators
+  const trimmed = phone.trim();
+  const hasPlus = trimmed.startsWith("+");
+  let digits = trimmed.replace(/[^\d]/g, "");
 
-  // Keep only digits and common phone separators
-  return phone.replace(/[^\d\-\s\(\)\+]/g, "").trim();
+  // Heuristic for Brazilian numbers: if +55 and 11-digit national (mobile),
+  // normalize to 10-digit national (landline-style) by removing leading 9 in local part.
+  if (hasPlus && digits.startsWith("55")) {
+    const national = digits.slice(2);
+    // area (2) + local (9)
+    if (national.length === 11 && national[2] === "9") {
+      const area = national.slice(0, 2);
+      const local = national.slice(3); // drop the first '9'
+      digits = "55" + area + local;
+    }
+  }
+
+  return (hasPlus ? "+" : "") + digits;
 }
 
 /**

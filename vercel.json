@@ -2,9 +2,8 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "installCommand": "npm ci",
-  "ignoreCommand": "git diff --quiet HEAD~ HEAD -- . ':(exclude)node_modules' ':(exclude).git'",
   "env": {
-    "VITE_API_URL": "@vite_api_url",
+    "VITE_API_URL": "https://backend-production-4a6b.up.railway.app",
     "NODE_ENV": "production"
   },
   "headers": [
@@ -46,7 +45,11 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://seu-backend.railway.app/api/:path*"
+      "destination": "https://backend-production-4a6b.up.railway.app/api/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { notifyOwner } from "./notification";
 import { adminProcedure, publicProcedure, router } from "./trpc";
+import { getUserSchemaStatus } from "../db";
 
 export const systemRouter = router({
   health: publicProcedure
@@ -25,5 +26,11 @@ export const systemRouter = router({
       return {
         success: delivered,
       } as const;
+    }),
+
+  schemaStatus: adminProcedure
+    .query(async () => {
+      const status = await getUserSchemaStatus();
+      return status;
     }),
 });

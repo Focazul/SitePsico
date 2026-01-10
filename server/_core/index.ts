@@ -4,12 +4,15 @@ import { createServer } from "http";
 import net from "net";
 import helmet from "helmet";
 import cors from "cors";
+import rateLimit from "express-rate-limit";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerOAuthRoutes } from "./oauth";
 import seoRouter from "./seoRouter";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
+import { csrfProtectionMiddleware } from "./csrf";
+import { getUserSchemaStatus } from "../db";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -31,6 +34,16 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
 }
 
 async function startServer() {
+  // Optional: auto-run migrations at startup
+  if (process.env.AUTO_MIGRATE === "true") {
+    try {
+      const { runMigrations } = await import("./migrate");
+      await runMigrations();
+    } catch (error) {
+      console.error("[Server] Database migrations failed at startup:", error);
+    }
+  }
+
   const app = express();
   const server = createServer(app);
 
@@ -38,16 +51,25 @@ async function startServer() {
   app.use(
     helmet({
       contentSecurityPolicy: {
-        directives: {
-          defaultSrc: ["'self'"],
-          scriptSrc: ["'self'", "'unsafe-inline'"],
-          styleSrc: ["'self'", "'unsafe-inline'", "fonts.googleapis.com"],
-          fontSrc: ["'self'", "fonts.gstatic.com"],
-          imgSrc: ["'self'", "data:", "https:"],
-          connectSrc: ["'self'", "localhost:*", "*.googleapis.com"],
-          frameSrc: ["'none'"],
-          objectSrc: ["'none'"],
-        },
+        directives: (() => {
+          const isDev = process.env.NODE_ENV === "development";
+          return {
+            defaultSrc: ["'self'"],
+            scriptSrc: isDev
+              ? ["'self'", "'unsafe-inline'", "localhost:*"]
+              : ["'self'"],
+            styleSrc: isDev
+              ? ["'self'", "'unsafe-inline'", "fonts.googleapis.com"]
+              : ["'self'", "fonts.googleapis.com"],
+            fontSrc: ["'self'", "fonts.gstatic.com"],
+            imgSrc: ["'self'", "data:", "https:"],
+            connectSrc: isDev
+              ? ["'self'", "localhost:*", "*.googleapis.com"]
+              : ["'self'", "*.googleapis.com"],
+            frameSrc: ["'none'"],
+            objectSrc: ["'none'"],
+          };
+        })(),
       },
       hsts: {
         maxAge: 31536000, // 1 year
@@ -80,15 +102,51 @@ async function startServer() {
     })
   );
 
+  // Rate Limiting
+  const loginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutos
+    max: 5, // 5 tentativas
+    message: "Muitas tentativas de login. Tente novamente em 15 minutos.",
+    standardHeaders: true,
+    legacyHeaders: false,
+    skip: (req) => process.env.NODE_ENV === "development", // Desabilita em dev
+  });
+
+  const passwordResetLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000, // 1 hora
+    max: 3, // 3 tentativas
+    message: "Muitas tentativas de reset. Tente novamente em 1 hora.",
+    standardHeaders: true,
+    legacyHeaders: false,
+    skip: (req) => process.env.NODE_ENV === "development",
+  });
+
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
+
+  // Aplicar rate limiting nas rotas de autenticação
+  app.post("/api/trpc/auth.login", loginLimiter);
+  app.post("/api/trpc/auth.requestPasswordReset", passwordResetLimiter);
 
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
 
   // SEO routes (sitemap.xml, robots.txt)
   app.use(seoRouter);
+
+  // CSRF protection for API mutations
+  app.use("/api", csrfProtectionMiddleware);
+
+  // Public schema status (GET) for quick production verification
+  app.get("/api/schema-status", async (_req, res) => {
+    try {
+      const status = await getUserSchemaStatus();
+      res.json({ ok: true, status });
+    } catch (error) {
+      res.status(500).json({ ok: false, error: String(error) });
+    }
+  });
 
   // tRPC API
   app.use(

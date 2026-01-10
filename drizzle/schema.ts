@@ -5,14 +5,29 @@ import { boolean, date, index, int, mysqlEnum, mysqlTable, text, time, timestamp
  * Extend this file with additional tables as your product grows.
  * Columns use camelCase to match both database fields and generated types.
  */
-export const users = mysqlTable("users", {
-  id: int("id").autoincrement().primaryKey(),
-  email: varchar("email", { length: 320 }).notNull().unique(),
-  password: text("password").notNull(),
-  name: varchar("name", { length: 255 }),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
+export const users = mysqlTable(
+  "users",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    // Identidade externa (OAuth/OpenID) e login tradicional
+    openId: varchar("openId", { length: 255 }).unique(),
+    email: varchar("email", { length: 320 }).unique(),
+    password: text("password"),
+    name: varchar("name", { length: 255 }),
+    loginMethod: mysqlEnum("loginMethod", ["manus", "oauth", "password"]).default("manus"),
+    role: mysqlEnum("role", ["admin", "user"]).default("user").notNull(),
+    lastSignedIn: timestamp("lastSignedIn"),
+    resetToken: varchar("resetToken", { length: 255 }),
+    resetTokenExpiry: timestamp("resetTokenExpiry"),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  },
+  (table) => ({
+    idxOpenId: index("idx_user_openId").on(table.openId!),
+    idxEmail: index("idx_user_email").on(table.email!),
+    idxResetToken: index("idx_user_resetToken").on(table.resetToken!),
+  })
+);
 
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;

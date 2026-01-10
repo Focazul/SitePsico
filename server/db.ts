@@ -79,6 +79,32 @@ export async function getDb() {
   return _db;
 }
 
+/**
+ * Verify presence of auth-related columns in `users` table in production.
+ */
+export async function getUserSchemaStatus(): Promise<Record<string, boolean>> {
+  const db = await getDb();
+  if (!db || !_connection) {
+    throw new Error("Database connection not available");
+  }
+
+  const [rows] = await _connection.query<{ COLUMN_NAME: string }[]>(
+    "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'users'"
+  );
+  const cols = new Set(rows.map(r => r.COLUMN_NAME));
+  const required = [
+    "openId",
+    "loginMethod",
+    "role",
+    "lastSignedIn",
+    "resetToken",
+    "resetTokenExpiry",
+  ];
+  const status: Record<string, boolean> = {};
+  for (const c of required) status[c] = cols.has(c);
+  return status;
+}
+
 export async function upsertUser(user: InsertUser): Promise<void> {
   if (!user.openId) {
     throw new Error("User openId is required for upsert");
@@ -1071,7 +1097,7 @@ export async function getEmailLogStats(): Promise<{
 // --- Auth helpers for password change ---
 import { verifyPassword, hashPassword } from "./_core/auth";
 
-export async function changeUserPassword(userId: number, currentPassword: string, newPassword: string): Promise<void> {
+export async function changeUserPassword(userId: number, currentPassword: string | null, newPassword: string, forceChange = false): Promise<void> {
   const db = await ensureDb();
   
   // Get user
@@ -1080,14 +1106,48 @@ export async function changeUserPassword(userId: number, currentPassword: string
     throw new Error("Usuário não encontrado");
   }
   
-  // Verify current password
-  if (!user[0].password || !verifyPassword(currentPassword, user[0].password)) {
-    throw new Error("Senha atual incorreta");
+  // Verify current password (skip if forceChange=true, como em reset)
+  if (!forceChange && currentPassword) {
+    if (!user[0].password || !verifyPassword(currentPassword, user[0].password)) {
+      throw new Error("Senha atual incorreta");
+    }
   }
   
   // Hash new password
   const hashedPassword = hashPassword(newPassword);
   
-  // Update password
-  await db.update(users).set({ password: hashedPassword }).where(eq(users.id, userId));
+  // Update password and clear reset token
+  await db.update(users).set({ 
+    password: hashedPassword,
+    resetToken: null,
+    resetTokenExpiry: null,
+  }).where(eq(users.id, userId));
+}
+
+export async function setPasswordResetToken(userId: number, token: string, expiryMs: number = 24 * 60 * 60 * 1000): Promise<void> {
+  const db = await ensureDb();
+  
+  const expiryDate = new Date(Date.now() + expiryMs);
+  
+  await db.update(users).set({
+    resetToken: token,
+    resetTokenExpiry: expiryDate,
+  }).where(eq(users.id, userId));
+}
+
+export async function verifyPasswordResetToken(token: string): Promise<number | null> {
+  const db = await ensureDb();
+  
+  const user = await db.select().from(users)
+    .where(and(
+      eq(users.resetToken, token),
+      gte(users.resetTokenExpiry, new Date()),
+    ))
+    .limit(1);
+  
+  if (!user || user.length === 0) {
+    return null;
+  }
+  
+  return user[0].id;
 }
