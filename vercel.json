@@ -1,7 +1,6 @@
 {
-  "name": "psicologo-sp-site",
   "buildCommand": "npm run build",
-  "outputDirectory": "dist",
+  "outputDirectory": "dist/public",
   "installCommand": "npm ci",
   "env": {
     "VITE_API_URL": "https://backend-production-4a6b.up.railway.app",
