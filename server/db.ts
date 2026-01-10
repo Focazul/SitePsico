@@ -1124,17 +1124,6 @@ export async function changeUserPassword(userId: number, currentPassword: string
   }).where(eq(users.id, userId));
 }
 
-export async function setPasswordResetToken(userId: number, token: string, expiryMs: number = 24 * 60 * 60 * 1000): Promise<void> {
-  const db = await ensureDb();
-  
-  const expiryDate = new Date(Date.now() + expiryMs);
-  
-  await db.update(users).set({
-    resetToken: token,
-    resetTokenExpiry: expiryDate,
-  }).where(eq(users.id, userId));
-}
-
 export async function verifyPasswordResetToken(token: string): Promise<number | null> {
   const db = await ensureDb();
   
