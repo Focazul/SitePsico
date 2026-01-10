@@ -101,6 +101,13 @@ jspm_packages/
 tmp/
 temp/
 
+# Arquivos antigos/documentação local
+_ARQUIVOS_ANTIGOS/
+*.bat
+*.ps1
+test-*.mjs
+console.*
+
 # Database
 *.db
 *.sqlite
