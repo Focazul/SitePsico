@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useLocation } from 'wouter';
-import { useSearchParams } from '@tanstack/react-router';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
