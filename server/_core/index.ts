@@ -159,6 +159,72 @@ async function startServer() {
     }
   });
 
+  // Temporary seed endpoint (REMOVE AFTER FIRST USE)
+  app.post("/api/seed-settings", async (req, res) => {
+    try {
+      const { getDb } = await import("../db");
+      const db = await getDb();
+      if (!db) {
+        return res.status(500).json({ ok: false, error: "Database not available" });
+      }
+
+      // Import schema
+      const { settings } = await import("../../drizzle/schema");
+
+      // Check if already seeded
+      const existing = await db.select().from(settings).limit(1);
+      if (existing.length > 0) {
+        return res.json({ ok: true, message: "Settings already exist", count: existing.length });
+      }
+
+      // Seed data
+      const settingsData = [
+        // Informações do Psicólogo
+        { key: 'psychologist_name', value: 'Dr. [Nome do Psicólogo]', type: 'string', description: 'Nome completo do psicólogo' },
+        { key: 'psychologist_crp', value: 'CRP 06/123456', type: 'string', description: 'Número do CRP' },
+        { key: 'psychologist_phone', value: '(11) 99999-9999', type: 'string', description: 'Telefone para contato' },
+        { key: 'psychologist_email', value: 'contato@psicologo.com.br', type: 'string', description: 'Email profissional' },
+        
+        // Endereço
+        { key: 'office_address_street', value: 'Rua Exemplo, 123', type: 'string', description: 'Endereço do consultório' },
+        { key: 'office_address_complement', value: 'Sala 45', type: 'string', description: 'Complemento' },
+        { key: 'office_address_district', value: 'Jardim Paulista', type: 'string', description: 'Bairro' },
+        { key: 'office_address_city', value: 'São Paulo', type: 'string', description: 'Cidade' },
+        { key: 'office_address_state', value: 'SP', type: 'string', description: 'Estado' },
+        { key: 'office_address_zip', value: '01310-100', type: 'string', description: 'CEP' },
+        
+        // Mapa
+        { key: 'map_latitude', value: '-23.550520', type: 'string', description: 'Latitude do consultório' },
+        { key: 'map_longitude', value: '-46.633308', type: 'string', description: 'Longitude do consultório' },
+        { key: 'map_zoom', value: '15', type: 'number', description: 'Zoom do mapa' },
+        { key: 'map_enabled', value: 'true', type: 'boolean', description: 'Exibir mapa no site' },
+        
+        // Redes Sociais
+        { key: 'social_whatsapp', value: '5511999999999', type: 'string', description: 'WhatsApp com DDI e DDD' },
+        { key: 'whatsapp_enabled', value: 'true', type: 'boolean', description: 'Exibir botão WhatsApp' },
+        { key: 'whatsapp_default_message', value: 'Olá! Gostaria de saber mais sobre os atendimentos.', type: 'string', description: 'Mensagem padrão' },
+        
+        // Valores e Horários
+        { key: 'session_price_presential', value: 'R$ 200,00', type: 'string', description: 'Valor sessão presencial' },
+        { key: 'session_price_online', value: 'R$ 180,00', type: 'string', description: 'Valor sessão online' },
+        { key: 'session_duration', value: '60', type: 'number', description: 'Duração em minutos' },
+        { key: 'office_hours_weekdays', value: 'Segunda a Sexta: 8h às 18h', type: 'string', description: 'Horários dias úteis' },
+        
+        // Features
+        { key: 'feature_online_booking', value: 'true', type: 'boolean', description: 'Agendamento online' },
+        { key: 'feature_blog_comments', value: 'false', type: 'boolean', description: 'Comentários no blog' },
+        { key: 'google_analytics_enabled', value: 'false', type: 'boolean', description: 'Google Analytics' },
+      ];
+
+      await db.insert(settings).values(settingsData);
+
+      res.json({ ok: true, message: "Settings seeded successfully", count: settingsData.length });
+    } catch (error: any) {
+      console.error("[Seed] Error:", error);
+      res.status(500).json({ ok: false, error: error.message });
+    }
+  });
+
   // tRPC API
   app.use(
     "/api/trpc",
