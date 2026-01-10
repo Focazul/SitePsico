@@ -143,7 +143,7 @@ async function startServer() {
   // SEO routes (sitemap.xml, robots.txt)
   app.use(seoRouter);
 
-  // CSRF token endpoint (must be before CSRF middleware)
+  // CSRF token endpoint (before CSRF middleware)
   app.get("/api/csrf-token", (req, res) => {
     const { generateCsrfToken } = require("./csrf");
     const sessionId = req.sessionID || req.ip || "anonymous";
@@ -151,15 +151,12 @@ async function startServer() {
     res.json({ token });
   });
 
-  // CSRF protection for API mutations
-  app.use("/api", csrfProtectionMiddleware);
-
-  // Simple health endpoint for monitoring
+  // Simple health endpoint for monitoring (no CSRF needed)
   app.get("/api/health", (_req, res) => {
     res.json({ ok: true, service: "backend", time: Date.now() });
   });
 
-  // Public schema status (GET) for quick production verification
+  // Public schema status (GET) for quick production verification (no CSRF needed)
   app.get("/api/schema-status", async (_req, res) => {
     try {
       const status = await getUserSchemaStatus();
@@ -235,6 +232,9 @@ async function startServer() {
     }
   });
 
+  // CSRF protection specifically for tRPC mutations (must be BEFORE tRPC handler)
+  app.use("/api/trpc", csrfProtectionMiddleware);
+
   // tRPC API
   app.use(
     "/api/trpc",
@@ -243,6 +243,7 @@ async function startServer() {
       createContext,
     })
   );
+
   // development mode uses Vite, production mode uses static files
   if (process.env.NODE_ENV === "development") {
     await setupVite(app, server);
