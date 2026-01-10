@@ -149,6 +149,11 @@ async function startServer() {
   // CSRF protection for API mutations
   app.use("/api", csrfProtectionMiddleware);
 
+  // Simple health endpoint for monitoring
+  app.get("/api/health", (_req, res) => {
+    res.json({ ok: true, service: "backend", time: Date.now() });
+  });
+
   // Public schema status (GET) for quick production verification
   app.get("/api/schema-status", async (_req, res) => {
     try {
