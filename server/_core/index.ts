@@ -47,6 +47,9 @@ async function startServer() {
   const app = express();
   const server = createServer(app);
 
+  // Trust proxy for Railway/production deployment
+  app.set('trust proxy', true);
+
   // Security: Helmet configuration
   app.use(
     helmet({
