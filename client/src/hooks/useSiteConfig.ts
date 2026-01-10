@@ -41,30 +41,33 @@ export interface SiteConfig {
 export function useSiteConfig() {
   const { data: settings, isLoading, error } = trpc.settings.getPublic.useQuery();
 
+  // Ensure settings is always an array to prevent .find() errors
+  const settingsArray = Array.isArray(settings) ? settings : [];
+
   const config: SiteConfig = {
     // Informações do psicólogo
-    psychologistName: settings?.find((s) => s.key === "psychologist_name")?.value ?? "Psicólogo(a)",
-    psychologistCrp: settings?.find((s) => s.key === "psychologist_crp")?.value ?? "CRP 06/000000",
+    psychologistName: settingsArray.find((s) => s.key === "psychologist_name")?.value ?? "Psicólogo(a)",
+    psychologistCrp: settingsArray.find((s) => s.key === "psychologist_crp")?.value ?? "CRP 06/000000",
     
     // Contato
-    email: settings?.find((s) => s.key === "email")?.value ?? "contato@exemplo.com",
-    phone: settings?.find((s) => s.key === "phone")?.value ?? "(11) 99999-9999",
-    whatsappNumber: settings?.find((s) => s.key === "whatsapp_number")?.value ?? "5511999999999",
-    address: settings?.find((s) => s.key === "address")?.value ?? "Endereço não informado",
+    email: settingsArray.find((s) => s.key === "email")?.value ?? "contato@exemplo.com",
+    phone: settingsArray.find((s) => s.key === "phone")?.value ?? "(11) 99999-9999",
+    whatsappNumber: settingsArray.find((s) => s.key === "whatsapp_number")?.value ?? "5511999999999",
+    address: settingsArray.find((s) => s.key === "address")?.value ?? "Endereço não informado",
     
     // Redes sociais
-    instagramUrl: settings?.find((s) => s.key === "instagram_url")?.value ?? "",
-    linkedinUrl: settings?.find((s) => s.key === "linkedin_url")?.value ?? "",
-    website: settings?.find((s) => s.key === "website")?.value ?? "",
+    instagramUrl: settingsArray.find((s) => s.key === "instagram_url")?.value ?? "",
+    linkedinUrl: settingsArray.find((s) => s.key === "linkedin_url")?.value ?? "",
+    website: settingsArray.find((s) => s.key === "website")?.value ?? "",
     
     // Conteúdo
-    aboutText: settings?.find((s) => s.key === "about_text")?.value ?? "",
-    servicesText: settings?.find((s) => s.key === "services_text")?.value ?? "",
-    consultationPrice: settings?.find((s) => s.key === "consultation_price")?.value ?? "R$ 200,00",
-    openingHours: settings?.find((s) => s.key === "opening_hours")?.value ?? "Segunda a Sexta: 09h - 18h",
-    sessionDuration: settings?.find((s) => s.key === "session_duration")?.value ?? "50",
+    aboutText: settingsArray.find((s) => s.key === "about_text")?.value ?? "",
+    servicesText: settingsArray.find((s) => s.key === "services_text")?.value ?? "",
+    consultationPrice: settingsArray.find((s) => s.key === "consultation_price")?.value ?? "R$ 200,00",
+    openingHours: settingsArray.find((s) => s.key === "opening_hours")?.value ?? "Segunda a Sexta: 09h - 18h",
+    sessionDuration: settingsArray.find((s) => s.key === "session_duration")?.value ?? "50",
     availability: (() => {
-      const raw = settings?.find((s) => s.key === "availability")?.value;
+      const raw = settingsArray.find((s) => s.key === "availability")?.value;
       if (!raw) return undefined;
       try {
         const parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
@@ -75,8 +78,8 @@ export function useSiteConfig() {
     })(),
     
     // Meta
-    siteTitle: settings?.find((s) => s.key === "site_title")?.value ?? "Consultório de Psicologia",
-    siteDescription: settings?.find((s) => s.key === "site_description")?.value ?? "Atendimento psicológico humanizado",
+    siteTitle: settingsArray.find((s) => s.key === "site_title")?.value ?? "Consultório de Psicologia",
+    siteDescription: settingsArray.find((s) => s.key === "site_description")?.value ?? "Atendimento psicológico humanizado",
   };
 
   return {

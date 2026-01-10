@@ -106,6 +106,7 @@
     "esbuild": "^0.25.0",
     "helmet": "^8.1.0",
     "lighthouse": "^13.0.1",
+    "playwright": "^1.57.0",
     "pnpm": "^10.15.1",
     "postcss": "^8.4.47",
     "prettier": "^3.6.2",

@@ -12,10 +12,13 @@ interface WhatsAppConfig {
 export function useWhatsAppConfig() {
   const { data: settings, isLoading } = trpc.settings.getPublic.useQuery();
 
+  // Ensure settings is always an array to prevent .find() errors
+  const settingsArray = Array.isArray(settings) ? settings : [];
+
   const config: WhatsAppConfig = {
-    enabled: settings?.find((s) => s.key === "whatsapp_button_enabled")?.value !== "false",
-    phoneNumber: settings?.find((s) => s.key === "whatsapp_number")?.value ?? "5511999999999",
-    defaultMessage: settings?.find((s) => s.key === "whatsapp_default_message")?.value ?? "Olá! Gostaria de saber mais sobre os atendimentos.",
+    enabled: settingsArray.find((s) => s.key === "whatsapp_button_enabled")?.value !== "false",
+    phoneNumber: settingsArray.find((s) => s.key === "whatsapp_number")?.value ?? "5511999999999",
+    defaultMessage: settingsArray.find((s) => s.key === "whatsapp_default_message")?.value ?? "Olá! Gostaria de saber mais sobre os atendimentos.",
   };
 
   return {
