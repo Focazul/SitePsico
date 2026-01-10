@@ -138,6 +138,14 @@ async function startServer() {
   // SEO routes (sitemap.xml, robots.txt)
   app.use(seoRouter);
 
+  // CSRF token endpoint (must be before CSRF middleware)
+  app.get("/api/csrf-token", (req, res) => {
+    const { generateCsrfToken } = require("./csrf");
+    const sessionId = req.sessionID || req.ip || "anonymous";
+    const token = generateCsrfToken(sessionId, req.ip);
+    res.json({ token });
+  });
+
   // CSRF protection for API mutations
   app.use("/api", csrfProtectionMiddleware);
 

@@ -125,12 +125,8 @@ export function csrfProtectionMiddleware(
     return next();
   }
 
-  // Get session ID from cookies
-  const sessionId = req.cookies?.sessionId;
-  if (!sessionId) {
-    console.warn("❌ CSRF: No session found");
-    return res.status(403).json({ error: "CSRF validation failed" });
-  }
+  // Get session ID from cookies or use IP as fallback
+  const sessionId = req.cookies?.sessionId || req.ip || "anonymous";
 
   // Get CSRF token from header or body
   const csrfToken = req.headers["x-csrf-token"] || req.body?.csrfToken;
@@ -140,7 +136,7 @@ export function csrfProtectionMiddleware(
   }
 
   // Get client IP
-  const ip = req.ip || req.headers["x-forwarded-for"] || "unknown";
+  const ip = (req.ip || req.headers["x-forwarded-for"] || "unknown") as string;
 
   // Validate token
   if (!validateCsrfToken(sessionId, csrfToken as string, ip)) {
