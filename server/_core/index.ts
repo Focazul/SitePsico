@@ -50,6 +50,11 @@ async function startServer() {
   // Trust proxy for Railway/production deployment
   app.set('trust proxy', true);
 
+  // Plain health endpoint for infra checks
+  app.get("/health", (_req, res) => {
+    res.json({ ok: true, service: "backend", time: Date.now() });
+  });
+
   // Security: Helmet configuration
   app.use(
     helmet({
