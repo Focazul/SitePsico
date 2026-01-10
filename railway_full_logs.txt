@@ -1,0 +1,500 @@
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Missing session cookie
+[Database] getAllSettings result: 0 rows
+[Auth] Missing session cookie
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings called
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Missing session cookie
+[Database] getAllSettings result: 0 rows
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Missing session cookie
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Database] getAllSettings called
+[Auth] Missing session cookie
+[Database] getAllSettings result: 0 rows
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Missing session cookie
+[Auth] Missing session cookie
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Missing session cookie
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Auth] Session payload missing required fields
+[Auth] Session payload missing required fields
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Database] getAllSettings result: 0 rows
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Database] getAllSettings result: 0 rows
+[Auth] Missing session cookie
+[Auth] Missing session cookie
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Missing session cookie
+[Auth] Missing session cookie
+[Auth] Missing session cookie
+🧹 Cleaned up 75 expired CSRF tokens
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Database] getAllSettings result: 0 rows
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+🧹 Cleaned up 7 expired CSRF tokens
+[Scheduler] Running daily reminder check...
+[Scheduler] Initializing appointment reminder scheduler...
+[Scheduler] Found 0 future appointments
+[Scheduler] Successfully scheduled 0 reminders
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Auth] Session payload missing required fields
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Scheduler] Running daily reminder check...
+[Scheduler] Initializing appointment reminder scheduler...
+[Scheduler] Found 0 future appointments
+[Scheduler] Successfully scheduled 0 reminders
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Auth] Session payload missing required fields
+[Auth] Session payload missing required fields
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Auth] Session payload missing required fields
+[Auth] Session payload missing required fields
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Auth] Session payload missing required fields
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+🧹 Cleaned up 8 expired CSRF tokens
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+🧹 Cleaned up 3 expired CSRF tokens
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Auth] Session payload missing required fields
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Auth] Session payload missing required fields
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Auth] Session payload missing required fields
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+🧹 Cleaned up 49 expired CSRF tokens
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Auth] Session payload missing required fields
+[Auth] Session payload missing required fields
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Auth] Session payload missing required fields
+[Auth] Session payload missing required fields
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Auth] Session payload missing required fields
+[Auth] Session payload missing required fields
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Auth] Session payload missing required fields
+[Auth] Session payload missing required fields
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Missing session cookie
+[Auth] Missing session cookie
+[Auth] Missing session cookie
+[Auth] Missing session cookie
+[Auth] Missing session cookie
+[Auth] Missing session cookie
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Auth] Session payload missing required fields
+[Auth] Session payload missing required fields
+🧹 Cleaned up 3 expired CSRF tokens
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Missing session cookie
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Database] getAllSettings called
+[Database] getAllSettings result: 0 rows
+[Auth] Session payload missing required fields
+[Auth] Session payload missing required fields
