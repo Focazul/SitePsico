@@ -85,20 +85,22 @@ const trpcClient = trpc.createClient({
         // Get CSRF token for POST requests
         const token = await getCsrfToken();
         console.log("[tRPC Client] CSRF token included:", token ? `${token.substring(0, 10)}...` : "EMPTY!");
-        console.log("[tRPC Client] Credentials:", init?.credentials || "not set");
         
         const headers = {
           ...(init?.headers ?? {}),
           "X-CSRF-Token": token,
         };
         
+        const fetchInit = {
+          credentials: "include" as const,
+          ...(init ?? {}),
+          headers,
+        };
+        
+        console.log("[tRPC Client] Credentials:", fetchInit.credentials);
         console.log("[tRPC Client] Final headers:", Object.keys(headers));
         
-        return globalThis.fetch(input, {
-          ...(init ?? {}),
-          credentials: "include",
-          headers,
-        }).then(async (response) => {
+        return globalThis.fetch(input, fetchInit).then(async (response) => {
           console.log("[tRPC Client] Response status:", response.status, response.statusText);
           
           // Clone para ler o corpo sem consumir
