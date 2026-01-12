@@ -11,30 +11,23 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 export default function Dashboard() {
   const [dateRange] = useState<{ start?: string; end?: string }>({});
 
-  // DEV MODE: Skip queries during testing
-  const isDev = import.meta.env.DEV || process.env.NODE_ENV === 'development';
-
   // Fetch appointments (próximos agendamentos)
   const appointmentsQuery = trpc.booking.list.useQuery(
     {
       startDate: dateRange.start,
       endDate: dateRange.end,
-    },
-    { enabled: !isDev } // Disable in dev mode for testing
+    }
   );
 
   // Fetch messages (mensagens não lidas)
   const messagesQuery = trpc.contact.getMessages.useQuery(
     {
       status: "novo",
-    },
-    { enabled: !isDev } // Disable in dev mode for testing
+    }
   );
 
   // Get unread count
-  const unreadCountQuery = trpc.contact.getUnreadCount.useQuery(undefined, {
-    enabled: !isDev, // Disable in dev mode for testing
-  });
+  const unreadCountQuery = trpc.contact.getUnreadCount.useQuery();
 
   // Calcular métricas
   const metrics = useMemo(() => {

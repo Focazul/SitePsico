@@ -29,14 +29,8 @@ export default function Settings() {
   const [activeTab, setActiveTab] = useState("profile");
   const [showPassword, setShowPassword] = useState(false);
 
-  // DEV MODE: Skip queries during testing
-  const isDev = import.meta.env.DEV || process.env.NODE_ENV === 'development';
-
   // Queries - Use admin endpoint
-  const settingsQuery = trpc.settings.getAll.useQuery(undefined, {
-    staleTime: 5 * 60 * 1000,
-    enabled: !isDev, // Disable in dev mode for testing
-  });
+  const settingsQuery = trpc.settings.getAll.useQuery();
 
   // Mutations
   const bulkUpdateMutation = trpc.settings.bulkUpdate.useMutation({
