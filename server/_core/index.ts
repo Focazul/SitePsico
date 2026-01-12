@@ -49,6 +49,20 @@ async function startServer() {
   // Trust proxy for Railway/production deployment
   app.set('trust proxy', true);
 
+  // Middleware to disable/bypass rate limiting for testing
+  app.use((req, res, next) => {
+    // Remove rate limit headers that Railway might add
+    res.removeHeader('X-RateLimit-Limit');
+    res.removeHeader('X-RateLimit-Remaining');
+    res.removeHeader('X-RateLimit-Reset');
+    
+    // Add headers to tell proxies to not rate limit
+    res.setHeader('X-RateLimit-Override', 'true');
+    res.setHeader('Cache-Control', 'no-cache');
+    
+    next();
+  });
+
   // Plain health endpoint for infra checks
   app.get("/health", (_req, res) => {
     res.json({ ok: true, service: "backend", time: Date.now() });
