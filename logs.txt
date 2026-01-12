@@ -1,0 +1,92 @@
+Starting Container
+[Database] Connection established successfully!
+[OAuth] ERROR: OAUTH_SERVER_URL is not configured! Set OAUTH_SERVER_URL environment variable.
+  resendFromEmail: 'noreply@example.com',
+Server running on http://localhost:3000/
+  ownerNotificationEmail: 'marcelo_juninho.891012@live.com'
+[Scheduler] Initializing appointment reminder scheduler...
+[ENV] Loaded configuration: {
+[Database] Creating connection pool...
+}
+  hasResendKey: true,
+[OAuth] Initialized with baseURL: 
+  resendKeyLength: 16,
+[Scheduler] Found 0 future appointments
+[Scheduler] Successfully scheduled 0 reminders
+[Scheduler] Daily reminder check job started (runs at 00:05)
+✅ Reminder scheduler initialized successfully
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 24 rows
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 24 rows
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 24 rows
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 24 rows
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 24 rows
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 24 rows
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 24 rows
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 24 rows
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 24 rows
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 24 rows
+ValidationError: The Express 'trust proxy' setting is true, which allows anyone to trivially bypass IP-based rate limiting. See https://express-rate-limit.github.io/ERR_ERL_PERMISSIVE_TRUST_PROXY/ for more information.
+    at Object.trustProxy (file:///app/node_modules/express-rate-limit/dist/index.mjs:319:13)
+    at wrappedValidations.<computed> [as trustProxy] (file:///app/node_modules/express-rate-limit/dist/index.mjs:651:22)
+    at Object.keyGenerator (file:///app/node_modules/express-rate-limit/dist/index.mjs:753:20)
+    at file:///app/node_modules/express-rate-limit/dist/index.mjs:815:32
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async file:///app/node_modules/express-rate-limit/dist/index.mjs:796:5 {
+  code: 'ERR_ERL_PERMISSIVE_TRUST_PROXY',
+  help: 'https://express-rate-limit.github.io/ERR_ERL_PERMISSIVE_TRUST_PROXY/'
+}
+[Auth] Missing session cookie
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 24 rows
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 24 rows
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 24 rows
+[Database] getAllSettings result: 24 rows
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 24 rows
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 24 rows
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 24 rows
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 24 rows
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 24 rows
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 24 rows
+[Auth] Missing session cookie
+[Database] getAllSettings called
+[Database] getAllSettings result: 24 rows
+[Auth] Missing session cookie

@@ -125,6 +125,12 @@ export function csrfProtectionMiddleware(
     return next();
   }
 
+  // DEV MODE: Skip CSRF check if DEV_SKIP_AUTH is enabled
+  if (process.env.DEV_SKIP_AUTH === 'true') {
+    console.warn("[DEV MODE] ⚠️  CSRF protection bypassed!");
+    return next();
+  }
+
   // Get session ID from cookies or use IP as fallback
   const sessionId = req.cookies?.sessionId || req.ip || "anonymous";
 
