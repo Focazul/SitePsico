@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import React from 'react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,6 +14,16 @@ export default function AdminLogin() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [, setLocation] = useLocation();
+
+  // DEV MODE: Auto-redirect to dashboard for testing
+  React.useEffect(() => {
+    if (process.env.NODE_ENV === 'development' || import.meta.env.DEV) {
+      // In dev, auto-redirect after a short delay to show this message
+      setTimeout(() => {
+        setLocation('/admin/dashboard');
+      }, 2000);
+    }
+  }, []);
 
   const loginMutation = trpc.auth.login.useMutation({
     onSuccess: () => {
