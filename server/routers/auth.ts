@@ -9,7 +9,7 @@ import { sdk } from "../_core/sdk";
 import { sendEmail } from "../_core/email";
 
 const loginSchema = z.object({
-  email: z.string().email(),
+  email: z.string().min(1, "Email é obrigatório"),
   password: z.string().min(6),
 });
 

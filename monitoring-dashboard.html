@@ -304,18 +304,21 @@
       // Check Frontend
       await checkService(FRONTEND_URL, 'frontend');
       
-      // Check Backend using JSON schema-status (stable JSON)
-      const backendResult = await checkService(`${BACKEND_URL}/api/schema-status`, 'backend');
-      // If backend returns JSON ok, mark online explicitly
+      // Check Backend
+      const backendResult = await checkService(`${BACKEND_URL}/api/health`, 'backend');
       if (backendResult && backendResult.code === 200) {
         document.getElementById('backend-status').className = 'status online';
       }
       
-      // Check Auth endpoint (HEAD/GET to avoid CSRF)
-      await checkService(`${BACKEND_URL}/api/schema-status`, 'auth');
+      // Check Auth endpoint (tRPC login)
+      const authResult = await checkService(`${BACKEND_URL}/api/trpc/auth.login`, 'auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: {} })
+      });
       
-      // Check Password Reset (use schema-status as lightweight check)
-      await checkService(`${BACKEND_URL}/api/schema-status`, 'reset');
+      // Check Password Reset endpoint
+      const resetResult = await checkService(`${BACKEND_URL}/api/csrf-token`, 'reset');
       
       const now = new Date();
       document.getElementById('timestamp').textContent = 
