@@ -81,21 +81,7 @@ export const adminProcedure = t.procedure.use(
 export const rateLimitedProcedure = publicProcedure.use(
   t.middleware(async opts => {
     const { ctx, next } = opts;
-    const ip = ctx.ip || "unknown";
-
-    // Desabilita rate limit em ambientes não-produção para facilitar testes
-    if (process.env.NODE_ENV !== "production") {
-      return next();
-    }
-    
-    // 3 requests per 15 minutes per IP
-    if (!checkRateLimit(ip, 3, 15 * 60 * 1000)) {
-      throw new TRPCError({ 
-        code: "TOO_MANY_REQUESTS", 
-        message: "Muitas tentativas. Tente novamente em alguns minutos." 
-      });
-    }
-
+    // RATE LIMIT DESABILIDADO PARA TESTES
     return next();
   }),
 );

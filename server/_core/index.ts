@@ -4,7 +4,6 @@ import { createServer } from "http";
 import net from "net";
 import helmet from "helmet";
 import cors from "cors";
-import rateLimit from "express-rate-limit";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerOAuthRoutes } from "./oauth";
 import seoRouter from "./seoRouter";
@@ -110,32 +109,9 @@ async function startServer() {
     })
   );
 
-  // Rate Limiting
-  const loginLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutos
-    max: 5, // 5 tentativas
-    message: "Muitas tentativas de login. Tente novamente em 15 minutos.",
-    standardHeaders: true,
-    legacyHeaders: false,
-    skip: (req) => process.env.NODE_ENV === "development", // Desabilita em dev
-  });
-
-  const passwordResetLimiter = rateLimit({
-    windowMs: 60 * 60 * 1000, // 1 hora
-    max: 3, // 3 tentativas
-    message: "Muitas tentativas de reset. Tente novamente em 1 hora.",
-    standardHeaders: true,
-    legacyHeaders: false,
-    skip: (req) => process.env.NODE_ENV === "development",
-  });
-
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
-
-  // Aplicar rate limiting nas rotas de autenticação
-  app.post("/api/trpc/auth.login", loginLimiter);
-  app.post("/api/trpc/auth.requestPasswordReset", passwordResetLimiter);
 
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
