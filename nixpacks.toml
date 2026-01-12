@@ -9,3 +9,9 @@ cmds = ["npm run build"]
 
 [start]
 cmd = "node dist/index.js"
+
+# Railway DDoS/Rate Limiting Configuration
+# Disable rate limiting for development/testing
+[variables]
+RAILWAY_DISABLE_RATE_LIMIT = "true"
+RAILWAY_DISABLE_DDoS_PROTECTION = "true"
