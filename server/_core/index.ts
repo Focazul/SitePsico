@@ -69,7 +69,8 @@ async function startServer() {
       ok: true, 
       service: "backend", 
       time: Date.now(),
-      devSkipAuth: process.env.DEV_SKIP_AUTH === 'true'
+      devSkipAuth: process.env.DEV_SKIP_AUTH === 'true',
+      csrfBypass: process.env.DEV_SKIP_AUTH === 'true'
     });
   });
 
