@@ -1,7 +1,7 @@
 # 🚀 DEPLOYMENT STATUS REPORT
 
-**Generated**: 2026-01-10 11:50 UTC  
-**Status**: ✅ **SYSTEM OPERATIONAL** (Minor frontend deployment needed)
+**Generated**: 2026-01-12 05:30 UTC  
+**Status**: ✅ **SYSTEM OPERATIONAL** (Frontend deploy pendente)
 
 ---
 
@@ -10,11 +10,11 @@
 | Component | Status | Details |
 |-----------|--------|---------|
 | Backend (Express + tRPC) | ✅ **WORKING** | Railway - Node.js 22.21.1 |
-| Database (MySQL) | ✅ **WORKING** | 12 tables, populated with settings |
-| CSRF Protection | ✅ **FIXED** | Now protecting only tRPC, not blocking public endpoints |
-| tRPC API | ✅ **WORKING** | Endpoints accessible with CSRF token |
-| Frontend (React) | ⚠️ **CONFIG ISSUE** | Build exists, Vercel config needs update |
-| Admin Login Flow | ✅ **READY** | Backend supports, frontend needs deploy |
+| Database (MySQL) | ✅ **WORKING** | Conectado; 4 registros de settings retornando |
+| CSRF Protection | ⚙️ **CONDITIONAL** | Aplica-se só se `DEV_SKIP_AUTH !== 'true'`; ignora GET |
+| tRPC API | ✅ **WORKING** | `httpLink` no client; queries GET funcionando |
+| Frontend (React) | 🔧 **READY TO DEPLOY** | Build ok; `vercel.json` ajustado para `dist/public` |
+| Admin Login Flow | ✅ **DEV SKIP AUTH** | Bypass ativo em dev (Railway env) |
 
 ---
 
@@ -44,30 +44,13 @@ app.use("/api/trpc", createExpressMiddleware({...}))
 
 ---
 
-## 🔧 FRONTEND DEPLOYMENT FIX (PENDING)
+## 🔧 FRONTEND DEPLOYMENT STATUS
 
-### Issue: Vercel 404 Error
-**Cause**: `vercel.json` pointing to wrong output directory
+- `vercel.json` atualizado para `outputDirectory: dist/public`.
+- Build gerado em `dist/public` com `index.html`, `assets/` e `images/`.
+- Rewrites configurados para SPA fallback e proxy `/api/*` → Railway.
 
-**File**: `vercel.json`
-
-**Before** (BROKEN):
-```json
-"outputDirectory": "dist"
-```
-
-**After** (FIXED):
-```json
-"outputDirectory": "dist/public"
-```
-
-**Reason**: 
-- Vite (React build tool) outputs to `dist/public`
-- Vercel was looking for `dist`, finding nothing
-- Result: 404 for all frontend requests
-
-**Status**: ✅ Fixed locally, needs git push to trigger Vercel redeploy
-
+**Status**: ✅ Pronto para redeploy na Vercel (necessita push).
 ---
 
 ## 📊 TEST RESULTS
@@ -139,11 +122,11 @@ After frontend live:
 
 ## 🔐 SECURITY STATUS
 
-- ✅ CSRF protection: **ACTIVE** (prevents attacks on tRPC)
-- ✅ CORS: **Configured** (Vercel domain + localhost + Railway)
-- ✅ Helmet: **Enabled** (XSS/clickjacking protection)
-- ✅ Rate Limiting: **Enabled** (login attempts rate limited)
-- ✅ Password Hashing: **bcrypt** (salted + cost factor)
+- ⚙️ CSRF protection: **CONDITIONAL** (bypass em dev com `DEV_SKIP_AUTH=true`)
+- ✅ CORS: **Configured** (Vercel + localhost + Railway)
+- ✅ Helmet: **Enabled** (XSS/clickjacking)
+- ❌ Rate Limiting: **DISABLED** por configuração atual
+- ✅ Password Hashing: **bcrypt**
 
 ---
 
