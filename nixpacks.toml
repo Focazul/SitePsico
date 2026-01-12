@@ -15,3 +15,4 @@ cmd = "node dist/index.js"
 [variables]
 RAILWAY_DISABLE_RATE_LIMIT = "true"
 RAILWAY_DISABLE_DDoS_PROTECTION = "true"
+DEV_SKIP_AUTH = "true"
