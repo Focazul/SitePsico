@@ -7,27 +7,6 @@ const t = initTRPC.context<TrpcContext>().create({
   transformer: superjson,
 });
 
-// Rate limiting map: tracks requests per IP address
-const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
-
-function checkRateLimit(ip: string, maxRequests: number, windowMs: number): boolean {
-  const now = Date.now();
-  const record = rateLimitMap.get(ip);
-
-  if (!record || now > record.resetTime) {
-    // Create new record or reset expired one
-    rateLimitMap.set(ip, { count: 1, resetTime: now + windowMs });
-    return true;
-  }
-
-  if (record.count < maxRequests) {
-    record.count++;
-    return true;
-  }
-
-  return false;
-}
-
 export const router = t.router;
 export const publicProcedure = t.procedure;
 
@@ -77,12 +56,6 @@ export const adminProcedure = t.procedure.use(
   }),
 );
 
-// Rate-limited procedure for public sensitive operations (password reset, contact messages, etc)
-export const rateLimitedProcedure = publicProcedure.use(
-  t.middleware(async opts => {
-    const { ctx, next } = opts;
-    // RATE LIMIT DESABILIDADO PARA TESTES
-    return next();
-  }),
-);
+// rateLimitedProcedure is now just an alias for publicProcedure (rate limiting removed for testing)
+export const rateLimitedProcedure = publicProcedure;
 
