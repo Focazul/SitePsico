@@ -65,7 +65,12 @@ async function startServer() {
 
   // Plain health endpoint for infra checks
   app.get("/health", (_req, res) => {
-    res.json({ ok: true, service: "backend", time: Date.now() });
+    res.json({ 
+      ok: true, 
+      service: "backend", 
+      time: Date.now(),
+      devSkipAuth: process.env.DEV_SKIP_AUTH === 'true'
+    });
   });
 
   // Security: Helmet configuration
