@@ -130,8 +130,25 @@ export function csrfProtectionMiddleware(
 
   // Get CSRF token from header or body
   const csrfToken = req.headers["x-csrf-token"] || req.body?.csrfToken;
+  
+  // Enhanced logging for debugging
+  console.log("[CSRF Middleware]", {
+    method: req.method,
+    path: req.path,
+    url: req.originalUrl,
+    sessionId: sessionId?.substring(0, 10),
+    hasHeaderToken: !!req.headers["x-csrf-token"],
+    headerToken: req.headers["x-csrf-token"] ? req.headers["x-csrf-token"].toString().substring(0, 10) : "none",
+    hasBodyToken: !!req.body?.csrfToken,
+    cookieNames: Object.keys(req.cookies || {}),
+    headers: Object.keys(req.headers),
+  });
+
   if (!csrfToken) {
-    console.warn("❌ CSRF: No token provided");
+    console.warn("❌ CSRF: No token provided", {
+      sessionId,
+      cookies: req.cookies,
+    });
     return res.status(403).json({ error: "CSRF token missing" });
   }
 
@@ -139,9 +156,15 @@ export function csrfProtectionMiddleware(
   const ip = (req.ip || req.headers["x-forwarded-for"] || "unknown") as string;
 
   // Validate token
-  if (!validateCsrfToken(sessionId, csrfToken as string, ip)) {
+  const isValid = validateCsrfToken(sessionId, csrfToken as string, ip);
+  if (!isValid) {
+    console.warn("❌ CSRF: Token validation failed", {
+      sessionId,
+      tokenProvided: csrfToken.toString().substring(0, 10),
+    });
     return res.status(403).json({ error: "CSRF validation failed" });
   }
 
+  console.log("✅ CSRF: Token validated successfully");
   return next();
 }
