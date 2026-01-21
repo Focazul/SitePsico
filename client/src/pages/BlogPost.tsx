@@ -6,8 +6,10 @@ import OrganicDivider from '@/components/OrganicDivider';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { blogPosts } from './blogData';
-import { ArrowLeft, BookOpen, Calendar, Clock, Link2, Linkedin, MessageCircle, Share2, User } from 'lucide-react';
+import { trpc } from '@/lib/trpc';
+import { ArrowLeft, BookOpen, Calendar, Clock, Link2, Linkedin, MessageCircle, Share2, User, Loader2 } from 'lucide-react';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 type BlogPostParams = {
   params: {
@@ -16,7 +18,12 @@ type BlogPostParams = {
 };
 
 export default function BlogPost({ params }: BlogPostParams) {
-  const post = useMemo(() => blogPosts.find((p) => p.slug === params.slug), [params.slug]);
+  const { data: post, isLoading, error } = trpc.blog.getPost.useQuery({ slug: params.slug });
+  const { data: related } = trpc.blog.getRelatedPosts.useQuery(
+    { postId: post?.id || 0 },
+    { enabled: !!post?.id }
+  );
+
   const [shareUrl, setShareUrl] = useState('');
 
   useEffect(() => {
@@ -26,12 +33,31 @@ export default function BlogPost({ params }: BlogPostParams) {
     }
   }, [params.slug]);
 
-  const related = useMemo(() => {
-    if (!post) return [];
-    return blogPosts.filter((p) => p.slug !== post.slug && (p.category === post.category || p.tags.some((t) => post.tags.includes(t)))).slice(0, 3);
-  }, [post]);
+  const formatDate = (date: Date | null | string | undefined) => {
+    if (!date) return '';
+    const d = typeof date === 'string' ? new Date(date) : date;
+    return format(d, "dd MMM yyyy", { locale: ptBR });
+  };
 
-  if (!post) {
+  const getReadTime = (content: string) => {
+    const words = content.split(' ').length;
+    const minutes = Math.ceil(words / 200);
+    return `${minutes} min`;
+  };
+
+  if (isLoading) {
+     return (
+      <div className="min-h-screen flex flex-col bg-background">
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <Loader2 className="w-8 h-8 animate-spin text-accent" />
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error || !post) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
         <Header />
@@ -61,9 +87,13 @@ export default function BlogPost({ params }: BlogPostParams) {
                 <ArrowLeft className="w-4 h-4" /> Voltar
               </Link>
               <span>•</span>
-              <span className="px-2 py-1 rounded-full bg-accent/10 text-accent font-semibold text-[11px]">{post.category}</span>
-              <span className="flex items-center gap-1"><Calendar className="w-4 h-4" /> {post.date}</span>
-              <span className="flex items-center gap-1"><Clock className="w-4 h-4" /> {post.readTime}</span>
+              {post.category && (
+                <span className="px-2 py-1 rounded-full bg-accent/10 text-accent font-semibold text-[11px]">{post.category.name}</span>
+              )}
+              {post.publishedAt && (
+                <span className="flex items-center gap-1"><Calendar className="w-4 h-4" /> {formatDate(post.publishedAt)}</span>
+              )}
+              <span className="flex items-center gap-1"><Clock className="w-4 h-4" /> {getReadTime(post.content)}</span>
               <span className="flex items-center gap-1"><User className="w-4 h-4" /> Psicólogo Responsável</span>
             </div>
             <h1 className="text-3xl md:text-4xl font-bold text-foreground leading-tight">{post.title}</h1>
@@ -72,7 +102,7 @@ export default function BlogPost({ params }: BlogPostParams) {
             </p>
             <div className="flex flex-wrap gap-2">
               {post.tags.map((t) => (
-                <Badge key={t} variant="outline">#{t}</Badge>
+                <Badge key={t.id} variant="outline">#{t.name}</Badge>
               ))}
             </div>
 
@@ -106,59 +136,28 @@ export default function BlogPost({ params }: BlogPostParams) {
         <OrganicDivider color="accent" className="mb-0" />
 
         {/* COVER IMAGE */}
-        <section className="bg-background">
-          <div className="container max-w-5xl">
-            <div className="rounded-2xl overflow-hidden border border-border/60 shadow-sm">
-              <img 
-                src={post.cover} 
-                alt={post.title} 
-                width="1200" 
-                height="675" 
-                className="w-full h-auto object-cover" 
-                loading="lazy" 
-              />
+        {post.coverImage && (
+          <section className="bg-background">
+            <div className="container max-w-5xl">
+              <div className="rounded-2xl overflow-hidden border border-border/60 shadow-sm">
+                <img
+                  src={post.coverImage}
+                  alt={post.title}
+                  width="1200"
+                  height="675"
+                  className="w-full h-auto object-cover"
+                  loading="lazy"
+                />
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* CONTENT */}
         <section className="py-12 md:py-16">
           <div className="container max-w-4xl space-y-8 text-base leading-relaxed text-muted-foreground">
-            <article className="space-y-6">
-              <p>
-                Este conteúdo é informativo e não substitui avaliação individual. Cada pessoa possui contexto único; para orientação personalizada, agende uma sessão.
-              </p>
-
-              <h2 className="text-2xl font-semibold text-foreground">Por que este tema importa</h2>
-              <p>
-                Entender o papel da psicoterapia ajuda a reduzir estigmas e facilita a busca por cuidado qualificado. Aqui trazemos conceitos-chave de forma acessível, alinhados a boas práticas e ética profissional.
-              </p>
-
-              <h3 className="text-xl font-semibold text-foreground">O que você encontra nas sessões</h3>
-              <ul className="list-disc list-inside space-y-2">
-                <li>Escuta ativa, sigilosa e sem julgamentos.</li>
-                <li>Clareza de objetivos terapêuticos e combinações de frequência.</li>
-                <li>Ferramentas práticas para manejo emocional e tomada de decisão.</li>
-                <li>Referenciamento responsável quando necessário (ex.: psiquiatria).</li>
-              </ul>
-
-              <h3 className="text-xl font-semibold text-foreground">Como se preparar</h3>
-              <p>
-                Anote dúvidas, expectativas e situações que deseja abordar. Preparar-se ajuda a aproveitar melhor o tempo da sessão e a construir um plano de cuidado consistente.
-              </p>
-
-              <h3 className="text-xl font-semibold text-foreground">Sinais de que vale buscar apoio</h3>
-              <ul className="list-disc list-inside space-y-2">
-                <li>Sintomas persistentes de ansiedade, tristeza ou irritabilidade.</li>
-                <li>Dificuldade para dormir, concentrar ou manter rotinas.</li>
-                <li>Conflitos recorrentes em relacionamentos pessoais ou profissionais.</li>
-                <li>Momentos de transição (mudança de trabalho, cidade, ciclo de vida) que geram sobrecarga.</li>
-              </ul>
-
-              <h3 className="text-xl font-semibold text-foreground">Lembrete importante</h3>
-              <p>
-                Conteúdos online são complementares. Para avaliação, diagnóstico e condução do tratamento, marque uma sessão com um profissional habilitado e registrado no conselho regional.
-              </p>
+            <article className="space-y-6 prose prose-stone max-w-none dark:prose-invert">
+              <div dangerouslySetInnerHTML={{ __html: post.content }} />
             </article>
 
             <Card className="p-6 bg-accent/10 border-accent/40 space-y-3">
@@ -178,7 +177,7 @@ export default function BlogPost({ params }: BlogPostParams) {
         <OrganicDivider color="secondary" className="mb-0" />
 
         {/* RELATED */}
-        {related.length > 0 && (
+        {related && related.length > 0 && (
           <section className="py-12 md:py-16 bg-secondary/10">
             <div className="container max-w-5xl space-y-4">
               <div className="flex items-center gap-2">
@@ -190,18 +189,22 @@ export default function BlogPost({ params }: BlogPostParams) {
                   <Link key={item.slug} href={`/blog/${item.slug}`} className="block group">
                     <Card className="h-full border-border/60 hover:border-accent transition-all duration-200">
                       <div className="aspect-[16/9] bg-muted overflow-hidden">
-                        <img
-                          src={item.cover}
-                          alt={item.title}
-                          width="640"
-                          height="360"
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          loading="lazy"
-                        />
+                        {item.coverImage ? (
+                          <img
+                            src={item.coverImage}
+                            alt={item.title}
+                            width="640"
+                            height="360"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-accent/20" />
+                        )}
                       </div>
                       <div className="p-4 space-y-2">
                         <p className="text-xs text-muted-foreground flex items-center gap-1">
-                          <Calendar className="w-4 h-4" /> {item.date}
+                          <Calendar className="w-4 h-4" /> {formatDate(item.publishedAt)}
                         </p>
                         <p className="font-semibold text-foreground group-hover:text-accent transition-colors">
                           {item.title}

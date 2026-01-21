@@ -484,13 +484,62 @@ export async function getAvailableSlots(dateStr: string): Promise<AvailableSlot[
   const slotIntervalSetting = Number(await getSettingValue("slot_interval"));
   const slotMinutesFromSettings = Number.isFinite(slotIntervalSetting) && slotIntervalSetting > 0 ? slotIntervalSetting : null;
 
+  // Fetch Google Calendar events for this day
+  let googleEvents: any[] = [];
+  try {
+    const { getEventsForDateRange } = await import("./_core/googleCalendar");
+    // Define end of the day for the range
+    const dayEnd = new Date(dateValue.getTime() + 24 * 60 * 60 * 1000 - 1);
+    googleEvents = await getEventsForDateRange(dateValue, dayEnd);
+  } catch (err) {
+    console.warn("[Database] Failed to fetch Google Calendar events:", err);
+  }
+
+  const isGoogleBusy = (slotStartMinutes: number, slotDuration: number) => {
+    if (googleEvents.length === 0) return false;
+
+    // Create Date objects for the slot in UTC (as dateValue is UTC 00:00)
+    // Note: This logic assumes all dates are handled in UTC or consistently.
+    // dateValue is explicitly Z (UTC).
+    const slotStart = new Date(dateValue.getTime() + slotStartMinutes * 60000);
+    const slotEnd = new Date(slotStart.getTime() + slotDuration * 60000);
+
+    return googleEvents.some((event) => {
+      let eventStart: Date;
+      let eventEnd: Date;
+
+      if (event.start?.dateTime) {
+        eventStart = new Date(event.start.dateTime);
+      } else if (event.start?.date) {
+        // All-day event: assumes UTC for simplicity or app timezone
+        eventStart = new Date(`${event.start.date}T00:00:00.000Z`);
+      } else {
+        return false;
+      }
+
+      if (event.end?.dateTime) {
+        eventEnd = new Date(event.end.dateTime);
+      } else if (event.end?.date) {
+         // All-day event end date is exclusive (next day)
+        eventEnd = new Date(`${event.end.date}T00:00:00.000Z`);
+      } else {
+        return false;
+      }
+
+      // Overlap check: StartA < EndB && EndA > StartB
+      return slotStart < eventEnd && slotEnd > eventStart;
+    });
+  };
+
   // Helper to build slots from a start/end window
   const buildSlots = (start: number, end: number, slotMinutes: number, booked?: Set<string>) => {
     const list: AvailableSlot[] = [];
     const taken = booked ?? new Set<string>();
     for (let m = start; m + slotMinutes <= end; m += slotMinutes) {
       const label = formatTime(m);
-      if (!taken.has(label)) list.push({ time: label });
+      if (!taken.has(label) && !isGoogleBusy(m, slotMinutes)) {
+        list.push({ time: label });
+      }
     }
     return list;
   };
@@ -634,11 +683,26 @@ export type PostWithRelations = Post & { tags: Tag[]; category: Category | null 
 export async function getPublishedPosts(
   limit: number = 10,
   offset: number = 0,
-  categoryId?: number | null
+  categoryId?: number | null,
+  tagId?: number | null
 ): Promise<PostWithRelations[]> {
   const db = await ensureDb();
   const clauses = [sql`${posts.publishedAt} IS NOT NULL`];
   if (categoryId) clauses.push(eq(posts.categoryId, categoryId));
+
+  if (tagId) {
+    const pIds = await db
+      .select({ postId: postTags.postId })
+      .from(postTags)
+      .where(eq(postTags.tagId, tagId));
+
+    if (pIds.length === 0) {
+      return [];
+    }
+
+    const ids = pIds.map((p) => p.postId);
+    clauses.push(inArray(posts.id, ids));
+  }
 
   const results = await db
     .select()
