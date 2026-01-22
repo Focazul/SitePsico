@@ -10,7 +10,7 @@ import seoRouter from "./seoRouter";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
-import { csrfProtectionMiddleware } from "./csrf";
+import { csrfProtectionMiddleware, generateCsrfToken } from "./csrf";
 import { getUserSchemaStatus } from "../db";
 
 function isPortAvailable(port: number): Promise<boolean> {
@@ -141,7 +141,6 @@ async function startServer() {
 
   // CSRF token endpoint (before CSRF middleware)
   app.get("/api/csrf-token", (req, res) => {
-    const { generateCsrfToken } = require("./csrf");
     const sessionId = req.sessionID || req.ip || "anonymous";
     const token = generateCsrfToken(sessionId, req.ip);
     res.json({ token });

@@ -16,7 +16,7 @@ export default function Login() {
 
   const loginMutation = trpc.auth.login.useMutation({
     onSuccess: () => {
-      setLocation('/dashboard');
+      setLocation('/admin/dashboard');
     },
     onError: (error) => {
       setError(error.message || 'Erro ao fazer login');

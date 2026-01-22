@@ -65,18 +65,27 @@ export default function Blog() {
 
   const isSearch = search.length > 0;
 
-  const { data: postsData, isLoading } = isSearch
-    ? trpc.blog.searchPosts.useQuery({
-        query: search,
-        limit: PAGE_SIZE,
-        offset: (page - 1) * PAGE_SIZE
-      })
-    : trpc.blog.getPosts.useQuery({
-        limit: PAGE_SIZE,
-        offset: (page - 1) * PAGE_SIZE,
-        categoryId: selectedCategoryId,
-        tagId: selectedTagId
-      });
+  const searchPostsQuery = trpc.blog.searchPosts.useQuery(
+    {
+      query: search,
+      limit: PAGE_SIZE,
+      offset: (page - 1) * PAGE_SIZE
+    },
+    { enabled: isSearch }
+  );
+
+  const getPostsQuery = trpc.blog.getPosts.useQuery(
+    {
+      limit: PAGE_SIZE,
+      offset: (page - 1) * PAGE_SIZE,
+      categoryId: selectedCategoryId,
+      tagId: selectedTagId
+    },
+    { enabled: !isSearch }
+  );
+
+  const postsData = isSearch ? searchPostsQuery.data : getPostsQuery.data;
+  const isLoading = isSearch ? searchPostsQuery.isLoading : getPostsQuery.isLoading;
 
   const posts = postsData?.posts || [];
   const totalCount = postsData?.count || 0;

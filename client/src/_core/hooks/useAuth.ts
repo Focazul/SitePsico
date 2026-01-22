@@ -9,7 +9,8 @@ type UseAuthOptions = {
 };
 
 // 🚧 DEV MODE: Bypass de autenticação para desenvolvimento
-const DEV_MODE = import.meta.env.DEV;
+// Only enable bypass if explicitly requested via env var
+const DEV_MODE = import.meta.env.DEV && import.meta.env.VITE_BYPASS_AUTH === 'true';
 const DEV_USER = {
   id: 999,
   email: 'dev@local.dev',

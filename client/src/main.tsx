@@ -40,6 +40,7 @@ queryClient.getMutationCache().subscribe(event => {
 
 // CSRF Token Cache
 let csrfToken: string | null = null;
+let csrfTokenPromise: Promise<string> | null = null;
 
 /**
  * Get CSRF token from server
@@ -47,28 +48,35 @@ let csrfToken: string | null = null;
  */
 async function getCsrfToken(): Promise<string> {
   if (csrfToken) return csrfToken;
+  if (csrfTokenPromise) return csrfTokenPromise;
 
-  try {
-    const base = getApiBaseUrl();
-    const url = base ? `${base}/api/csrf-token` : "/api/csrf-token";
-    
-    const response = await fetch(url, {
-      credentials: "include",
-    });
+  csrfTokenPromise = (async () => {
+    try {
+      const base = getApiBaseUrl();
+      const url = base ? `${base}/api/csrf-token` : "/api/csrf-token";
 
-    if (!response.ok) {
-      throw new Error(`Failed to get CSRF token: ${response.status}`);
+      const response = await fetch(url, {
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to get CSRF token: ${response.status}`);
+      }
+
+      const data = await response.json();
+      csrfToken = data.token;
+      console.log("[CSRF] Token obtained successfully");
+      return csrfToken || "";
+    } catch (error) {
+      console.error("[CSRF] Error getting token:", error);
+      // Return empty string to allow request to proceed (backend will reject it)
+      return "";
+    } finally {
+      csrfTokenPromise = null;
     }
+  })();
 
-    const data = await response.json();
-    csrfToken = data.token;
-    console.log("[CSRF] Token obtained successfully");
-    return csrfToken;
-  } catch (error) {
-    console.error("[CSRF] Error getting token:", error);
-    // Return empty string to allow request to proceed (backend will reject it)
-    return "";
-  }
+  return csrfTokenPromise;
 }
 
 const trpcClient = trpc.createClient({
@@ -99,6 +107,7 @@ const trpcClient = trpc.createClient({
         
         console.log("[tRPC Client] Credentials:", fetchInit.credentials);
         console.log("[tRPC Client] Final headers:", Object.keys(headers));
+        console.log("[tRPC Client] Body:", fetchInit.body);
         
         return globalThis.fetch(input, fetchInit).then(async (response) => {
           console.log("[tRPC Client] Response status:", response.status, response.statusText);
