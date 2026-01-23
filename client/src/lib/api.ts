@@ -5,10 +5,7 @@ export function getApiBaseUrl(): string {
     return envUrl;
   }
 
-  if (import.meta.env.PROD) {
-    // Fallback seguro em produção quando a env está ausente ou inválida
-    return "https://backend-production-4a6b.up.railway.app";
-  }
-  // Dev: usa proxy local
-  return ""; // relativo: /api/trpc
+  // Default to relative URL for same-origin deployment (both dev and prod)
+  // This ensures the frontend talks to the backend serving it
+  return "";
 }
