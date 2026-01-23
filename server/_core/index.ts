@@ -243,6 +243,24 @@ async function startServer() {
     })
   );
 
+  // Global Error Handler for API Routes
+  // This prevents HTML error pages (like 404 or 500) from being returned to JSON clients
+  app.use("/api/*", (err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+    console.error("[API Error]", err);
+    if (res.headersSent) {
+      return next(err);
+    }
+    res.status(err.status || 500).json({
+      message: err.message || "Internal Server Error",
+      code: err.code || "INTERNAL_SERVER_ERROR"
+    });
+  });
+
+  // 404 Handler for API Routes (must be after all API routes but before frontend)
+  app.all("/api/*", (req, res) => {
+    res.status(404).json({ message: "API endpoint not found" });
+  });
+
   // development mode uses Vite, production mode uses static files
   if (process.env.NODE_ENV === "development") {
     await setupVite(app, server);
