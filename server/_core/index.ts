@@ -11,7 +11,7 @@ import seoRouter from "./seoRouter";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
-import { csrfProtectionMiddleware } from "./csrf";
+import { csrfProtectionMiddleware, generateCsrfToken } from "./csrf";
 import { getUserSchemaStatus } from "../db";
 
 function isPortAvailable(port: number): Promise<boolean> {
@@ -130,6 +130,8 @@ async function startServer() {
     })
   );
 
+  app.use(cookieParser());
+
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
@@ -143,7 +145,6 @@ async function startServer() {
 
   // CSRF token endpoint (before CSRF middleware)
   app.get("/api/csrf-token", (req, res) => {
-    const { generateCsrfToken } = require("./csrf");
     const sessionId = req.sessionID || req.ip || "anonymous";
     const token = generateCsrfToken(sessionId, req.ip);
     res.json({ token });
@@ -245,6 +246,25 @@ async function startServer() {
     })
   );
 
+ fix-blog-calendar-ci-14526180216525658684
+  // Global error handler for API routes to ensure JSON response
+  app.use("/api", (err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+    console.error("[API Error]", err);
+    if (!res.headersSent) {
+      // Return TRPC-compliant error envelope
+      res.status(500).json({
+        error: {
+          message: err.message || "Internal Server Error",
+          code: -32603, // INTERNAL_SERVER_ERROR
+          data: {
+            httpStatus: 500,
+            code: "INTERNAL_SERVER_ERROR",
+            path: req.path
+          }
+        }
+      });
+    }
+
   // Global Error Handler for API Routes
   // This prevents HTML error pages (like 404 or 500) from being returned to JSON clients
   app.use("/api/*", (err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -261,6 +281,7 @@ async function startServer() {
   // 404 Handler for API Routes (must be after all API routes but before frontend)
   app.all("/api/*", (req, res) => {
     res.status(404).json({ message: "API endpoint not found" });
+master
   });
 
   // development mode uses Vite, production mode uses static files

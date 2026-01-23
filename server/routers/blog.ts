@@ -36,10 +36,11 @@ export const blogRouter = router({
         limit: z.number().int().positive().default(10),
         offset: z.number().int().nonnegative().default(0),
         categoryId: z.number().int().optional(),
+        tagId: z.number().int().optional(),
       })
     )
     .query(async ({ input }) => {
-      const posts = await getPublishedPosts(input.limit, input.offset, input.categoryId);
+      const posts = await getPublishedPosts(input.limit, input.offset, input.categoryId, input.tagId);
       return { posts, count: posts.length };
     }),
 

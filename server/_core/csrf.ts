@@ -155,7 +155,14 @@ export function csrfProtectionMiddleware(
       sessionId,
       cookies: req.cookies,
     });
-    return res.status(403).json({ error: "CSRF token missing" });
+    // Return TRPC-compliant error
+    return res.status(403).json({
+      error: {
+        message: "CSRF token missing",
+        code: -32003, // FORBIDDEN
+        data: { httpStatus: 403, code: "FORBIDDEN" }
+      }
+    });
   }
 
   // Get client IP
@@ -168,7 +175,14 @@ export function csrfProtectionMiddleware(
       sessionId,
       tokenProvided: csrfToken.toString().substring(0, 10),
     });
-    return res.status(403).json({ error: "CSRF validation failed" });
+    // Return TRPC-compliant error
+    return res.status(403).json({
+      error: {
+        message: "CSRF validation failed",
+        code: -32003, // FORBIDDEN
+        data: { httpStatus: 403, code: "FORBIDDEN" }
+      }
+    });
   }
 
   console.log("✅ CSRF: Token validated successfully");

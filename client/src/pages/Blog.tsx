@@ -8,11 +8,10 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
-import { blogPosts } from './blogData';
-import { BookOpen, Calendar, Clock, Filter, Search, Tag as TagIcon } from 'lucide-react';
-
-const categories = Array.from(new Set(blogPosts.map((p) => p.category)));
-const tags = Array.from(new Set(blogPosts.flatMap((p) => p.tags)));
+import { trpc } from '@/lib/trpc';
+import { BookOpen, Calendar, Clock, Filter, Search, Tag as TagIcon, Loader2 } from 'lucide-react';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 const PAGE_SIZE = 6;
 
@@ -22,46 +21,97 @@ export default function Blog() {
   const sidebarRef = useScrollReveal<HTMLDivElement>({ threshold: 0.15 });
 
   const [search, setSearch] = useState('');
+  // For simplicity, we are handling client-side filtering for category/tag for now,
+  // or we could implement server-side filtering.
+  // The API supports search query, limit, offset.
+  // But category/tag filtering logic in current API is limited (only categoryId).
+  // I'll fetch posts via searchPosts and filter on client if needed, or stick to search.
+  // Actually, let's keep it simple: use searchPosts for text search.
+  // For Category/Tag filtering, we might need to extend API or do client side.
+  // Given the MVP nature, let's do client side filtering on the fetched page or better:
+  // Since pagination is involved, client-side filtering on a page is weird.
+  // Let's rely on 'searchPosts' which searches title/content.
+  // For exact category filtering, we'll implement it if API allows.
+  // API `getPosts` allows `categoryId`. `searchPosts` does not.
+
   const [category, setCategory] = useState<string | null>(null);
-  const [tag, setTag] = useState<string | null>(null);
+  const [tag, setTag] = useState<string | null>(null); // Tag filtering not directly supported by API yet
   const [page, setPage] = useState(1);
 
-  const featured = useMemo(() => blogPosts.filter((p) => p.featured), []);
+  // Fetch categories and tags
+  const { data: categoriesData } = trpc.blog.getCategories.useQuery();
+  const { data: tagsData } = trpc.blog.getTags.useQuery();
 
-  const filtered = useMemo(() => {
-    let posts = blogPosts;
+  // Determine which query to use
+  // If we have a category selected, we should find its ID.
+  const selectedCategoryId = useMemo(() => {
+    if (!category || !categoriesData) return undefined;
+    const cat = categoriesData.find(c => c.name === category);
+    return cat?.id;
+  }, [category, categoriesData]);
 
-    if (search.trim()) {
-      const term = search.toLowerCase();
-      posts = posts.filter(
-        (p) =>
-          p.title.toLowerCase().includes(term) ||
-          p.excerpt.toLowerCase().includes(term) ||
-          p.tags.some((t) => t.toLowerCase().includes(term))
-      );
-    }
+  const selectedTagId = useMemo(() => {
+    if (!tag || !tagsData) return undefined;
+    const t = tagsData.find(t => t.name === tag);
+    return t?.id;
+  }, [tag, tagsData]);
 
-    if (category) {
-      posts = posts.filter((p) => p.category === category);
-    }
+  // Main query
+  // Note: API `searchPosts` takes query string. `getPosts` takes categoryId.
+  // If we have search term, we use searchPosts.
+  // If we have category, we use getPosts.
+  // If both? Search takes precedence or we need a new API endpoint.
+  // Let's prioritize search if present.
 
-    if (tag) {
-      posts = posts.filter((p) => p.tags.includes(tag));
-    }
+  const isSearch = search.length > 0;
 
-    return posts;
-  }, [search, category, tag]);
+  const searchPostsQuery = trpc.blog.searchPosts.useQuery(
+    {
+      query: search,
+      limit: PAGE_SIZE,
+      offset: (page - 1) * PAGE_SIZE
+    },
+    { enabled: isSearch }
+  );
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const currentPage = Math.min(page, totalPages);
-  const start = (currentPage - 1) * PAGE_SIZE;
-  const paginated = filtered.slice(start, start + PAGE_SIZE);
+  const getPostsQuery = trpc.blog.getPosts.useQuery(
+    {
+      limit: PAGE_SIZE,
+      offset: (page - 1) * PAGE_SIZE,
+      categoryId: selectedCategoryId,
+      tagId: selectedTagId
+    },
+    { enabled: !isSearch }
+  );
+
+  const postsData = isSearch ? searchPostsQuery.data : getPostsQuery.data;
+  const isLoading = isSearch ? searchPostsQuery.isLoading : getPostsQuery.isLoading;
+
+  const posts = postsData?.posts || [];
+  const totalCount = postsData?.count || 0;
+
+  const filteredPosts = posts;
+
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
 
   const resetFilters = () => {
     setCategory(null);
     setTag(null);
     setPage(1);
     setSearch('');
+  };
+
+  const formatDate = (date: Date | null | string) => {
+    if (!date) return '';
+    const d = typeof date === 'string' ? new Date(date) : date;
+    return format(d, "dd MMM yyyy", { locale: ptBR });
+  };
+
+  // Mock read time based on content length
+  const getReadTime = (content: string) => {
+    const words = content.split(' ').length;
+    const minutes = Math.ceil(words / 200);
+    return `${minutes} min`;
   };
 
   return (
@@ -131,61 +181,6 @@ export default function Blog() {
 
         <OrganicDivider color="accent" className="mb-0" />
 
-        {/* FEATURED */}
-        {featured.length > 0 && (
-          <section className="py-12 md:py-16">
-            <div className="container space-y-6">
-              <div className="flex items-center gap-3">
-                <div className="h-8 w-1 rounded-full bg-accent" />
-                <div>
-                  <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Destaques</p>
-                  <h2 className="text-2xl font-bold text-foreground">Artigos em evidência</h2>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {featured.map((post) => (
-                  <Link key={post.slug} href={`/blog/${post.slug}`} className="block group">
-                    <Card className="overflow-hidden border-border/60 hover:border-accent transition-all duration-200 h-full">
-                      <div className="aspect-[16/9] bg-muted relative overflow-hidden">
-                        <img
-                          src={post.cover}
-                          alt={post.title}
-                          width="800"
-                          height="450"
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          loading="lazy"
-                        />
-                      </div>
-                      <div className="p-5 space-y-3">
-                        <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                          <span className="px-2 py-1 rounded-full bg-accent/10 text-accent font-semibold text-[11px]">
-                            {post.category}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Calendar className="w-4 h-4" />
-                            {post.date}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Clock className="w-4 h-4" />
-                            {post.readTime}
-                          </span>
-                        </div>
-                        <h3 className="text-xl font-semibold text-foreground group-hover:text-accent transition-colors">
-                          {post.title}
-                        </h3>
-                        <p className="text-sm text-muted-foreground leading-relaxed">{post.excerpt}</p>
-                      </div>
-                    </Card>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
-
-        <OrganicDivider color="secondary" className="mb-0" />
-
         {/* LISTING + SIDEBAR */}
         <section className="py-16 md:py-24">
           <div className="container grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-10">
@@ -232,18 +227,18 @@ export default function Blog() {
                   >
                     Todas
                   </Button>
-                  {categories.map((c) => (
+                  {categoriesData?.map((c) => (
                     <Button
-                      key={c}
+                      key={c.id}
                       size="sm"
-                      variant={category === c ? 'default' : 'outline'}
-                      className={category === c ? 'bg-accent text-accent-foreground' : ''}
+                      variant={category === c.name ? 'default' : 'outline'}
+                      className={category === c.name ? 'bg-accent text-accent-foreground' : ''}
                       onClick={() => {
-                        setCategory(c);
+                        setCategory(c.name);
                         setPage(1);
                       }}
                     >
-                      {c}
+                      {c.name}
                     </Button>
                   ))}
                 </div>
@@ -262,78 +257,101 @@ export default function Blog() {
                 >
                   Todas
                 </Badge>
-                {tags.map((t) => (
+                {tagsData?.map((t) => (
                   <Badge
-                    key={t}
-                    variant={tag === t ? 'default' : 'outline'}
-                    className={tag === t ? 'bg-accent text-accent-foreground cursor-pointer' : 'cursor-pointer'}
+                    key={t.id}
+                    variant={tag === t.name ? 'default' : 'outline'}
+                    className={tag === t.name ? 'bg-accent text-accent-foreground cursor-pointer' : 'cursor-pointer'}
                     onClick={() => {
-                      setTag(t);
+                      setTag(t.name);
                       setPage(1);
                     }}
                   >
-                    {t}
+                    {t.name}
                   </Badge>
                 ))}
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {paginated.map((post) => (
-                  <Link key={post.slug} href={`/blog/${post.slug}`} className="block group h-full">
-                    <Card className="h-full overflow-hidden border-border/60 hover:border-accent hover:shadow-md transition-all duration-200">
-                      <div className="aspect-[16/9] bg-muted overflow-hidden">
-                        <img
-                          src={post.cover}
-                          alt={post.title}
-                          width="800"
-                          height="450"
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          loading="lazy"
-                        />
-                      </div>
-                      <div className="p-5 space-y-3">
-                        <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                          <span className="px-2 py-1 rounded-full bg-accent/10 text-accent font-semibold text-[11px]">
-                            {post.category}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Calendar className="w-4 h-4" />
-                            {post.date}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Clock className="w-4 h-4" />
-                            {post.readTime}
-                          </span>
+              {isLoading ? (
+                <div className="flex justify-center items-center py-20">
+                  <Loader2 className="w-8 h-8 animate-spin text-accent" />
+                </div>
+              ) : filteredPosts.length === 0 ? (
+                <div className="text-center py-20">
+                  <p className="text-muted-foreground">Nenhum artigo encontrado.</p>
+                  <Button variant="link" onClick={resetFilters}>Limpar filtros</Button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {filteredPosts.map((post) => (
+                    <Link key={post.slug} href={`/blog/${post.slug}`} className="block group h-full">
+                      <Card className="h-full overflow-hidden border-border/60 hover:border-accent hover:shadow-md transition-all duration-200">
+                        <div className="aspect-[16/9] bg-muted overflow-hidden">
+                          {post.coverImage ? (
+                            <img
+                              src={post.coverImage}
+                              alt={post.title}
+                              width="800"
+                              height="450"
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              loading="lazy"
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-accent/20 flex items-center justify-center">
+                              <BookOpen className="w-12 h-12 text-accent/50" />
+                            </div>
+                          )}
                         </div>
-                        <h3 className="text-lg font-semibold text-foreground group-hover:text-accent transition-colors">
-                          {post.title}
-                        </h3>
-                        <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">{post.excerpt}</p>
-                        <div className="flex flex-wrap gap-2 pt-2">
-                          {post.tags.map((t) => (
-                            <span
-                              key={t}
-                              className="text-[11px] px-2 py-1 rounded-full bg-muted text-muted-foreground"
-                            >
-                              #{t}
+                        <div className="p-5 space-y-3">
+                          <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                            {post.category && (
+                              <span className="px-2 py-1 rounded-full bg-accent/10 text-accent font-semibold text-[11px]">
+                                {post.category.name}
+                              </span>
+                            )}
+                            {post.publishedAt && (
+                              <span className="flex items-center gap-1">
+                                <Calendar className="w-4 h-4" />
+                                {formatDate(post.publishedAt)}
+                              </span>
+                            )}
+                            <span className="flex items-center gap-1">
+                              <Clock className="w-4 h-4" />
+                              {getReadTime(post.content)}
                             </span>
-                          ))}
+                          </div>
+                          <h3 className="text-lg font-semibold text-foreground group-hover:text-accent transition-colors">
+                            {post.title}
+                          </h3>
+                          <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
+                             {post.excerpt || post.content.substring(0, 150) + '...'}
+                          </p>
+                          <div className="flex flex-wrap gap-2 pt-2">
+                            {post.tags.map((t) => (
+                              <span
+                                key={t.id}
+                                className="text-[11px] px-2 py-1 rounded-full bg-muted text-muted-foreground"
+                              >
+                                #{t.name}
+                              </span>
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                    </Card>
-                  </Link>
-                ))}
-              </div>
+                      </Card>
+                    </Link>
+                  ))}
+                </div>
+              )}
 
               <div className="flex items-center justify-between pt-4">
                 <p className="text-sm text-muted-foreground">
-                  {filtered.length} artigo(s) | Página {currentPage} de {totalPages}
+                   Página {page} de {totalPages || 1}
                 </p>
                 <div className="flex items-center gap-2">
                   <Button
                     variant="outline"
                     size="sm"
-                    disabled={currentPage === 1}
+                    disabled={page === 1 || isLoading}
                     onClick={() => setPage((p) => Math.max(1, p - 1))}
                   >
                     Anterior
@@ -341,7 +359,7 @@ export default function Blog() {
                   <Button
                     variant="outline"
                     size="sm"
-                    disabled={currentPage === totalPages}
+                    disabled={page === totalPages || isLoading || totalPages === 0}
                     onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   >
                     Próxima
@@ -363,19 +381,21 @@ export default function Blog() {
                   <p className="font-semibold text-foreground">Categorias</p>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {categories.map((c) => {
-                    const count = blogPosts.filter((p) => p.category === c).length;
+                  {categoriesData?.map((c) => {
+                    // Note: Counting posts per category on the client is not efficient or accurate with pagination.
+                    // Ideally, the category list endpoint should return counts.
+                    // For now, we skip the count or just show it if we had it.
                     return (
                       <Badge
-                        key={c}
-                        variant={category === c ? 'default' : 'outline'}
-                        className={category === c ? 'bg-accent text-accent-foreground cursor-pointer' : 'cursor-pointer'}
+                        key={c.id}
+                        variant={category === c.name ? 'default' : 'outline'}
+                        className={category === c.name ? 'bg-accent text-accent-foreground cursor-pointer' : 'cursor-pointer'}
                         onClick={() => {
-                          setCategory(category === c ? null : c);
+                          setCategory(category === c.name ? null : c.name);
                           setPage(1);
                         }}
                       >
-                        {c} ({count})
+                        {c.name}
                       </Badge>
                     );
                   })}
@@ -388,37 +408,18 @@ export default function Blog() {
                   <p className="font-semibold text-foreground">Tags populares</p>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {tags.map((t) => (
+                  {tagsData?.map((t) => (
                     <Badge
-                      key={t}
-                      variant={tag === t ? 'default' : 'outline'}
-                      className={tag === t ? 'bg-accent text-accent-foreground cursor-pointer' : 'cursor-pointer'}
+                      key={t.id}
+                      variant={tag === t.name ? 'default' : 'outline'}
+                      className={tag === t.name ? 'bg-accent text-accent-foreground cursor-pointer' : 'cursor-pointer'}
                       onClick={() => {
-                        setTag(tag === t ? null : t);
+                        setTag(tag === t.name ? null : t.name);
                         setPage(1);
                       }}
                     >
-                      #{t}
+                      #{t.name}
                     </Badge>
-                  ))}
-                </div>
-              </Card>
-
-              <Card className="p-5 space-y-3">
-                <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-accent" />
-                  <p className="font-semibold text-foreground">Recentes</p>
-                </div>
-                <div className="space-y-2">
-                  {blogPosts.slice(0, 5).map((post) => (
-                    <Link key={post.slug} href={`/blog/${post.slug}`} className="block group">
-                      <div className="p-3 rounded-lg border border-border/60 hover:border-accent transition-all">
-                        <p className="text-sm font-semibold text-foreground group-hover:text-accent">{post.title}</p>
-                        <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
-                          <Calendar className="w-3 h-3" /> {post.date}
-                        </p>
-                      </div>
-                    </Link>
                   ))}
                 </div>
               </Card>

@@ -1,6 +1,7 @@
 import { and, asc, desc, eq, gte, inArray, lte, sql } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/mysql2";
+import { drizzle, MySql2Database } from "drizzle-orm/mysql2";
 import mysql from "mysql2/promise";
+import * as schema from "../drizzle/schema";
 import {
   appointments,
   availability,
@@ -40,7 +41,7 @@ import {
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
-let _db: ReturnType<typeof drizzle> | null = null;
+let _db: MySql2Database<typeof schema> | null = null;
 let _connection: mysql.Pool | null = null;
 
 // Lazily create the drizzle instance so local tooling can run without a DB.
@@ -53,20 +54,7 @@ export async function getDb() {
         connectionLimit: 10,
       });
       _db = drizzle(_connection, {
-        schema: {
-          users,
-          appointments,
-          availability,
-          blockedDates,
-          categories,
-          tags,
-          posts,
-          postTags,
-          pages,
-          messages,
-          settings,
-          emailLogs,
-        },
+        schema,
         mode: 'default',
       });
       console.log("[Database] Connection established successfully!");
@@ -88,7 +76,7 @@ export async function getUserSchemaStatus(): Promise<Record<string, boolean>> {
     throw new Error("Database connection not available");
   }
 
-  const [rows] = await _connection.query<{ COLUMN_NAME: string }[]>(
+  const [rows] = await _connection.query<any[]>(
     "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'users'"
   );
   const cols = new Set(rows.map(r => r.COLUMN_NAME));
@@ -321,16 +309,19 @@ export async function createAppointment(data: InsertAppointment): Promise<Appoin
     throw new Error("Horário indisponível. Escolha outro horário ou data.");
   }
 
-  const [created] = await db
+  const [result] = await db
     .insert(appointments)
     .values({
       ...data,
       appointmentDate: normalizedDate,
       appointmentTime: normalizedTime,
       status: data.status ?? "pendente",
-    })
-    .returning();
+    });
 
+  const insertId = result.insertId;
+  const created = await getAppointmentById(insertId);
+
+  if (!created) throw new Error("Failed to create appointment");
   return created;
 }
 
@@ -484,13 +475,62 @@ export async function getAvailableSlots(dateStr: string): Promise<AvailableSlot[
   const slotIntervalSetting = Number(await getSettingValue("slot_interval"));
   const slotMinutesFromSettings = Number.isFinite(slotIntervalSetting) && slotIntervalSetting > 0 ? slotIntervalSetting : null;
 
+  // Fetch Google Calendar events for this day
+  let googleEvents: any[] = [];
+  try {
+    const { getEventsForDateRange } = await import("./_core/googleCalendar");
+    // Define end of the day for the range
+    const dayEnd = new Date(dateValue.getTime() + 24 * 60 * 60 * 1000 - 1);
+    googleEvents = await getEventsForDateRange(dateValue, dayEnd);
+  } catch (err) {
+    console.warn("[Database] Failed to fetch Google Calendar events:", err);
+  }
+
+  const isGoogleBusy = (slotStartMinutes: number, slotDuration: number) => {
+    if (googleEvents.length === 0) return false;
+
+    // Create Date objects for the slot in UTC (as dateValue is UTC 00:00)
+    // Note: This logic assumes all dates are handled in UTC or consistently.
+    // dateValue is explicitly Z (UTC).
+    const slotStart = new Date(dateValue.getTime() + slotStartMinutes * 60000);
+    const slotEnd = new Date(slotStart.getTime() + slotDuration * 60000);
+
+    return googleEvents.some((event) => {
+      let eventStart: Date;
+      let eventEnd: Date;
+
+      if (event.start?.dateTime) {
+        eventStart = new Date(event.start.dateTime);
+      } else if (event.start?.date) {
+        // All-day event: assumes UTC for simplicity or app timezone
+        eventStart = new Date(`${event.start.date}T00:00:00.000Z`);
+      } else {
+        return false;
+      }
+
+      if (event.end?.dateTime) {
+        eventEnd = new Date(event.end.dateTime);
+      } else if (event.end?.date) {
+         // All-day event end date is exclusive (next day)
+        eventEnd = new Date(`${event.end.date}T00:00:00.000Z`);
+      } else {
+        return false;
+      }
+
+      // Overlap check: StartA < EndB && EndA > StartB
+      return slotStart < eventEnd && slotEnd > eventStart;
+    });
+  };
+
   // Helper to build slots from a start/end window
   const buildSlots = (start: number, end: number, slotMinutes: number, booked?: Set<string>) => {
     const list: AvailableSlot[] = [];
     const taken = booked ?? new Set<string>();
     for (let m = start; m + slotMinutes <= end; m += slotMinutes) {
       const label = formatTime(m);
-      if (!taken.has(label)) list.push({ time: label });
+      if (!taken.has(label) && !isGoogleBusy(m, slotMinutes)) {
+        list.push({ time: label });
+      }
     }
     return list;
   };
@@ -554,7 +594,10 @@ export async function getAvailableSlots(dateStr: string): Promise<AvailableSlot[
 
 export async function createCategory(data: InsertCategory): Promise<Category> {
   const db = await ensureDb();
-  const [created] = await db.insert(categories).values(data).returning();
+  const [result] = await db.insert(categories).values(data);
+  const insertId = result.insertId;
+  const [created] = await db.select().from(categories).where(eq(categories.id, insertId)).limit(1);
+  if (!created) throw new Error("Failed to create category");
   return created;
 }
 
@@ -571,7 +614,10 @@ export async function getCategoryBySlug(slug: string): Promise<Category | null> 
 
 export async function createTag(data: InsertTag): Promise<Tag> {
   const db = await ensureDb();
-  const [created] = await db.insert(tags).values(data).returning();
+  const [result] = await db.insert(tags).values(data);
+  const insertId = result.insertId;
+  const [created] = await db.select().from(tags).where(eq(tags.id, insertId)).limit(1);
+  if (!created) throw new Error("Failed to create tag");
   return created;
 }
 
@@ -588,13 +634,16 @@ export async function getTagBySlug(slug: string): Promise<Tag | null> {
 
 export async function createPost(data: InsertPost, tagIds?: number[]): Promise<Post> {
   const db = await ensureDb();
-  const [created] = await db.insert(posts).values(data).returning();
+  const [result] = await db.insert(posts).values(data);
+  const insertId = result.insertId;
 
   if (tagIds && tagIds.length > 0) {
-    const postTagValues = tagIds.map((tagId) => ({ postId: created.id, tagId }));
+    const postTagValues = tagIds.map((tagId) => ({ postId: insertId, tagId }));
     await db.insert(postTags).values(postTagValues);
   }
 
+  const [created] = await db.select().from(posts).where(eq(posts.id, insertId)).limit(1);
+  if (!created) throw new Error("Failed to create post");
   return created;
 }
 
@@ -634,11 +683,26 @@ export type PostWithRelations = Post & { tags: Tag[]; category: Category | null 
 export async function getPublishedPosts(
   limit: number = 10,
   offset: number = 0,
-  categoryId?: number | null
+  categoryId?: number | null,
+  tagId?: number | null
 ): Promise<PostWithRelations[]> {
   const db = await ensureDb();
   const clauses = [sql`${posts.publishedAt} IS NOT NULL`];
   if (categoryId) clauses.push(eq(posts.categoryId, categoryId));
+
+  if (tagId) {
+    const pIds = await db
+      .select({ postId: postTags.postId })
+      .from(postTags)
+      .where(eq(postTags.tagId, tagId));
+
+    if (pIds.length === 0) {
+      return [];
+    }
+
+    const ids = pIds.map((p) => p.postId);
+    clauses.push(inArray(posts.id, ids));
+  }
 
   const results = await db
     .select()
@@ -831,17 +895,18 @@ export async function pageExists(slug: string, excludeId?: number): Promise<bool
 export async function createMessage(data: InsertMessage): Promise<Message> {
   const db = await ensureDb();
   // MySQL não suporta .returning(); usamos insertId e depois buscamos o registro
-  const insertResult = await db.insert(messages).values(data);
-  const insertId = (Array.isArray(insertResult) ? (insertResult[0] as any)?.insertId : (insertResult as any)?.insertId) as number | undefined;
+  const [result] = await db.insert(messages).values(data);
+  const insertId = result.insertId;
 
-  if (insertId) {
-    const [created] = await db.select().from(messages).where(eq(messages.id, insertId)).limit(1);
-    return created;
+  const [created] = await db.select().from(messages).where(eq(messages.id, insertId)).limit(1);
+
+  if (!created) {
+     // fallback: retorna o último registro inserido (deve ser raro)
+    const [last] = await db.select().from(messages).orderBy(desc(messages.id)).limit(1);
+    return last;
   }
 
-  // fallback: retorna o último registro inserido (deve ser raro)
-  const [last] = await db.select().from(messages).orderBy(desc(messages.id)).limit(1);
-  return last;
+  return created;
 }
 
 export async function getMessages(status?: "novo" | "lido" | "respondido" | "arquivado"): Promise<Message[]> {
@@ -998,7 +1063,7 @@ export async function deleteSetting(key: string): Promise<void> {
 export async function insertEmailLog(data: {
   recipientEmail: string;
   subject: string;
-  emailType: string;
+  emailType: InsertEmailLog['emailType'];
   status: "sent" | "failed";
   sentAt?: Date | null;
 }): Promise<EmailLog> {

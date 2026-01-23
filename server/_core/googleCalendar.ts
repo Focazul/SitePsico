@@ -430,3 +430,33 @@ export async function getUpcomingEvents(maxResults: number = 10): Promise<calend
     return [];
   }
 }
+
+/**
+ * Obtém eventos do Google Calendar para um intervalo de tempo
+ */
+export async function getEventsForDateRange(startDate: Date, endDate: Date): Promise<calendar_v3.Schema$Event[]> {
+  try {
+    const enabled = await isCalendarEnabled();
+    if (!enabled) {
+      return [];
+    }
+
+    const oauth2Client = await getOAuth2Client();
+    const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
+    const config = await getCalendarConfig();
+
+    const response = await calendar.events.list({
+      calendarId: config.calendarId || 'primary',
+      timeMin: startDate.toISOString(),
+      timeMax: endDate.toISOString(),
+      singleEvents: true,
+      orderBy: 'startTime'
+    });
+
+    return response.data.items || [];
+
+  } catch (error) {
+    console.error('[Google Calendar] Erro ao listar eventos por intervalo:', error);
+    return [];
+  }
+}

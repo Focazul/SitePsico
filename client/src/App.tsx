@@ -68,6 +68,9 @@ function Router() {
           <Route path={"/admin/calendar"} component={AdminCalendar} />
           <Route path={"/admin/pages"} component={AdminPages} />
           <Route path={"/admin/settings"} component={AdminSettings} />
+          <Route path={"/admin"}>
+            {(params) => <AdminDashboard />}
+          </Route>
           <Route path={"/404"} component={NotFound} />
           {/* Final fallback route */}
           <Route component={NotFound} />
