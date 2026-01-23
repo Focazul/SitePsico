@@ -29,10 +29,15 @@ async function seed() {
     });
 
     // Verificar se admin já existe
-    const [rows] = await connection.execute('SELECT id FROM users WHERE email = ?', [adminEmail]);
+    const [rows] = await connection.execute('SELECT id, openId FROM users WHERE email = ?', [adminEmail]);
 
     if ((rows as any[]).length > 0) {
       console.log('✅ Admin já existe no banco de dados');
+      const user = (rows as any[])[0];
+      if (!user.openId) {
+        console.log('🔄 Atualizando openId do admin...');
+        await connection.execute('UPDATE users SET openId = ? WHERE id = ?', [`user_${user.id}`, user.id]);
+      }
       await connection.end();
       return;
     }
@@ -41,11 +46,17 @@ async function seed() {
     const hashedPassword = hashPassword(adminPassword);
 
     // Inserir admin
-    await connection.execute(
+    const [result] = await connection.execute(
       `INSERT INTO users (email, password, name, createdAt, updatedAt) 
        VALUES (?, ?, ?, NOW(), NOW())`,
       [adminEmail, hashedPassword, 'Psicólogo']
     );
+
+    // @ts-ignore
+    const insertId = result.insertId;
+    if (insertId) {
+      await connection.execute('UPDATE users SET openId = ? WHERE id = ?', [`user_${insertId}`, insertId]);
+    }
 
     console.log('✅ Admin criado com sucesso!');
     console.log(`📧 Email: ${adminEmail}`);

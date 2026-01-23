@@ -1140,3 +1140,8 @@ export async function verifyPasswordResetToken(token: string): Promise<number | 
   
   return user[0].id;
 }
+
+export async function updateUserOpenId(userId: number, openId: string): Promise<void> {
+  const db = await ensureDb();
+  await db.update(users).set({ openId }).where(eq(users.id, userId));
+}

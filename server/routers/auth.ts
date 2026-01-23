@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { getUserByEmail, changeUserPassword, setPasswordResetToken, verifyPasswordResetToken } from "../db";
+import { getUserByEmail, changeUserPassword, setPasswordResetToken, verifyPasswordResetToken, updateUserOpenId } from "../db";
 import { users } from "../../drizzle/schema";
 import { hashPassword, verifyPassword, generateToken } from "../_core/auth";
 import { publicProcedure, protectedProcedure, adminProcedure, router } from "../_core/trpc";
@@ -33,12 +33,19 @@ export const authRouter = router({
     .mutation(async ({ input, ctx }) => {
       const user = await getUserByEmail(input.email);
 
-      if (!user || !verifyPassword(input.password, user.password)) {
+      if (!user || !user.password || !verifyPassword(input.password, user.password)) {
         throw new Error("Email ou senha inválidos");
       }
 
+      // Ensure openId is set correctly for local users
+      const expectedOpenId = `user_${user.id}`;
+      if (user.openId !== expectedOpenId) {
+        await updateUserOpenId(user.id, expectedOpenId);
+        user.openId = expectedOpenId;
+      }
+
       // Create session token
-      const sessionToken = await sdk.createSessionToken(`user_${user.id}`, {
+      const sessionToken = await sdk.createSessionToken(expectedOpenId, {
         name: user.name || "",
         expiresInMs: ONE_YEAR_MS,
       });

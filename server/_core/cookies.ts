@@ -39,10 +39,17 @@ export function getSessionCookieOptions(
   //       ? hostname
   //       : undefined;
 
+  const isProduction = process.env.NODE_ENV === "production";
+
+  // In production with SameSite=None, Secure must be true.
+  // We force it in production to ensure cross-origin cookies work.
+  // In dev, we respect the request protocol to allow http://localhost.
+  const secure = isProduction || isSecureRequest(req);
+
   return {
     httpOnly: true,
     path: "/",
-    sameSite: "none",
-    secure: isSecureRequest(req),
+    sameSite: "none", // Required for cross-site (Vercel frontend -> Railway backend)
+    secure: secure,
   };
 }
