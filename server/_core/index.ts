@@ -249,9 +249,17 @@ async function startServer() {
   app.use("/api", (err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
     console.error("[API Error]", err);
     if (!res.headersSent) {
+      // Return TRPC-compliant error envelope
       res.status(500).json({
-        error: "Internal Server Error",
-        message: err.message || "Unknown error"
+        error: {
+          message: err.message || "Internal Server Error",
+          code: -32603, // INTERNAL_SERVER_ERROR
+          data: {
+            httpStatus: 500,
+            code: "INTERNAL_SERVER_ERROR",
+            path: req.path
+          }
+        }
       });
     }
   });
