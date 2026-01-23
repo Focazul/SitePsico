@@ -1,27 +1,32 @@
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import sync_playwright, expect
 
-def verify_blog():
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        page = browser.new_page()
+def run(playwright):
+    browser = playwright.chromium.launch(headless=True)
+    context = browser.new_context()
+    page = context.new_page()
 
-        # Go to blog
-        print("Navigating to /blog...")
-        page.goto("http://localhost:5173/blog")
+    # Port is 3001 as per server log
+    url = "http://localhost:3001/blog"
+    print(f"Navigating to {url}")
+    try:
+        page.goto(url)
 
-        # Wait for posts to load (if any)
-        # Check for "Blog" title
-        try:
-            page.wait_for_selector("h1:text('Blog')", timeout=10000)
-            print("Blog title found.")
-        except:
-            print("Blog title NOT found.")
+        # Wait for network idle to ensure assets are loaded
+        page.wait_for_load_state("networkidle")
 
-        # Take screenshot
-        print("Taking screenshot...")
-        page.screenshot(path="verification/blog.png", full_page=True)
+        # Take a screenshot
+        page.screenshot(path="verification/blog_page.png")
+        print("Screenshot saved to verification/blog_page.png")
 
+        # Check title
+        title = page.title()
+        print(f"Page title: {title}")
+
+    except Exception as e:
+        print(f"Error: {e}")
+        page.screenshot(path="verification/error.png")
+    finally:
         browser.close()
 
-if __name__ == "__main__":
-    verify_blog()
+with sync_playwright() as playwright:
+    run(playwright)
