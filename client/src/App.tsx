@@ -24,6 +24,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import FloatingWhatsApp from "./components/FloatingWhatsApp";
 import CookieConsent from "./components/CookieConsent";
 import SkipToContent from "./components/SkipToContent";
+import BackgroundBlobs from "./components/BackgroundBlobs";
 import { ManusDialog } from "./components/ManusDialog";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { QuickBookingProvider, useQuickBooking } from "./contexts/QuickBookingContext";
@@ -93,6 +94,7 @@ function App() {
       >
         <QuickBookingProvider>
           <TooltipProvider>
+            <BackgroundBlobs />
             <SkipToContent />
             <RouteProgressBar />
             <Toaster />
