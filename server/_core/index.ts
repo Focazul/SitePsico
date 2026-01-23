@@ -186,40 +186,40 @@ async function startServer() {
       // Seed data
       const settingsData = [
         // Informações do Psicólogo
-        { key: 'psychologist_name', value: 'Dr. [Nome do Psicólogo]', type: 'string', description: 'Nome completo do psicólogo' },
-        { key: 'psychologist_crp', value: 'CRP 06/123456', type: 'string', description: 'Número do CRP' },
-        { key: 'psychologist_phone', value: '(11) 99999-9999', type: 'string', description: 'Telefone para contato' },
-        { key: 'psychologist_email', value: 'contato@psicologo.com.br', type: 'string', description: 'Email profissional' },
+        { key: 'psychologist_name', value: 'Dr. [Nome do Psicólogo]', type: 'string' as const, description: 'Nome completo do psicólogo' },
+        { key: 'psychologist_crp', value: 'CRP 06/123456', type: 'string' as const, description: 'Número do CRP' },
+        { key: 'psychologist_phone', value: '(11) 99999-9999', type: 'string' as const, description: 'Telefone para contato' },
+        { key: 'psychologist_email', value: 'contato@psicologo.com.br', type: 'string' as const, description: 'Email profissional' },
         
         // Endereço
-        { key: 'office_address_street', value: 'Rua Exemplo, 123', type: 'string', description: 'Endereço do consultório' },
-        { key: 'office_address_complement', value: 'Sala 45', type: 'string', description: 'Complemento' },
-        { key: 'office_address_district', value: 'Jardim Paulista', type: 'string', description: 'Bairro' },
-        { key: 'office_address_city', value: 'São Paulo', type: 'string', description: 'Cidade' },
-        { key: 'office_address_state', value: 'SP', type: 'string', description: 'Estado' },
-        { key: 'office_address_zip', value: '01310-100', type: 'string', description: 'CEP' },
+        { key: 'office_address_street', value: 'Rua Exemplo, 123', type: 'string' as const, description: 'Endereço do consultório' },
+        { key: 'office_address_complement', value: 'Sala 45', type: 'string' as const, description: 'Complemento' },
+        { key: 'office_address_district', value: 'Jardim Paulista', type: 'string' as const, description: 'Bairro' },
+        { key: 'office_address_city', value: 'São Paulo', type: 'string' as const, description: 'Cidade' },
+        { key: 'office_address_state', value: 'SP', type: 'string' as const, description: 'Estado' },
+        { key: 'office_address_zip', value: '01310-100', type: 'string' as const, description: 'CEP' },
         
         // Mapa
-        { key: 'map_latitude', value: '-23.550520', type: 'string', description: 'Latitude do consultório' },
-        { key: 'map_longitude', value: '-46.633308', type: 'string', description: 'Longitude do consultório' },
-        { key: 'map_zoom', value: '15', type: 'number', description: 'Zoom do mapa' },
-        { key: 'map_enabled', value: 'true', type: 'boolean', description: 'Exibir mapa no site' },
+        { key: 'map_latitude', value: '-23.550520', type: 'string' as const, description: 'Latitude do consultório' },
+        { key: 'map_longitude', value: '-46.633308', type: 'string' as const, description: 'Longitude do consultório' },
+        { key: 'map_zoom', value: '15', type: 'number' as const, description: 'Zoom do mapa' },
+        { key: 'map_enabled', value: 'true', type: 'boolean' as const, description: 'Exibir mapa no site' },
         
         // Redes Sociais
-        { key: 'social_whatsapp', value: '5511999999999', type: 'string', description: 'WhatsApp com DDI e DDD' },
-        { key: 'whatsapp_enabled', value: 'true', type: 'boolean', description: 'Exibir botão WhatsApp' },
-        { key: 'whatsapp_default_message', value: 'Olá! Gostaria de saber mais sobre os atendimentos.', type: 'string', description: 'Mensagem padrão' },
+        { key: 'social_whatsapp', value: '5511999999999', type: 'string' as const, description: 'WhatsApp com DDI e DDD' },
+        { key: 'whatsapp_enabled', value: 'true', type: 'boolean' as const, description: 'Exibir botão WhatsApp' },
+        { key: 'whatsapp_default_message', value: 'Olá! Gostaria de saber mais sobre os atendimentos.', type: 'string' as const, description: 'Mensagem padrão' },
         
         // Valores e Horários
-        { key: 'session_price_presential', value: 'R$ 200,00', type: 'string', description: 'Valor sessão presencial' },
-        { key: 'session_price_online', value: 'R$ 180,00', type: 'string', description: 'Valor sessão online' },
-        { key: 'session_duration', value: '60', type: 'number', description: 'Duração em minutos' },
-        { key: 'office_hours_weekdays', value: 'Segunda a Sexta: 8h às 18h', type: 'string', description: 'Horários dias úteis' },
+        { key: 'session_price_presential', value: 'R$ 200,00', type: 'string' as const, description: 'Valor sessão presencial' },
+        { key: 'session_price_online', value: 'R$ 180,00', type: 'string' as const, description: 'Valor sessão online' },
+        { key: 'session_duration', value: '60', type: 'number' as const, description: 'Duração em minutos' },
+        { key: 'office_hours_weekdays', value: 'Segunda a Sexta: 8h às 18h', type: 'string' as const, description: 'Horários dias úteis' },
         
         // Features
-        { key: 'feature_online_booking', value: 'true', type: 'boolean', description: 'Agendamento online' },
-        { key: 'feature_blog_comments', value: 'false', type: 'boolean', description: 'Comentários no blog' },
-        { key: 'google_analytics_enabled', value: 'false', type: 'boolean', description: 'Google Analytics' },
+        { key: 'feature_online_booking', value: 'true', type: 'boolean' as const, description: 'Agendamento online' },
+        { key: 'feature_blog_comments', value: 'false', type: 'boolean' as const, description: 'Comentários no blog' },
+        { key: 'google_analytics_enabled', value: 'false', type: 'boolean' as const, description: 'Google Analytics' },
       ];
 
       await db.insert(settings).values(settingsData);
@@ -246,7 +246,6 @@ async function startServer() {
     })
   );
 
- fix-blog-calendar-ci-14526180216525658684
   // Global error handler for API routes to ensure JSON response
   app.use("/api", (err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
     console.error("[API Error]", err);
@@ -264,24 +263,11 @@ async function startServer() {
         }
       });
     }
-
-  // Global Error Handler for API Routes
-  // This prevents HTML error pages (like 404 or 500) from being returned to JSON clients
-  app.use("/api/*", (err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-    console.error("[API Error]", err);
-    if (res.headersSent) {
-      return next(err);
-    }
-    res.status(err.status || 500).json({
-      message: err.message || "Internal Server Error",
-      code: err.code || "INTERNAL_SERVER_ERROR"
-    });
   });
 
   // 404 Handler for API Routes (must be after all API routes but before frontend)
   app.all("/api/*", (req, res) => {
     res.status(404).json({ message: "API endpoint not found" });
-master
   });
 
   // development mode uses Vite, production mode uses static files

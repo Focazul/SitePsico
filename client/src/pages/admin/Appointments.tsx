@@ -17,12 +17,12 @@ interface Appointment {
   clientName: string;
   clientEmail: string;
   clientPhone: string;
-  appointmentDate: string;
+  appointmentDate: string | Date;
   appointmentTime: string;
   modality: AppointmentType;
   status: AppointmentStatus;
-  notes?: string;
-  createdAt?: string;
+  notes?: string | null;
+  createdAt?: string | Date;
 }
 
 const statusConfig: Record<AppointmentStatus, { label: string; color: string; bgColor: string }> = {
@@ -79,7 +79,7 @@ export default function Appointments() {
   const filteredAppointments = useMemo(() => {
     return displayAppointments.filter((apt) => {
       if (selectedStatus !== "all" && apt.status !== selectedStatus) return false;
-      if (selectedType !== "all" && apt.type !== selectedType) return false;
+      if (selectedType !== "all" && apt.modality !== selectedType) return false;
       return true;
     });
   }, [displayAppointments, selectedStatus, selectedType]);
@@ -87,15 +87,25 @@ export default function Appointments() {
   // Agendamentos do mês selecionado
   const monthAppointments = useMemo(() => {
     const monthStr = currentDate.toISOString().slice(0, 7); // "2025-12"
-    return filteredAppointments.filter((apt) => apt.appointmentDate.startsWith(monthStr));
+    return filteredAppointments.filter((apt) => {
+        // Ensure we handle both Date objects (from superjson) and strings (fallback)
+        const dateStr = apt.appointmentDate instanceof Date
+            ? apt.appointmentDate.toISOString()
+            : String(apt.appointmentDate);
+        return dateStr.startsWith(monthStr);
+    });
   }, [filteredAppointments, currentDate]);
 
   // Agrupar agendamentos por data (para view de calendário)
   const appointmentsByDate = useMemo(() => {
     const grouped: Record<string, Appointment[]> = {};
     monthAppointments.forEach((apt) => {
-      if (!grouped[apt.appointmentDate]) grouped[apt.appointmentDate] = [];
-      grouped[apt.appointmentDate].push(apt);
+      const dateKey = apt.appointmentDate instanceof Date
+        ? apt.appointmentDate.toISOString().slice(0, 10)
+        : String(apt.appointmentDate).slice(0, 10);
+
+      if (!grouped[dateKey]) grouped[dateKey] = [];
+      grouped[dateKey].push(apt);
     });
     return grouped;
   }, [monthAppointments]);
@@ -111,7 +121,9 @@ export default function Appointments() {
       const aptDate = new Date(apt.appointmentDate);
       return aptDate >= today && aptDate <= nextWeek;
     }).sort((a, b) => {
-      const dateCompare = a.appointmentDate.localeCompare(b.appointmentDate);
+      const dateA = new Date(a.appointmentDate);
+      const dateB = new Date(b.appointmentDate);
+      const dateCompare = dateA.getTime() - dateB.getTime();
       if (dateCompare !== 0) return dateCompare;
       return a.appointmentTime.localeCompare(b.appointmentTime);
     }).slice(0, 5);
