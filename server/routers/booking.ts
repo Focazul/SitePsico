@@ -88,7 +88,6 @@ export const bookingRouter = router({
     }))
     .mutation(async ({ input }) => {
       const { getAppointmentById, updateAppointmentStatus } = await import("../db");
-      const { sendConfirmationEmail } = await import("../_core/email");
       
       // Buscar agendamento atual
       const appointment = await getAppointmentById(input.id);
@@ -101,8 +100,9 @@ export const bookingRouter = router({
 
       // Se confirmado, enviar email de confirmação (fire-and-forget)
       if (input.status === "confirmado") {
-        import("../_core/email").then(({ sendConfirmationEmail }) => {
-          void sendConfirmationEmail(appointment).catch(console.error);
+        import("../_core/notification").then(({ sendAppointmentEmails }) => {
+          // Reutiliza a lógica de notificação que busca config e formata dados
+          void sendAppointmentEmails(appointment).catch(console.error);
         }).catch((error) => {
           console.warn("[Booking] Failed to send confirmation email", error);
         });
