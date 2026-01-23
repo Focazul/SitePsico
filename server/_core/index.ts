@@ -245,6 +245,17 @@ async function startServer() {
     })
   );
 
+  // Global error handler for API routes to ensure JSON response
+  app.use("/api", (err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+    console.error("[API Error]", err);
+    if (!res.headersSent) {
+      res.status(500).json({
+        error: "Internal Server Error",
+        message: err.message || "Unknown error"
+      });
+    }
+  });
+
   // development mode uses Vite, production mode uses static files
   if (process.env.NODE_ENV === "development") {
     await setupVite(app, server);

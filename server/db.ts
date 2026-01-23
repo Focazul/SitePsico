@@ -76,7 +76,7 @@ export async function getUserSchemaStatus(): Promise<Record<string, boolean>> {
     throw new Error("Database connection not available");
   }
 
-  const [rows] = await _connection.query<{ COLUMN_NAME: string }[]>(
+  const [rows] = await _connection.query<any[]>(
     "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'users'"
   );
   const cols = new Set(rows.map(r => r.COLUMN_NAME));
