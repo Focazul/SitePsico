@@ -687,7 +687,10 @@ export async function getPublishedPosts(
   tagId?: number | null
 ): Promise<PostWithRelations[]> {
   const db = await ensureDb();
-  const clauses = [sql`${posts.publishedAt} IS NOT NULL`];
+  const clauses = [
+    sql`${posts.publishedAt} IS NOT NULL`,
+    sql`${posts.publishedAt} <= NOW()`
+  ];
   if (categoryId) clauses.push(eq(posts.categoryId, categoryId));
 
   if (tagId) {
@@ -739,6 +742,7 @@ export async function searchPosts(query: string, limit: number = 10, offset: num
     .where(
       and(
         sql`${posts.publishedAt} IS NOT NULL`,
+        sql`${posts.publishedAt} <= NOW()`,
         sql`(${posts.title} LIKE ${searchPattern} OR ${posts.excerpt} LIKE ${searchPattern} OR ${posts.content} LIKE ${searchPattern})`
       )
     )

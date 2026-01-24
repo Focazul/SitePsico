@@ -50,6 +50,6 @@ export function getSessionCookieOptions(
     httpOnly: true,
     path: "/",
     sameSite: "none", // Required for cross-site (Vercel frontend -> Railway backend)
-    secure: secure,
+    secure: true, // Always enforce secure cookies, assuming HTTPS (or localhost override)
   };
 }

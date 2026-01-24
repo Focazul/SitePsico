@@ -70,8 +70,6 @@ async function startServer() {
       ok: true, 
       service: "backend", 
       time: Date.now(),
-      devSkipAuth: process.env.DEV_SKIP_AUTH === 'true',
-      csrfBypass: process.env.DEV_SKIP_AUTH === 'true'
     });
   });
 
@@ -232,10 +230,7 @@ async function startServer() {
   });
 
   // CSRF protection specifically for tRPC mutations (must be BEFORE tRPC handler)
-   // DISABLED in dev mode (DEV_SKIP_AUTH is enabled)
-   if (process.env.DEV_SKIP_AUTH !== 'true') {
-     app.use("/api/trpc", csrfProtectionMiddleware);
-   }
+  app.use("/api/trpc", csrfProtectionMiddleware);
 
   // tRPC API
   app.use(
