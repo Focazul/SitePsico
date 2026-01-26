@@ -262,7 +262,13 @@ async function startServer() {
 
   // 404 Handler for API Routes (must be after all API routes but before frontend)
   app.all("/api/*", (req, res) => {
-    res.status(404).json({ message: "API endpoint not found" });
+    res.status(404).json({
+      error: {
+        message: "API endpoint not found",
+        code: -32004, // NOT_FOUND
+        data: { httpStatus: 404, code: "NOT_FOUND", path: req.path }
+      }
+    });
   });
 
   // development mode uses Vite, production mode uses static files
