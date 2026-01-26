@@ -31,18 +31,7 @@ export const adminProcedure = t.procedure.use(
   t.middleware(async opts => {
     const { ctx, next } = opts;
 
-    // DEV MODE: Skip authentication if DEV_SKIP_AUTH is enabled
-    if (process.env.DEV_SKIP_AUTH === 'true') {
-      console.warn("[DEV MODE] ⚠️  Admin procedure bypassing authentication!");
-      return next({
-        ctx: {
-          ...ctx,
-          user: ctx.user || { id: 1, email: "dev@local.dev", role: "admin" } as any,
-        },
-      });
-    }
-
-    // PRODUCTION: Require authentication
+    // Require authentication and admin role
     if (!ctx.user || ctx.user.role !== 'admin') {
       throw new TRPCError({ code: "FORBIDDEN", message: NOT_ADMIN_ERR_MSG });
     }
