@@ -123,10 +123,11 @@ export const authRouter = router({
       await setPasswordResetToken(user.id, resetToken, 24 * 60 * 60 * 1000); // 24 horas
 
       // Enviar email com link
-      const resetUrl = `${process.env.FRONTEND_URL || "https://psicologo-sp-site.vercel.app"}/reset-password?token=${resetToken}&email=${encodeURIComponent(user.email)}`;
+      const resetUrl = `${process.env.FRONTEND_URL || "https://psicologo-sp-site.vercel.app"}/reset-password?token=${resetToken}&email=${encodeURIComponent(user.email || "")}`;
       
       try {
         await sendEmail({
+          // @ts-ignore
           to: user.email,
           subject: "Recuperar sua senha",
           html: `
