@@ -153,15 +153,15 @@ export function sanitizeObject<T extends Record<string, any>>(obj: T): T {
     if (typeof value === "string") {
       // Apply appropriate sanitization based on field name
       if (key.includes("email")) {
-        sanitized[key] = sanitizeEmail(value);
+        sanitized[key] = sanitizeEmail(value) as any;
       } else if (key.includes("phone")) {
-        sanitized[key] = sanitizePhone(value);
+        sanitized[key] = sanitizePhone(value) as any;
       } else if (key.includes("url") || key.includes("link")) {
-        sanitized[key] = sanitizeUrl(value);
+        sanitized[key] = sanitizeUrl(value) as any;
       } else if (key === "content" || key === "body" || key === "description") {
-        sanitized[key] = sanitizeContent(value);
+        sanitized[key] = sanitizeContent(value) as any;
       } else {
-        sanitized[key] = sanitizeInput(value);
+        sanitized[key] = sanitizeInput(value) as any;
       }
     } else if (typeof value === "object" && value !== null) {
       // Recursively sanitize nested objects

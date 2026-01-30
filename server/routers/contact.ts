@@ -32,7 +32,7 @@ export const contactRouter = router({
       const sanitized = {
         name: sanitizeInput(input.name),
         email: sanitizeEmail(input.email),
-        phone: input.phone ? sanitizePhone(input.phone) : null,
+        phone: input.phone ? sanitizePhone(input.phone) : undefined,
         subject: sanitizeInput(input.subject),
         content: sanitizeContent(input.content),
       };

@@ -24,7 +24,7 @@ import { LogOut, PanelLeft, ChevronDown } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
-import { adminMenuConfig } from "@/lib/adminMenuConfig";
+import { adminMenuConfig, findActiveMenuItem } from "@/lib/adminMenuConfig";
 
 const menuItems = adminMenuConfig;
 
@@ -87,7 +87,7 @@ function DashboardLayoutContent({
   const isCollapsed = state === "collapsed";
   const [isResizing, setIsResizing] = useState(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
-  const activeMenuItem = menuItems.find(item => item.path === location);
+  const activeMenuItem = findActiveMenuItem(location);
   const isMobile = useIsMobile();
 
   useEffect(() => {

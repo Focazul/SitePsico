@@ -27,7 +27,7 @@ type AppointmentFormData = z.infer<typeof appointmentSchema>;
 
 export default function AppointmentForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const createAppointment = trpc.appointments.create.useMutation();
+  const createAppointment = trpc.booking.create.useMutation();
 
   const {
     register,

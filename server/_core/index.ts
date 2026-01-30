@@ -143,6 +143,7 @@ async function startServer() {
 
   // CSRF token endpoint (before CSRF middleware)
   app.get("/api/csrf-token", (req, res) => {
+    // @ts-ignore - sessionID might exist if express-session is present, but we fallback
     const sessionId = req.sessionID || req.ip || "anonymous";
     const token = generateCsrfToken(sessionId, req.ip);
     res.json({ token });

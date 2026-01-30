@@ -42,7 +42,7 @@ export default function Contact() {
     message: '',
     captcha: false,
   });
-  const [errors, setErrors] = useState<Partial<FormState>>({});
+  const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success'>('idle');
 
   const isDisabled = useMemo(() => {
@@ -50,7 +50,7 @@ export default function Contact() {
   }, [status, form.captcha]);
 
   const validate = () => {
-    const newErrors: Partial<FormState> = {};
+    const newErrors: Partial<Record<keyof FormState, string>> = {};
     if (!form.name.trim()) newErrors.name = 'Informe seu nome completo.';
     if (!form.email.trim()) newErrors.email = 'Informe um e-mail válido.';
     if (form.email && !/.+@.+\..+/.test(form.email)) newErrors.email = 'Formato de e-mail inválido.';
@@ -80,7 +80,7 @@ export default function Contact() {
     setStatus('submitting');
 
     // Track form submission
-    trackFormSubmission('contact', true);
+    trackFormSubmission('contact_form', 'contact');
 
       // Enviar para o backend
       await sendMessageMutation.mutateAsync({

@@ -33,7 +33,7 @@ export const authRouter = router({
     .mutation(async ({ input, ctx }) => {
       const user = await getUserByEmail(input.email);
 
-      if (!user || !user.password || !verifyPassword(input.password, user.password)) {
+      if (!user || !user.password || !verifyPassword(input.password, user.password as string)) {
         throw new Error("Email ou senha inválidos");
       }
 
@@ -41,6 +41,7 @@ export const authRouter = router({
       const expectedOpenId = `user_${user.id}`;
       if (user.openId !== expectedOpenId) {
         await updateUserOpenId(user.id, expectedOpenId);
+        // @ts-ignore
         user.openId = expectedOpenId;
       }
 

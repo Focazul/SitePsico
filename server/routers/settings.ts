@@ -95,7 +95,7 @@ export const settingsRouter = router({
       const gaMeasurementId = all.find((s) => s.key === "google_analytics_measurement_id");
 
       return {
-        enabled: gaEnabled?.value === "true" || gaEnabled?.value === true,
+        enabled: gaEnabled?.value === "true",
         measurement_id: gaMeasurementId?.value || "",
       };
     } catch (err) {
