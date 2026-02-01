@@ -116,7 +116,6 @@
     "helmet": "^8.1.0",
     "lighthouse": "^13.0.1",
     "playwright": "^1.57.0",
-    "pnpm": "^10.15.1",
     "postcss": "^8.4.47",
     "prettier": "^3.6.2",
     "sanitize-html": "^2.17.0",
@@ -127,10 +126,5 @@
     "vite": "^5.4.0",
     "vite-plugin-manus-runtime": "^0.0.57",
     "vitest": "^2.1.4"
-  },
-  "pnpm": {
-    "overrides": {
-      "tailwindcss>nanoid": "3.3.7"
-    }
   }
 }
