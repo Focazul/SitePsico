@@ -3,11 +3,14 @@
  */
 
 import 'dotenv/config';
-import mysql from 'mysql2/promise';
+import { drizzle } from 'drizzle-orm/postgres-js';
+import postgres from 'postgres';
+import { users } from '../drizzle/schema';
 import { scryptSync, randomBytes } from 'crypto';
 
-const adminEmail = process.env.ADMIN_EMAIL || 'psicólogo@example.com';
-const adminPassword = process.env.ADMIN_PASSWORD || 'Admin@12345';
+const adminEmail = process.env.ADMIN_EMAIL || 'marcelo';
+const adminPassword = process.env.ADMIN_PASSWORD || '1234';
+const adminName = process.env.ADMIN_NAME || 'Marcelo';
 
 // Hash da senha usando scrypt
 function hashPassword(password: string): string {
@@ -21,24 +24,30 @@ async function seed() {
     console.log('🌱 Iniciando seed do admin...');
     console.log(`📧 Email: ${adminEmail}`);
 
-    const connection = await mysql.createConnection({
-      host: process.env.DB_HOST || 'localhost',
-      user: process.env.DB_USER || 'root',
-      password: process.env.DB_PASSWORD || '',
-      database: process.env.DB_NAME || 'psicólogo_sp',
-    });
+    const sql = postgres(process.env.DATABASE_URL!);
+    const db = drizzle(sql);
 
     // Verificar se admin já existe
-    const [rows] = await connection.execute('SELECT id, openId FROM users WHERE email = ?', [adminEmail]);
+    const existingUser = await db
+      .select()
+      .from(users)
+      .where(
+        // @ts-ignore
+        users.email === adminEmail
+      )
+      .limit(1);
 
-    if ((rows as any[]).length > 0) {
+    if (existingUser.length > 0) {
       console.log('✅ Admin já existe no banco de dados');
-      const user = (rows as any[])[0];
+      const user = existingUser[0];
       if (!user.openId) {
         console.log('🔄 Atualizando openId do admin...');
-        await connection.execute('UPDATE users SET openId = ? WHERE id = ?', [`user_${user.id}`, user.id]);
+        await db
+          .update(users)
+          .set({ openId: `user_${user.id}` })
+          .where(users.id === user.id!);
       }
-      await connection.end();
+      await sql.end();
       return;
     }
 
@@ -46,25 +55,26 @@ async function seed() {
     const hashedPassword = hashPassword(adminPassword);
 
     // Inserir admin
-    const [result] = await connection.execute(
-      `INSERT INTO users (email, password, name, createdAt, updatedAt) 
-       VALUES (?, ?, ?, NOW(), NOW())`,
-      [adminEmail, hashedPassword, 'Psicólogo']
-    );
-
-    // @ts-ignore
-    const insertId = result.insertId;
-    if (insertId) {
-      await connection.execute('UPDATE users SET openId = ? WHERE id = ?', [`user_${insertId}`, insertId]);
-    }
+    const result = await db
+      .insert(users)
+      .values({
+        email: adminEmail,
+        password: hashedPassword,
+        name: adminName,
+        openId: `user_${Date.now()}`,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .returning();
 
     console.log('✅ Admin criado com sucesso!');
     console.log(`📧 Email: ${adminEmail}`);
     console.log(`🔑 Senha: ${adminPassword}`);
+    console.log(`👤 Nome: ${adminName}`);
     console.log('\n⚠️  IMPORTANTE: Mude a senha após o primeiro login!');
-    console.log('💡 Dica: Use variáveis de ambiente ADMIN_EMAIL e ADMIN_PASSWORD');
+    console.log('💡 Dica: Use variáveis de ambiente ADMIN_EMAIL, ADMIN_PASSWORD e ADMIN_NAME');
 
-    await connection.end();
+    await sql.end();
   } catch (error) {
     console.error('❌ Erro ao criar admin:', error);
     process.exit(1);

@@ -1,26 +1,26 @@
-import { boolean, date, index, int, mysqlEnum, mysqlTable, text, time, timestamp, varchar } from "drizzle-orm/mysql-core";
+import { boolean, date, index, integer, pgEnum, pgTable, serial, text, time, timestamp, varchar } from "drizzle-orm/pg-core";
 
 /**
  * Core user table backing auth flow.
  * Extend this file with additional tables as your product grows.
  * Columns use camelCase to match both database fields and generated types.
  */
-export const users = mysqlTable(
+export const users = pgTable(
   "users",
   {
-    id: int("id").autoincrement().primaryKey(),
+    id: serial("id").primaryKey(),
     // Identidade externa (OAuth/OpenID) e login tradicional
     openId: varchar("openId", { length: 255 }).unique(),
     email: varchar("email", { length: 320 }).unique(),
     password: text("password"),
     name: varchar("name", { length: 255 }),
-    loginMethod: mysqlEnum("loginMethod", ["manus", "oauth", "password"]).default("manus"),
-    role: mysqlEnum("role", ["admin", "user"]).default("user").notNull(),
+    loginMethod: pgEnum("loginMethod", ["manus", "oauth", "password"]).default("manus"),
+    role: pgEnum("role", ["admin", "user"]).default("user").notNull(),
     lastSignedIn: timestamp("lastSignedIn"),
     resetToken: varchar("resetToken", { length: 255 }),
     resetTokenExpiry: timestamp("resetTokenExpiry"),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
-    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().notNull(),
   },
   (table) => ({
     idxOpenId: index("idx_user_openId").on(table.openId!),
@@ -35,17 +35,17 @@ export type InsertUser = typeof users.$inferInsert;
 /**
  * Agenda clínica: horários disponíveis por dia da semana.
  */
-export const availability = mysqlTable(
+export const availability = pgTable(
   "availability",
   {
-    id: int("id").autoincrement().primaryKey(),
-    dayOfWeek: int("dayOfWeek").notNull(), // 0=Domingo ... 6=Sábado
+    id: serial("id").primaryKey(),
+    dayOfWeek: integer("dayOfWeek").notNull(), // 0=Domingo ... 6=Sábado
     startTime: time("startTime").notNull(),
     endTime: time("endTime").notNull(),
-    slotDurationMinutes: int("slotDurationMinutes").default(60).notNull(),
+    slotDurationMinutes: integer("slotDurationMinutes").default(60).notNull(),
     isAvailable: boolean("isAvailable").default(true).notNull(),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
-    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().notNull(),
   },
   (table) => ({
     idxDay: index("idx_availability_day").on(table.dayOfWeek),
@@ -55,10 +55,10 @@ export const availability = mysqlTable(
 /**
  * Datas bloqueadas (feriados, indisponibilidade pontual).
  */
-export const blockedDates = mysqlTable(
+export const blockedDates = pgTable(
   "blocked_dates",
   {
-    id: int("id").autoincrement().primaryKey(),
+    id: serial("id").primaryKey(),
     date: date("date").notNull(),
     reason: varchar("reason", { length: 255 }),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -71,23 +71,23 @@ export const blockedDates = mysqlTable(
 /**
  * Agendamentos de pacientes.
  */
-export const appointments = mysqlTable(
+export const appointments = pgTable(
   "appointments",
   {
-    id: int("id").autoincrement().primaryKey(),
+    id: serial("id").primaryKey(),
     clientName: varchar("clientName", { length: 255 }).notNull(),
     clientEmail: varchar("clientEmail", { length: 320 }).notNull(),
     clientPhone: varchar("clientPhone", { length: 20 }).notNull(),
     appointmentDate: date("appointmentDate").notNull(),
     appointmentTime: time("appointmentTime").notNull(),
-    duration: int("duration").default(60).notNull(),
-    modality: mysqlEnum("modality", ["presencial", "online"]).notNull(),
+    duration: integer("duration").default(60).notNull(),
+    modality: pgEnum("modality", ["presencial", "online"]).notNull(),
     subject: text("subject"),
     notes: text("notes"),
-    status: mysqlEnum("status", ["pendente", "confirmado", "cancelado", "concluido"]).default("pendente").notNull(),
+    status: pgEnum("status", ["pendente", "confirmado", "cancelado", "concluido"]).default("pendente").notNull(),
     calendarEventId: varchar("calendarEventId", { length: 255 }), // ID do evento no Google Calendar
     createdAt: timestamp("createdAt").defaultNow().notNull(),
-    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().notNull(),
   },
   (table) => ({
     idxDateTime: index("idx_appointment_datetime").on(table.appointmentDate, table.appointmentTime),
@@ -97,15 +97,15 @@ export const appointments = mysqlTable(
 /**
  * Categorias de artigos do blog.
  */
-export const categories = mysqlTable(
+export const categories = pgTable(
   "categories",
   {
-    id: int("id").autoincrement().primaryKey(),
+    id: serial("id").primaryKey(),
     name: varchar("name", { length: 255 }).notNull().unique(),
     slug: varchar("slug", { length: 255 }).notNull().unique(),
     description: text("description"),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
-    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().notNull(),
   },
   (table) => ({
     idxSlug: index("idx_category_slug").on(table.slug),
@@ -115,10 +115,10 @@ export const categories = mysqlTable(
 /**
  * Tags para artigos do blog.
  */
-export const tags = mysqlTable(
+export const tags = pgTable(
   "tags",
   {
-    id: int("id").autoincrement().primaryKey(),
+    id: serial("id").primaryKey(),
     name: varchar("name", { length: 255 }).notNull().unique(),
     slug: varchar("slug", { length: 255 }).notNull().unique(),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -131,20 +131,20 @@ export const tags = mysqlTable(
 /**
  * Artigos do blog.
  */
-export const posts = mysqlTable(
+export const posts = pgTable(
   "posts",
   {
-    id: int("id").autoincrement().primaryKey(),
+    id: serial("id").primaryKey(),
     title: varchar("title", { length: 500 }).notNull(),
     slug: varchar("slug", { length: 500 }).notNull().unique(),
     excerpt: text("excerpt"),
     content: text("content").notNull(),
     coverImage: varchar("coverImage", { length: 500 }),
-    categoryId: int("categoryId"),
-    views: int("views").default(0).notNull(),
+    categoryId: integer("categoryId"),
+    views: integer("views").default(0).notNull(),
     publishedAt: timestamp("publishedAt"),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
-    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().notNull(),
   },
   (table) => ({
     idxSlug: index("idx_post_slug").on(table.slug),
@@ -155,19 +155,19 @@ export const posts = mysqlTable(
 /**
  * Páginas estáticas do site (Sobre, Serviços, etc).
  */
-export const pages = mysqlTable(
+export const pages = pgTable(
   "pages",
   {
-    id: int("id").autoincrement().primaryKey(),
+    id: serial("id").primaryKey(),
     title: varchar("title", { length: 255 }).notNull(),
     slug: varchar("slug", { length: 255 }).notNull().unique(),
     content: text("content").notNull(),
     metaTitle: varchar("metaTitle", { length: 255 }),
     metaDescription: text("metaDescription"),
-    status: mysqlEnum("status", ["draft", "published"]).default("draft").notNull(),
-    order: int("order").default(0).notNull(),
+    status: pgEnum("status", ["draft", "published"]).default("draft").notNull(),
+    order: integer("order").default(0).notNull(),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
-    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().notNull(),
   },
   (table) => ({
     idxSlug: index("idx_page_slug").on(table.slug),
@@ -178,12 +178,12 @@ export const pages = mysqlTable(
 /**
  * Associação muitos-para-muitos entre posts e tags.
  */
-export const postTags = mysqlTable(
+export const postTags = pgTable(
   "post_tags",
   {
-    id: int("id").autoincrement().primaryKey(),
-    postId: int("postId").notNull(),
-    tagId: int("tagId").notNull(),
+    id: serial("id").primaryKey(),
+    postId: integer("postId").notNull(),
+    tagId: integer("tagId").notNull(),
   },
   (table) => ({
     idxPostTag: index("idx_post_tag").on(table.postId, table.tagId),
@@ -193,18 +193,18 @@ export const postTags = mysqlTable(
 /**
  * Mensagens de contato.
  */
-export const messages = mysqlTable(
+export const messages = pgTable(
   "messages",
   {
-    id: int("id").autoincrement().primaryKey(),
+    id: serial("id").primaryKey(),
     name: varchar("name", { length: 255 }).notNull(),
     email: varchar("email", { length: 320 }).notNull(),
     phone: varchar("phone", { length: 20 }),
     subject: varchar("subject", { length: 255 }).notNull(),
     content: text("content").notNull(),
-    status: mysqlEnum("status", ["novo", "lido", "respondido", "arquivado"]).default("novo").notNull(),
+    status: pgEnum("status", ["novo", "lido", "respondido", "arquivado"]).default("novo").notNull(),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
-    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().notNull(),
   },
   (table) => ({
     idxEmail: index("idx_message_email").on(table.email),
@@ -215,16 +215,16 @@ export const messages = mysqlTable(
 /**
  * Configurações do site (chave-valor).
  */
-export const settings = mysqlTable(
+export const settings = pgTable(
   "settings",
   {
-    id: int("id").autoincrement().primaryKey(),
+    id: serial("id").primaryKey(),
     key: varchar("key", { length: 255 }).notNull().unique(),
     value: text("value").notNull(),
-    type: mysqlEnum("type", ["string", "number", "boolean", "json"]).default("string").notNull(),
+    type: pgEnum("type", ["string", "number", "boolean", "json"]).default("string").notNull(),
     description: text("description"),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
-    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().notNull(),
   },
   (table) => ({
     idxKey: index("idx_setting_key").on(table.key),
@@ -234,13 +234,13 @@ export const settings = mysqlTable(
 /**
  * Log de emails enviados pelo sistema.
  */
-export const emailLogs = mysqlTable(
+export const emailLogs = pgTable(
   "email_logs",
   {
-    id: int("id").autoincrement().primaryKey(),
+    id: serial("id").primaryKey(),
     recipientEmail: varchar("recipientEmail", { length: 320 }).notNull(),
     subject: varchar("subject", { length: 500 }).notNull(),
-    emailType: mysqlEnum("emailType", [
+    emailType: pgEnum("emailType", [
       "appointmentConfirmation",
       "appointmentReminder",
       "newContactNotification",
@@ -248,7 +248,7 @@ export const emailLogs = mysqlTable(
       "passwordReset",
       "custom"
     ]).notNull(),
-    status: mysqlEnum("status", ["sent", "failed"]).notNull(),
+    status: pgEnum("status", ["sent", "failed"]).notNull(),
     sentAt: timestamp("sentAt"),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
   },
