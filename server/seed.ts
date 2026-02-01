@@ -8,8 +8,8 @@ import postgres from 'postgres';
 import { users } from '../drizzle/schema';
 import { scryptSync, randomBytes } from 'crypto';
 
-const adminEmail = process.env.ADMIN_EMAIL || 'marcelo';
-const adminPassword = process.env.ADMIN_PASSWORD || '1234';
+const adminEmail = process.env.ADMIN_EMAIL || 'marcelopsico07@gmail.com';
+const adminPassword = process.env.ADMIN_PASSWORD || '12345';
 const adminName = process.env.ADMIN_NAME || 'Marcelo';
 
 // Hash da senha usando scrypt

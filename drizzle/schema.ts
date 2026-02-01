@@ -1,4 +1,4 @@
-import { boolean, date, index, integer, pgEnum, pgTable, serial, text, time, timestamp, varchar } from "drizzle-orm/pg-core";
+import { boolean, date, index, integer, pgTable, serial, text, time, timestamp, varchar } from "drizzle-orm/pg-core";
 
 /**
  * Core user table backing auth flow.
@@ -14,8 +14,8 @@ export const users = pgTable(
     email: varchar("email", { length: 320 }).unique(),
     password: text("password"),
     name: varchar("name", { length: 255 }),
-    loginMethod: pgEnum("loginMethod", ["manus", "oauth", "password"]).default("manus"),
-    role: pgEnum("role", ["admin", "user"]).default("user").notNull(),
+    loginMethod: varchar("loginMethod", { length: 20 }).default("manus").notNull(),
+    role: varchar("role", { length: 20 }).default("user").notNull(),
     lastSignedIn: timestamp("lastSignedIn"),
     resetToken: varchar("resetToken", { length: 255 }),
     resetTokenExpiry: timestamp("resetTokenExpiry"),
@@ -81,10 +81,10 @@ export const appointments = pgTable(
     appointmentDate: date("appointmentDate").notNull(),
     appointmentTime: time("appointmentTime").notNull(),
     duration: integer("duration").default(60).notNull(),
-    modality: pgEnum("modality", ["presencial", "online"]).notNull(),
+    modality: varchar("modality", { length: 20 }).notNull(),
     subject: text("subject"),
     notes: text("notes"),
-    status: pgEnum("status", ["pendente", "confirmado", "cancelado", "concluido"]).default("pendente").notNull(),
+    status: varchar("status", { length: 20 }).default("pendente").notNull(),
     calendarEventId: varchar("calendarEventId", { length: 255 }), // ID do evento no Google Calendar
     createdAt: timestamp("createdAt").defaultNow().notNull(),
     updatedAt: timestamp("updatedAt").defaultNow().notNull(),
@@ -164,7 +164,7 @@ export const pages = pgTable(
     content: text("content").notNull(),
     metaTitle: varchar("metaTitle", { length: 255 }),
     metaDescription: text("metaDescription"),
-    status: pgEnum("status", ["draft", "published"]).default("draft").notNull(),
+    status: varchar("status", { length: 20 }).default("draft").notNull(),
     order: integer("order").default(0).notNull(),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
     updatedAt: timestamp("updatedAt").defaultNow().notNull(),
@@ -202,7 +202,7 @@ export const messages = pgTable(
     phone: varchar("phone", { length: 20 }),
     subject: varchar("subject", { length: 255 }).notNull(),
     content: text("content").notNull(),
-    status: pgEnum("status", ["novo", "lido", "respondido", "arquivado"]).default("novo").notNull(),
+    status: varchar("status", { length: 20 }).default("novo").notNull(),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
     updatedAt: timestamp("updatedAt").defaultNow().notNull(),
   },
@@ -221,7 +221,7 @@ export const settings = pgTable(
     id: serial("id").primaryKey(),
     key: varchar("key", { length: 255 }).notNull().unique(),
     value: text("value").notNull(),
-    type: pgEnum("type", ["string", "number", "boolean", "json"]).default("string").notNull(),
+    type: varchar("type", { length: 20 }).default("string").notNull(),
     description: text("description"),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
     updatedAt: timestamp("updatedAt").defaultNow().notNull(),
@@ -240,15 +240,8 @@ export const emailLogs = pgTable(
     id: serial("id").primaryKey(),
     recipientEmail: varchar("recipientEmail", { length: 320 }).notNull(),
     subject: varchar("subject", { length: 500 }).notNull(),
-    emailType: pgEnum("emailType", [
-      "appointmentConfirmation",
-      "appointmentReminder",
-      "newContactNotification",
-      "contactAutoReply",
-      "passwordReset",
-      "custom"
-    ]).notNull(),
-    status: pgEnum("status", ["sent", "failed"]).notNull(),
+    emailType: varchar("emailType", { length: 50 }).notNull(),
+    status: varchar("status", { length: 20 }).notNull(),
     sentAt: timestamp("sentAt"),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
   },

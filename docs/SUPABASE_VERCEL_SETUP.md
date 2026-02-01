@@ -64,7 +64,7 @@ VITE_GOOGLE_ANALYTICS_ID=seu_id
 # 1. Configure variáveis de ambiente no Vercel:
 DATABASE_URL=postgresql://postgres:YOUR_PASSWORD@db.iilroqozupvfxpfzfvtd.supabase.co:5432/postgres
 RESEND_API_KEY=seu_api_key
-ADMIN_EMAIL=marcelo
+ADMIN_EMAIL=marcelopsico07@gmail.com
 ADMIN_PASSWORD=1234
 JWT_SECRET=gere_novo_secret
 
