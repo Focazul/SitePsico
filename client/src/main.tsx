@@ -80,9 +80,9 @@ async function getCsrfToken(): Promise<string> {
 }
 
 const trpcClient = trpc.createClient({
-  transformer: superjson,
   links: [
     httpLink({
+      transformer: superjson,
       url: (() => {
         const base = getApiBaseUrl();
         return base ? `${base}/api/trpc` : "/api/trpc";

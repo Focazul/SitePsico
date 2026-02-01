@@ -11,6 +11,7 @@ import { useScrollReveal } from '@/hooks/useScrollReveal';
 import { useSiteConfig } from '@/hooks/useSiteConfig';
 import { Calendar as CalendarPicker } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Input } from '@/components/ui/input';
 import { ArrowLeft, ArrowRight, Calendar, CheckCircle2, Clock, Home, Laptop, Mail, Phone, Shield, User } from 'lucide-react';
 import { trackFormSubmission, trackAppointmentCompleted } from '@/lib/analytics';
 import { trpc } from '@/lib/trpc';
@@ -64,7 +65,7 @@ export default function Booking() {
 
   const [step, setStep] = useState(1);
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success'>('idle');
-  const [errors, setErrors] = useState<Partial<BookingState>>({});
+  const [errors, setErrors] = useState<Partial<Record<keyof BookingState, string>>>({});
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [data, setData] = useState<BookingState>({
     modality: '',
@@ -108,7 +109,7 @@ export default function Booking() {
   };
 
   const validateStep = (current: number) => {
-    const newErrors: Partial<BookingState> = {};
+    const newErrors: Partial<Record<keyof BookingState, string>> = {};
     if (current === 1 && !data.modality) newErrors.modality = 'Escolha uma modalidade.';
     if (current === 2) {
       if (!data.date) newErrors.date = 'Escolha uma data.';
@@ -136,12 +137,12 @@ export default function Booking() {
     setStatus('submitting');
     
     // Track form submission
-    trackFormSubmission('booking', true);
+    trackFormSubmission('booking_form', 'booking');
     
     setTimeout(() => {
       setStatus('success');
       // Track appointment completion (conversion event)
-      trackAppointmentCompleted(data.modality, data.date);
+      trackAppointmentCompleted(data.modality === 'Presencial' ? 'presencial' : 'online');
     }, 700);
   };
 

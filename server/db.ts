@@ -117,6 +117,7 @@ export async function upsertUser(user: InsertUser): Promise<void> {
       const value = user[field];
       if (value === undefined) return;
       const normalized = value ?? null;
+      // @ts-ignore
       values[field] = normalized;
       updateSet[field] = normalized;
     };
