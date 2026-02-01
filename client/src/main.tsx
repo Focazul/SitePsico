@@ -111,6 +111,25 @@ const trpcClient = trpc.createClient({
         
         return globalThis.fetch(input, fetchInit).then(async (response) => {
           console.log("[tRPC Client] Response status:", response.status, response.statusText);
+          console.log("[tRPC Client] Content-Type:", response.headers.get('content-type'));
+          
+          // Check if response is actually JSON before trying to parse
+          const contentType = response.headers.get('content-type');
+          const isJson = contentType?.includes('application/json');
+          
+          if (!isJson && !response.ok) {
+            const text = await response.text();
+            console.error("[tRPC Client] Non-JSON error response:", text.substring(0, 100));
+            return new Response(JSON.stringify({
+              error: {
+                message: `Server returned ${response.status}: ${text.substring(0, 50)}`,
+                code: -32000,
+              }
+            }), {
+              status: response.status,
+              headers: { 'content-type': 'application/json' }
+            });
+          }
           
           // Clone para ler o corpo sem consumir
           const clonedResponse = response.clone();

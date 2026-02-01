@@ -151,15 +151,23 @@ async function startServer() {
 
   // 6. SIMPLE HEALTH ENDPOINT FOR MONITORING (public, no CSRF needed)
   app.get("/api/health", (_req, res) => {
-    res.json({ ok: true, service: "backend", time: Date.now() });
+    try {
+      res.setHeader('Content-Type', 'application/json');
+      res.json({ ok: true, service: "backend", time: Date.now() });
+    } catch (error) {
+      console.error('[Health] Error:', error);
+      res.status(500).setHeader('Content-Type', 'application/json').send('{"ok":false}');
+    }
   });
 
   // 7. PUBLIC SCHEMA STATUS (no CSRF needed)
   app.get("/api/schema-status", async (_req, res) => {
     try {
       const status = await getUserSchemaStatus();
+      res.setHeader('Content-Type', 'application/json');
       res.json({ ok: true, status });
     } catch (error) {
+      res.setHeader('Content-Type', 'application/json');
       res.status(500).json({ ok: false, error: String(error) });
     }
   });
@@ -232,10 +240,16 @@ async function startServer() {
 
   // 9. CSRF TOKEN ENDPOINT (public, no protection needed)
   app.get("/api/csrf-token", (req, res) => {
-    // @ts-ignore - sessionID might exist if express-session is present, but we fallback
-    const sessionId = req.sessionID || req.ip || "anonymous";
-    const token = generateCsrfToken(sessionId, req.ip);
-    res.json({ token });
+    try {
+      // @ts-ignore - sessionID might exist if express-session is present, but we fallback
+      const sessionId = req.sessionID || req.ip || "anonymous";
+      const token = generateCsrfToken(sessionId, req.ip);
+      res.setHeader('Content-Type', 'application/json');
+      res.json({ token });
+    } catch (error) {
+      console.error('[CSRF Token] Error:', error);
+      res.status(500).setHeader('Content-Type', 'application/json').json({ error: 'Failed to generate CSRF token' });
+    }
   });
 
   // ============================================
