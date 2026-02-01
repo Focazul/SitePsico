@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,13 +12,31 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
+
+  // Check if already logged in
+  const meQuery = trpc.auth.me.useQuery(undefined, {
+    retry: false,
+  });
+
+  useEffect(() => {
+    // If user is already logged in, redirect to dashboard
+    if (meQuery.data && meQuery.data.role === 'admin') {
+      console.log('[Login] User already logged in, redirecting to /admin/dashboard');
+      setLocation('/admin/dashboard');
+    }
+  }, [meQuery.data, setLocation]);
 
   const loginMutation = trpc.auth.login.useMutation({
     onSuccess: () => {
-      setLocation('/admin/dashboard');
+      console.log('[Login] Login successful, redirecting to /admin/dashboard');
+      // Wait a moment for session to be established
+      setTimeout(() => {
+        setLocation('/admin/dashboard');
+      }, 500);
     },
     onError: (error) => {
+      console.error('[Login] Login error:', error.message);
       setError(error.message || 'Erro ao fazer login');
     },
   });
@@ -32,8 +50,21 @@ export default function Login() {
       return;
     }
 
+    console.log('[Login] Attempting login with email:', email);
     loginMutation.mutate({ email, password });
   };
+
+  // Show loading while checking authentication
+  if (meQuery.isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 flex items-center justify-center p-4">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-2" />
+          <p className="text-slate-600">Verificando autenticação...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 flex items-center justify-center p-4">
@@ -41,10 +72,10 @@ export default function Login() {
         <div className="p-8">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-slate-900 mb-2">
-              Painel
+              Painel Admin
             </h1>
             <p className="text-slate-600">
-              Faça login para continuar
+              Faça login para acessar
             </p>
           </div>
 

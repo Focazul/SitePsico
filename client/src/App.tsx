@@ -51,6 +51,7 @@ function Router() {
         transition={{ duration: 0.25, ease: "easeOut" }}
       >
         <Switch location={location}>
+          {/* PUBLIC ROUTES */}
           <Route path={"/"} component={Home} />
           <Route path={"/sobre"} component={About} />
           <Route path={"/servicos"} component={Services} />
@@ -61,6 +62,11 @@ function Router() {
           <Route path={"/login"} component={Login} />
           <Route path={"/forgot-password"} component={ForgotPassword} />
           <Route path={"/reset-password"} component={ResetPassword} />
+
+          {/* ADMIN ROUTES - Protected */}
+          <Route path={"/admin"}>
+            {() => <ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>}
+          </Route>
           <Route path={"/admin/dashboard"}>
             {() => <ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>}
           </Route>
@@ -88,11 +94,11 @@ function Router() {
           <Route path={"/admin/settings"}>
             {() => <ProtectedRoute adminOnly><AdminSettings /></ProtectedRoute>}
           </Route>
-          <Route path={"/admin"}>
-            {() => <ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>}
-          </Route>
+
+          {/* ERROR ROUTES */}
           <Route path={"/404"} component={NotFound} />
-          {/* Final fallback route */}
+
+          {/* FALLBACK - 404 */}
           <Route component={NotFound} />
         </Switch>
       </motion.div>
