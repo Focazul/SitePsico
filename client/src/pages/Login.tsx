@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,28 +12,15 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [location, setLocation] = useLocation();
+  const [, setLocation] = useLocation();
 
-  // Check if already logged in
-  const meQuery = trpc.auth.me.useQuery(undefined, {
-    retry: false,
-  });
-
-  useEffect(() => {
-    // If user is already logged in, redirect to dashboard
-    if (meQuery.data && meQuery.data.role === 'admin') {
-      console.log('[Login] User already logged in, redirecting to /admin/dashboard');
-      setLocation('/admin/dashboard');
-    }
-  }, [meQuery.data, setLocation]);
+  const utils = trpc.useContext();
 
   const loginMutation = trpc.auth.login.useMutation({
     onSuccess: () => {
       console.log('[Login] Login successful, redirecting to /admin/dashboard');
-      // Wait a moment for session to be established
-      setTimeout(() => {
-        setLocation('/admin/dashboard');
-      }, 500);
+      void utils.auth.me.invalidate();
+      setLocation('/admin/dashboard');
     },
     onError: (error) => {
       console.error('[Login] Login error:', error.message);
@@ -53,18 +40,6 @@ export default function Login() {
     console.log('[Login] Attempting login with email:', email);
     loginMutation.mutate({ email, password });
   };
-
-  // Show loading while checking authentication
-  if (meQuery.isLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 flex items-center justify-center p-4">
-        <div className="text-center">
-          <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-2" />
-          <p className="text-slate-600">Verificando autenticação...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 flex items-center justify-center p-4">

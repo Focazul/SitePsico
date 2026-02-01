@@ -171,7 +171,7 @@ class SDKServer {
     return this.signSession(
       {
         openId,
-        appId: ENV.appId,
+        appId: ENV.appId || "local",
         name: options.name || "",
       },
       options
@@ -200,6 +200,12 @@ class SDKServer {
   async verifySession(
     cookieValue: string | undefined | null
   ): Promise<{ openId: string; appId: string; name: string } | null> {
+    console.log('[SDK] verifySession called with:', {
+      hasCookie: !!cookieValue,
+      cookieLength: cookieValue?.length,
+      cookiePreview: cookieValue ? cookieValue.substring(0, 20) + '...' : 'null',
+    });
+
     if (!cookieValue) {
       console.warn("[Auth] Missing session cookie");
       return null;
@@ -207,16 +213,15 @@ class SDKServer {
 
     try {
       const secretKey = this.getSessionSecret();
+      console.log('[SDK] Verifying JWT with secret...');
       const { payload } = await jwtVerify(cookieValue, secretKey, {
         algorithms: ["HS256"],
       });
       const { openId, appId, name } = payload as Record<string, unknown>;
 
-      if (
-        !isNonEmptyString(openId) ||
-        !isNonEmptyString(appId) ||
-        !isNonEmptyString(name)
-      ) {
+      console.log('[SDK] JWT verified successfully:', { openId, appId, name });
+
+      if (!isNonEmptyString(openId)) {
         console.warn("[Auth] Session payload missing required fields");
         return null;
       }
@@ -257,46 +262,35 @@ class SDKServer {
   }
 
   async authenticateRequest(req: Request): Promise<User> {
+    console.log('[SDK.authenticateRequest] Starting authentication...');
+    
     // Regular authentication flow
     const cookies = this.parseCookies(req.headers.cookie);
+    console.log('[SDK.authenticateRequest] Parsed cookies:', Array.from(cookies.keys()));
+    
     const sessionCookie = cookies.get(COOKIE_NAME);
+    console.log('[SDK.authenticateRequest] Session cookie found:', !!sessionCookie);
+    
     const session = await this.verifySession(sessionCookie);
 
     if (!session) {
+      console.error('[SDK.authenticateRequest] Session verification failed');
       throw ForbiddenError("Invalid session cookie");
     }
+
+    console.log('[SDK.authenticateRequest] Session verified:', session.openId);
 
     const sessionUserId = session.openId;
     const signedInAt = new Date();
     let user = await db.getUserByOpenId(sessionUserId);
 
-    // If user not in DB, sync from OAuth server automatically
-    if (!user) {
-      try {
-        const userInfo = await this.getUserInfoWithJwt(sessionCookie ?? "");
-        await db.upsertUser({
-          openId: userInfo.openId,
-          name: userInfo.name || null,
-          email: userInfo.email ?? null,
-          loginMethod: (userInfo.loginMethod ?? userInfo.platform ?? null) as any,
-          lastSignedIn: signedInAt,
-        });
-        user = await db.getUserByOpenId(userInfo.openId);
-      } catch (error) {
-        console.error("[Auth] Failed to sync user from OAuth:", error);
-        throw ForbiddenError("Failed to sync user info");
-      }
-    }
+    console.log('[SDK.authenticateRequest] User lookup result:', !!user, user?.email);
 
     if (!user) {
       throw ForbiddenError("User not found");
     }
 
-    await db.upsertUser({
-      openId: user.openId,
-      lastSignedIn: signedInAt,
-    });
-
+    console.log('[SDK.authenticateRequest] User authenticated successfully:', user.email, user.role);
     return user;
   }
 }

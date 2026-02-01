@@ -17,9 +17,17 @@ export async function createContext(
 ): Promise<TrpcContext> {
   let user: User | null = null;
 
+  console.log('[Context] Creating context...');
+  console.log('[Context] Request method:', opts.req.method);
+  console.log('[Context] Request URL:', opts.req.url);
+  console.log('[Context] Request headers:', Object.keys(opts.req.headers));
+  console.log('[Context] Cookies:', opts.req.cookies);
+
   try {
     user = await sdk.authenticateRequest(opts.req);
+    console.log('[Context] User authenticated:', user?.email, user?.role);
   } catch (error) {
+    console.log('[Context] Authentication failed:', error instanceof Error ? error.message : String(error));
     // Authentication is optional for public procedures.
     user = null;
   }

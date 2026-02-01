@@ -9,10 +9,13 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ children, adminOnly = false }: ProtectedRouteProps) {
-  const [location, setLocation] = useLocation();
+  const [, setLocation] = useLocation();
   const [redirecting, setRedirecting] = useState(false);
   const meQuery = trpc.auth.me.useQuery(undefined, {
     retry: false,
+    refetchOnMount: "always",
+    refetchOnWindowFocus: false,
+    staleTime: 0,
   });
 
   useEffect(() => {
@@ -37,7 +40,7 @@ export function ProtectedRoute({ children, adminOnly = false }: ProtectedRoutePr
       console.log('[ProtectedRoute] User authenticated and authorized, allowing access');
       setRedirecting(false);
     }
-  }, [meQuery.data, meQuery.isLoading, adminOnly, setLocation, location]);
+  }, [meQuery.data, meQuery.isLoading, adminOnly, setLocation]);
 
   // Loading state
   if (meQuery.isLoading || redirecting) {
