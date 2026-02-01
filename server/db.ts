@@ -1,6 +1,6 @@
 import { and, asc, desc, eq, gte, inArray, lte, sql } from "drizzle-orm";
-import { drizzle, MySql2Database } from "drizzle-orm/mysql2";
-import mysql from "mysql2/promise";
+import { drizzle, PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 import * as schema from "../drizzle/schema";
 import {
   appointments,
@@ -41,27 +41,25 @@ import {
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
-let _db: MySql2Database<typeof schema> | null = null;
-let _connection: mysql.Pool | null = null;
+let _db: PostgresJsDatabase<typeof schema> | null = null;
+let _sql: postgres.Sql | null = null;
 
 // Lazily create the drizzle instance so local tooling can run without a DB.
 export async function getDb() {
   if (!_db && process.env.DATABASE_URL) {
     try {
-      console.log("[Database] Creating connection pool...");
-      _connection = mysql.createPool({
-        uri: process.env.DATABASE_URL,
-        connectionLimit: 10,
+      console.log("[Database] Creating PostgreSQL connection...");
+      _sql = postgres(process.env.DATABASE_URL, {
+        max: 10,
       });
-      _db = drizzle(_connection, {
+      _db = drizzle(_sql, {
         schema,
-        mode: 'default',
       });
-      console.log("[Database] Connection established successfully!");
+      console.log("[Database] PostgreSQL connection established successfully!");
     } catch (error) {
       console.error("[Database] Failed to connect:", error);
       _db = null;
-      _connection = null;
+      _sql = null;
     }
   }
   return _db;

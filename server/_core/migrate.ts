@@ -1,6 +1,6 @@
-import { drizzle } from "drizzle-orm/mysql2";
-import mysql from "mysql2/promise";
-import { migrate } from "drizzle-orm/mysql2/migrator";
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
+import { migrate } from "drizzle-orm/postgres-js/migrator";
 import { ENV } from "./env";
 
 /**
@@ -14,8 +14,8 @@ export async function runMigrations() {
   }
 
   console.log("[Migrate] Applying migrations...");
-  const pool = mysql.createPool({ uri: ENV.databaseUrl, connectionLimit: 2 });
-  const db = drizzle(pool);
+  const sql = postgres(ENV.databaseUrl, { max: 1 });
+  const db = drizzle(sql);
   try {
     await migrate(db, { migrationsFolder: "drizzle" });
     console.log("[Migrate] ✅ Migrations applied successfully");
@@ -23,6 +23,6 @@ export async function runMigrations() {
     console.error("[Migrate] ❌ Migration failed:", error);
     throw error;
   } finally {
-    await pool.end();
+    await sql.end();
   }
 }
