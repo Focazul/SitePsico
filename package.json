@@ -13,8 +13,11 @@
     "format": "prettier --write .",
     "test": "vitest run",
     "db:push": "drizzle-kit generate && drizzle-kit migrate",
+    "db:generate": "drizzle-kit generate",
+    "db:verify": "tsx server/_core/verify-db.ts",
     "seed": "tsx server/seed.ts",
-    "setup:admin": "node scripts/insert_admin_final.mjs"
+    "setup:supabase": "npm run db:push && npm run seed",
+    "setup:admin": "npm run seed"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.693.0",
