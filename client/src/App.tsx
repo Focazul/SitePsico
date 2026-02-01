@@ -25,6 +25,7 @@ import FloatingWhatsApp from "./components/FloatingWhatsApp";
 import CookieConsent from "./components/CookieConsent";
 import SkipToContent from "./components/SkipToContent";
 import BackgroundBlobs from "./components/BackgroundBlobs";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 import { ManusDialog } from "./components/ManusDialog";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { QuickBookingProvider, useQuickBooking } from "./contexts/QuickBookingContext";
@@ -60,17 +61,35 @@ function Router() {
           <Route path={"/login"} component={Login} />
           <Route path={"/forgot-password"} component={ForgotPassword} />
           <Route path={"/reset-password"} component={ResetPassword} />
-          <Route path={"/admin/dashboard"} component={AdminDashboard} />
-          <Route path={"/admin/appointments"} component={AdminAppointments} />
-          <Route path={"/admin/posts"} component={AdminPosts} />
-          <Route path={"/admin/messages"} component={AdminMessages} />
-          <Route path={"/admin/emails"} component={AdminEmails} />
-          <Route path={"/admin/communication"} component={AdminCommunication} />
-          <Route path={"/admin/calendar"} component={AdminCalendar} />
-          <Route path={"/admin/pages"} component={AdminPages} />
-          <Route path={"/admin/settings"} component={AdminSettings} />
+          <Route path={"/admin/dashboard"}>
+            {() => <ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>}
+          </Route>
+          <Route path={"/admin/appointments"}>
+            {() => <ProtectedRoute adminOnly><AdminAppointments /></ProtectedRoute>}
+          </Route>
+          <Route path={"/admin/posts"}>
+            {() => <ProtectedRoute adminOnly><AdminPosts /></ProtectedRoute>}
+          </Route>
+          <Route path={"/admin/messages"}>
+            {() => <ProtectedRoute adminOnly><AdminMessages /></ProtectedRoute>}
+          </Route>
+          <Route path={"/admin/emails"}>
+            {() => <ProtectedRoute adminOnly><AdminEmails /></ProtectedRoute>}
+          </Route>
+          <Route path={"/admin/communication"}>
+            {() => <ProtectedRoute adminOnly><AdminCommunication /></ProtectedRoute>}
+          </Route>
+          <Route path={"/admin/calendar"}>
+            {() => <ProtectedRoute adminOnly><AdminCalendar /></ProtectedRoute>}
+          </Route>
+          <Route path={"/admin/pages"}>
+            {() => <ProtectedRoute adminOnly><AdminPages /></ProtectedRoute>}
+          </Route>
+          <Route path={"/admin/settings"}>
+            {() => <ProtectedRoute adminOnly><AdminSettings /></ProtectedRoute>}
+          </Route>
           <Route path={"/admin"}>
-            {(params) => <AdminDashboard />}
+            {() => <ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>}
           </Route>
           <Route path={"/404"} component={NotFound} />
           {/* Final fallback route */}

@@ -10,7 +10,7 @@ import { sendEmail } from "../_core/email";
 
 const loginSchema = z.object({
   email: z.string().min(1, "Email é obrigatório"),
-  password: z.string().min(6),
+  password: z.string().min(1, "Senha obrigatória"),
 });
 
 const passwordResetRequestSchema = z.object({
@@ -78,7 +78,7 @@ export const authRouter = router({
 
     if (!user) return null;
 
-    return { id: user.id, email: user.email, name: user.name };
+    return { id: user.id, email: user.email, name: user.name, role: user.role };
   }),
 
   // Change password (admin only)
