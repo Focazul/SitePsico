@@ -60,6 +60,15 @@ function Router() {
           <Route path={"/contato"} component={Contact} />
           <Route path={"/agendamento"} component={Booking} />
           <Route path={"/login"} component={Login} />
+          <Route path={"/admin/login"}>
+            {() => {
+              const [, setLocation] = useLocation();
+              React.useEffect(() => {
+                setLocation('/login');
+              }, [setLocation]);
+              return null;
+            }}
+          </Route>
           <Route path={"/forgot-password"} component={ForgotPassword} />
           <Route path={"/reset-password"} component={ResetPassword} />
 
