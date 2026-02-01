@@ -8,7 +8,7 @@ export const getLoginUrl = () => {
   // Se OAuth não estiver configurado, retorna URL placeholder
   if (!oauthPortalUrl || !appId) {
     console.warn('OAuth not configured. Set VITE_OAUTH_PORTAL_URL and VITE_APP_ID in .env');
-    return '/admin/login'; // Fallback para login local
+    return '/login'; // Fallback para login local
   }
   
   const redirectUri = `${window.location.origin}/api/oauth/callback`;
