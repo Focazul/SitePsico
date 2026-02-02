@@ -308,15 +308,22 @@ async function startServer() {
     serveStatic(app);
   }
 
-  const preferredPort = parseInt(process.env.PORT || "3000");
-  const port = await findAvailablePort(preferredPort);
+  // In production (Render/Docker), we must listen on the exact port assigned by the environment
+  // and bind to 0.0.0.0. We should not try to find an "available" port because the
+  // health check expects the specific assigned port.
+  let port = parseInt(process.env.PORT || "3000");
+  const host = "0.0.0.0";
 
-  if (port !== preferredPort) {
-    console.log(`Port ${preferredPort} is busy, using port ${port} instead`);
+  if (process.env.NODE_ENV !== "production") {
+    const preferredPort = port;
+    port = await findAvailablePort(preferredPort);
+    if (port !== preferredPort) {
+      console.log(`Port ${preferredPort} is busy, using port ${port} instead`);
+    }
   }
 
-  server.listen(port, async () => {
-    console.log(`Server running on http://localhost:${port}/`);
+  server.listen(port, host, async () => {
+    console.log(`Server running on http://${host}:${port}/`);
     
     // Inicializar scheduler de lembretes
     try {
