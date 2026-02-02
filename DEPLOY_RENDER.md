@@ -2,30 +2,30 @@
 
 Este projeto utiliza **npm** como gerenciador de pacotes.
 
-O erro `ERR_PNPM_NO_LOCKFILE` ocorre porque o Render detectou ou foi configurado para usar `pnpm`, mas o projeto utiliza `npm` (possui `package-lock.json`).
+O erro `ERR_PNPM_NO_LOCKFILE` ocorre porque o Render detectou ou foi configurado para usar `pnpm`, mas o projeto utiliza `npm`.
 
-## Solução Rápida
+## SOLUÇÃO CRÍTICA (O que você deve fazer)
 
-Se você conectou o repositório ao Render e obteve o erro acima:
+Se você já conectou o repositório ao Render, você **DEVE** alterar manualmente o comando de build no painel do Render. As alterações no código deste repositório não sobrescrevem as configurações manuais existentes no painel.
 
-1. Acesse o dashboard do seu serviço no Render.
-2. Vá em **Settings** > **Build & Deploy**.
-3. Em **Build Command**, altere para:
+1. Acesse o [Dashboard do Render](https://dashboard.render.com/).
+2. Selecione o serviço `sitepsico`.
+3. Vá em **Settings** > **Build & Deploy**.
+4. Procure o campo **Build Command**.
+5. Altere o valor para:
    ```bash
-   npm install --include=dev --legacy-peer-deps && npm run build
+   ./scripts/render-build.sh
    ```
-4. Em **Start Command**, certifique-se de que está:
-   ```bash
-   npm start
-   ```
-5. Salve e faça um novo deploy (Manual Deploy > Clear build cache & deploy se possível).
+6. Salve as alterações.
+7. Faça um novo deploy (Manual Deploy > Clear build cache & deploy).
 
-## Uso de Blueprints (`render.yaml`)
+> **Nota:** Se você não quiser usar o script, pode usar o comando completo:
+> `npm install --include=dev --legacy-peer-deps && npm run build`
 
-O repositório já contém um arquivo `render.yaml` configurado corretamente. Recomenda-se criar um **Blueprint** no Render apontando para este repositório, em vez de criar um Web Service manualmente. Isso garantirá que todas as configurações (versão do Node, comandos de build e start, variáveis de ambiente) sejam aplicadas automaticamente.
+## Por que isso acontece?
 
-## Detalhes Importantes
+O Render tenta adivinhar o comando de build. Se ele escolheu `pnpm`, ele vai falhar. Além disso, em produção (`NODE_ENV=production`), o `npm install` padrão não instala o `vite` (que é uma dependência de desenvolvimento), causando o erro `vite: not found`.
 
-*   **Gerenciador de Pacotes:** `npm` (não use `pnpm` ou `yarn`).
-*   **Versão do Node:** 22.22.0 ou superior (definido em `.node-version` e `package.json`).
-*   **Dependências de Build:** O comando de build inclui `--include=dev` para garantir que o `vite` e `esbuild` sejam instalados mesmo em ambiente de produção (`NODE_ENV=production`), evitando o erro `vite: not found`.
+O script `scripts/render-build.sh` resolve ambos os problemas:
+1. Garante o uso de `npm`.
+2. Garante que as dependências de desenvolvimento sejam instaladas antes do build.
