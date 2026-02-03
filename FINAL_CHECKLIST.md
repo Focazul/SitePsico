@@ -1,11 +1,11 @@
-# ✅ CHECKLIST - DEPLOY VERCEL + SUPABASE
+# ✅ CHECKLIST - DEPLOY RENDER + SUPABASE
 
 ## 📋 O QUE FOI FEITO
 
 - ✅ **Schema PostgreSQL Completo**: Todas 8 tabelas convertidas (pgTable, serial(), pgEnum)
 - ✅ **Backend Convertido**: server/db.ts, migrate.ts, seed.ts aguardando Supabase
 - ✅ **Ambiente de Produção**: .env.production configurado para Supabase
-- ✅ **Documentação**: SUPABASE_VERCEL_SETUP.md com instruções passo a passo
+- ✅ **Documentação**: SUPABASE_RENDER_SETUP.md com instruções passo a passo
 - ✅ **Scripts de Setup**: npm run db:verify, npm run seed, npm run setup:supabase
 - ✅ **GitHub Atualizado**: Repositório com commits 3c16dd4 e 3b3ba4a
 - ✅ **Build Validado**: npm run build compila sem erros (154.8 KB backend + 1.6 MB frontend)
@@ -48,7 +48,7 @@ npm run db:verify
 
 # Esperado na saída:
 # ✅ Admin "marcelo" encontrado!
-# Pronto para login no Vercel ✨
+# Pronto para login no Render ✨
 ```
 
 ---
@@ -73,29 +73,30 @@ npm run dev
 
 ---
 
-### 4️⃣ **VERCEL: Conectar GitHub** (5 min)
+### 4️⃣ **RENDER: Conectar GitHub** (5 min)
 
-1. Ir em https://vercel.com/new
+1. Ir em https://dashboard.render.com
 2. Selecionar repositório: `Focazul/SitePsico`
-3. Configurar variáveis de ambiente:
+3. Criar Web Service usando [render.yaml](render.yaml)
+4. Configurar variáveis de ambiente:
    ```
    DATABASE_URL=postgresql://postgres:PASSWORD@db.iilroqozupvfxpfzfvtd.supabase.co:5432/postgres
    RESEND_API_KEY=seu_api_key_real
-   VITE_API_URL=https://seu-site.vercel.app
-   VITE_APP_URL=https://seu-site.vercel.app
+   VITE_API_URL=https://seu-app.onrender.com
+   VITE_APP_URL=https://seu-app.onrender.com
    VITE_GOOGLE_ANALYTICS_ID=seu_id
    ```
-4. Clicar "Deploy"
-5. Aguardar 2-3 minutos para deploy completar
+5. Iniciar Deploy
+6. Aguardar 2-3 minutos para deploy completar
 
 ---
 
 ### 5️⃣ **TESTAR EM PRODUÇÃO** (2 min)
 
-- Acessar: https://seu-site.vercel.app
+- Acessar: https://seu-app.onrender.com
 - Login com: marcelo / 1234
 - Testar todas funcionalidades
-- Verificar logs em Vercel > Deployments > Logs
+- Verificar logs em Render > Logs
 
 ---
 
@@ -115,8 +116,8 @@ ADMIN_EMAIL=marcelo
 ADMIN_PASSWORD=1234
 
 # Frontend URLs
-VITE_API_URL=https://seu-site.vercel.app
-VITE_APP_URL=https://seu-site.vercel.app
+VITE_API_URL=https://seu-app.onrender.com
+VITE_APP_URL=https://seu-app.onrender.com
 ```
 
 ### Variáveis de Ambiente OPCIONAIS
@@ -159,11 +160,11 @@ npm run seed
 ### ❌ Emails não estão sendo enviados
 
 ```bash
-# Verificar RESEND_API_KEY em Vercel
+# Verificar RESEND_API_KEY em Render
 # Settings > Environment Variables > RESEND_API_KEY
 
 # Testar enviando email via admin dashboard
-# Se falhar, verificar logs em Vercel
+# Se falhar, verificar logs em Render
 ```
 
 ---
@@ -176,7 +177,7 @@ npm run seed
 | **Código** | ✅ Compilado | Build 154.8 KB |
 | **Schema** | ✅ PostgreSQL | Pronto para push |
 | **Admin** | ⏳ Aguardando | npm run seed |
-| **Vercel** | ⏳ Aguardando | Configure env vars |
+| **Render** | ⏳ Aguardando | Configure env vars |
 | **Supabase** | ⏳ Aguardando | npm run db:push |
 
 ---
@@ -187,9 +188,9 @@ npm run seed
 1. npm run db:push          → Criar tabelas no Supabase
 2. npm run seed             → Criar admin marcelo:1234
 3. npm run dev              → Testar localmente
-4. Conectar GitHub no Vercel → Deploy automático
+4. Conectar GitHub no Render → Deploy automático
 5. Configurar env vars      → DATABASE_URL + RESEND_API_KEY
-6. Acessar seu-site.vercel.app → Usar marcelo:1234
+6. Acessar seu-app.onrender.com → Usar marcelo:1234
 ```
 
 ---

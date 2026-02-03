@@ -2,7 +2,7 @@
  * Executar seed da tabela settings via API
  */
 
-const BACKEND_URL = 'https://backend-production-4a6b.up.railway.app';
+const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:5000';
 
 console.log('🌱 Executando seed da tabela settings...\n');
 

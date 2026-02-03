@@ -70,14 +70,16 @@ export async function getDb() {
  */
 export async function getUserSchemaStatus(): Promise<Record<string, boolean>> {
   const db = await getDb();
-  if (!db || !_connection) {
+  if (!db || !_sql) {
     throw new Error("Database connection not available");
   }
 
-  const [rows] = await _connection.query<any[]>(
-    "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'users'"
-  );
-  const cols = new Set(rows.map(r => r.COLUMN_NAME));
+  const rows = await _sql`
+    SELECT column_name
+    FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'users'
+  `;
+  const cols = new Set(rows.map((r: { column_name: string }) => r.column_name));
   const required = [
     "openId",
     "loginMethod",
@@ -142,9 +144,13 @@ export async function upsertUser(user: InsertUser): Promise<void> {
       updateSet.lastSignedIn = new Date();
     }
 
-    await db.insert(users).values(values).onDuplicateKeyUpdate({
-      set: updateSet,
-    });
+    await db
+      .insert(users)
+      .values(values)
+      .onConflictDoUpdate({
+        target: users.openId,
+        set: updateSet,
+      });
   } catch (error) {
     console.error("[Database] Failed to upsert user:", error);
     throw error;
@@ -308,17 +314,15 @@ export async function createAppointment(data: InsertAppointment): Promise<Appoin
     throw new Error("Horário indisponível. Escolha outro horário ou data.");
   }
 
-  const [result] = await db
+  const [created] = await db
     .insert(appointments)
     .values({
       ...data,
       appointmentDate: normalizedDate,
       appointmentTime: normalizedTime,
       status: data.status ?? "pendente",
-    });
-
-  const insertId = result.insertId;
-  const created = await getAppointmentById(insertId);
+    })
+    .returning();
 
   if (!created) throw new Error("Failed to create appointment");
   return created;
@@ -403,22 +407,45 @@ export async function getAvailabilityByDay(dayOfWeek: number): Promise<Availabil
 
 export async function upsertAvailability(row: InsertAvailability): Promise<void> {
   const db = await ensureDb();
-  await db
-    .insert(availability)
-    .values(row)
-    .onDuplicateKeyUpdate({
-      set: {
+  const [existing] = await db
+    .select({ id: availability.id })
+    .from(availability)
+    .where(eq(availability.dayOfWeek, row.dayOfWeek))
+    .limit(1);
+
+  if (existing?.id) {
+    await db
+      .update(availability)
+      .set({
         startTime: row.startTime,
         endTime: row.endTime,
         slotDurationMinutes: row.slotDurationMinutes,
         isAvailable: row.isAvailable,
-      },
-    });
+      })
+      .where(eq(availability.id, existing.id));
+    return;
+  }
+
+  await db.insert(availability).values(row);
 }
 
 export async function addBlockedDate(row: InsertBlockedDate): Promise<void> {
   const db = await ensureDb();
-  await db.insert(blockedDates).values(row).onDuplicateKeyUpdate({ set: { reason: row.reason } });
+  const [existing] = await db
+    .select({ id: blockedDates.id })
+    .from(blockedDates)
+    .where(eq(blockedDates.date, row.date))
+    .limit(1);
+
+  if (existing?.id) {
+    await db
+      .update(blockedDates)
+      .set({ reason: row.reason })
+      .where(eq(blockedDates.id, existing.id));
+    return;
+  }
+
+  await db.insert(blockedDates).values(row);
 }
 
 export async function getBlockedDate(dateValue: Date): Promise<BlockedDate | null> {
@@ -593,9 +620,7 @@ export async function getAvailableSlots(dateStr: string): Promise<AvailableSlot[
 
 export async function createCategory(data: InsertCategory): Promise<Category> {
   const db = await ensureDb();
-  const [result] = await db.insert(categories).values(data);
-  const insertId = result.insertId;
-  const [created] = await db.select().from(categories).where(eq(categories.id, insertId)).limit(1);
+  const [created] = await db.insert(categories).values(data).returning();
   if (!created) throw new Error("Failed to create category");
   return created;
 }
@@ -613,9 +638,7 @@ export async function getCategoryBySlug(slug: string): Promise<Category | null> 
 
 export async function createTag(data: InsertTag): Promise<Tag> {
   const db = await ensureDb();
-  const [result] = await db.insert(tags).values(data);
-  const insertId = result.insertId;
-  const [created] = await db.select().from(tags).where(eq(tags.id, insertId)).limit(1);
+  const [created] = await db.insert(tags).values(data).returning();
   if (!created) throw new Error("Failed to create tag");
   return created;
 }
@@ -633,16 +656,14 @@ export async function getTagBySlug(slug: string): Promise<Tag | null> {
 
 export async function createPost(data: InsertPost, tagIds?: number[]): Promise<Post> {
   const db = await ensureDb();
-  const [result] = await db.insert(posts).values(data);
-  const insertId = result.insertId;
+  const [created] = await db.insert(posts).values(data).returning();
+  if (!created) throw new Error("Failed to create post");
 
   if (tagIds && tagIds.length > 0) {
-    const postTagValues = tagIds.map((tagId) => ({ postId: insertId, tagId }));
+    const postTagValues = tagIds.map((tagId) => ({ postId: created.id, tagId }));
     await db.insert(postTags).values(postTagValues);
   }
 
-  const [created] = await db.select().from(posts).where(eq(posts.id, insertId)).limit(1);
-  if (!created) throw new Error("Failed to create post");
   return created;
 }
 
@@ -857,13 +878,9 @@ export async function getPageBySlug(slug: string): Promise<Page | null> {
 
 export async function createPage(data: InsertPage): Promise<Page> {
   const db = await ensureDb();
-  const result = await db.insert(pages).values(data);
-  const id = Number(result[0].insertId);
-  
-  const page = await getPageById(id);
-  if (!page) throw new Error("Failed to create page");
-  
-  return page;
+  const [created] = await db.insert(pages).values(data).returning();
+  if (!created) throw new Error("Failed to create page");
+  return created;
 }
 
 export async function updatePage(id: number, data: Partial<InsertPage>): Promise<void> {
@@ -897,18 +914,8 @@ export async function pageExists(slug: string, excludeId?: number): Promise<bool
 
 export async function createMessage(data: InsertMessage): Promise<Message> {
   const db = await ensureDb();
-  // MySQL não suporta .returning(); usamos insertId e depois buscamos o registro
-  const [result] = await db.insert(messages).values(data);
-  const insertId = result.insertId;
-
-  const [created] = await db.select().from(messages).where(eq(messages.id, insertId)).limit(1);
-
-  if (!created) {
-     // fallback: retorna o último registro inserido (deve ser raro)
-    const [last] = await db.select().from(messages).orderBy(desc(messages.id)).limit(1);
-    return last;
-  }
-
+  const [created] = await db.insert(messages).values(data).returning();
+  if (!created) throw new Error("Failed to create message");
   return created;
 }
 
@@ -1072,7 +1079,7 @@ export async function insertEmailLog(data: {
 }): Promise<EmailLog> {
   const db = await ensureDb();
   try {
-    // MySQL não suporta .returning(), então fazemos insert e depois buscamos o registro
+    // Insert realizado via PostgreSQL (returning disponível)
     await db.insert(emailLogs).values(data);
     
     // Buscar o registro mais recente que foi inserido

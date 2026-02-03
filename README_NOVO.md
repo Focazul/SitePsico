@@ -17,8 +17,7 @@ Site profissional para consultório de psicologia com sistema de agendamento, bl
 - Drizzle ORM
 
 ### **Deployment**
-- **Frontend**: Vercel
-- **Backend**: Vercel API Routes
+- **App (frontend + backend)**: Render (Web Service)
 - **Database**: Supabase PostgreSQL
 
 ---
@@ -98,28 +97,29 @@ npm run format          # Formatar código
 
 ## 📚 **DOCUMENTAÇÃO**
 
-- [SUPABASE_VERCEL_SETUP.md](docs/SUPABASE_VERCEL_SETUP.md) - Guia completo de setup
+- [SUPABASE_RENDER_SETUP.md](docs/SUPABASE_RENDER_SETUP.md) - Guia completo de setup
 - [STATUS_PROJETO.md](docs/STATUS_PROJETO.md) - Status do projeto
 - [TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) - Solução de problemas
 
 ---
 
-## 🚀 **DEPLOY VERCEL**
+## 🚀 **DEPLOY RENDER**
 
-1. **Conectar GitHub** no painel Vercel
-2. **Configurar variáveis de ambiente**:
+1. **Conectar GitHub** no painel Render
+2. **Criar Web Service** usando o arquivo [render.yaml](render.yaml)
+3. **Configurar variáveis de ambiente**:
    ```
    DATABASE_URL=postgresql://postgres:PASSWORD@db.xxx.supabase.co:5432/postgres
    RESEND_API_KEY=seu_api_key
-   VITE_API_URL=https://seu-site.vercel.app
+   VITE_API_URL=https://seu-app.onrender.com
    ```
-3. **Deploy automático** ao fazer push para `master`
+4. **Deploy automático** ao fazer push para `master`
 
 ---
 
 ## 📞 **SUPORTE**
 
-Verifique [docs/SUPABASE_VERCEL_SETUP.md](docs/SUPABASE_VERCEL_SETUP.md) para instruções detalhadas de setup e troubleshooting.
+Verifique [docs/SUPABASE_RENDER_SETUP.md](docs/SUPABASE_RENDER_SETUP.md) para instruções detalhadas de setup e troubleshooting.
 
 ---
 

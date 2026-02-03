@@ -97,9 +97,13 @@ export const calendarRouter = router({
 
       for (const update of updates) {
         const db = (await getDb())!;
-        await db.insert(settings).values(update).onDuplicateKeyUpdate({
-          set: { value: update.value }
-        });
+        await db
+          .insert(settings)
+          .values(update)
+          .onConflictDoUpdate({
+            target: settings.key,
+            set: { value: update.value }
+          });
       }
 
       // Limpar cache
@@ -117,14 +121,18 @@ export const calendarRouter = router({
     }))
     .mutation(async ({ input }) => {
       const db = (await getDb())!;
-      await db.insert(settings).values({
-        key: 'googleCalendar.enabled',
-        value: input.enabled.toString(),
-        type: 'boolean',
-        description: 'Habilitar integração com Google Calendar'
-      }).onDuplicateKeyUpdate({
-        set: { value: input.enabled.toString() }
-      });
+      await db
+        .insert(settings)
+        .values({
+          key: 'googleCalendar.enabled',
+          value: input.enabled.toString(),
+          type: 'boolean',
+          description: 'Habilitar integração com Google Calendar'
+        })
+        .onConflictDoUpdate({
+          target: settings.key,
+          set: { value: input.enabled.toString() }
+        });
 
       clearCalendarConfigCache();
 

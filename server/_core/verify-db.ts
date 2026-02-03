@@ -48,7 +48,7 @@ async function verify() {
       console.log('\n✅ Admin "marcelo" encontrado!');
       console.log(`   ID: ${admin.id}`);
       console.log(`   Nome: ${admin.name}`);
-      console.log('   Pronto para login no Vercel ✨');
+      console.log('   Pronto para login no Render ✨');
     } else {
       console.log('\n⚠️  Admin "marcelo" ainda não foi criado');
       console.log('   Execute: npm run seed');

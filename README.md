@@ -6,8 +6,8 @@ Site profissional para consultório de psicologia com sistema de agendamento, bl
 
 ## 🚀 **PRODUÇÃO (LIVE)**
 
-### **Frontend** 
-🔗 https://psicologo-sp-site.vercel.app
+### **App (Frontend + Backend)**
+🔗 https://seu-app.onrender.com
 
 - React 19 + TypeScript + Vite
 - Tailwind CSS 4 + Radix UI
@@ -16,12 +16,10 @@ Site profissional para consultório de psicologia com sistema de agendamento, bl
 - Admin Dashboard responsivo
 
 ### **Backend**
-🔗 https://backend-production-4a6b.up.railway.app
-
 - Node.js 22 + Express + tRPC
-- MySQL (Railway)
+- PostgreSQL (Supabase)
 - Drizzle ORM
-- Rate Limiting + Helmet Security
+- Helmet Security
 - Email via Resend
 - Google Calendar integration
 
@@ -72,8 +70,7 @@ primeiras ideias/
 │
 ├── .env.example              # Template de variáveis
 ├── package.json              # Dependências
-├── nixpacks.toml             # Configuração Railway
-├── vercel.json               # Configuração Vercel
+├── render.yaml               # Configuração Render
 ├── drizzle.config.ts         # Configuração Drizzle ORM
 ├── vite.config.ts            # Configuração Vite
 └── tsconfig.json             # TypeScript config
@@ -86,7 +83,7 @@ primeiras ideias/
 ### **Backend (.env)**
 ```bash
 # Database
-DATABASE_URL=mysql://user:pass@host:port/db
+DATABASE_URL=postgresql://postgres:PASSWORD@db.xxx.supabase.co:5432/postgres
 
 # Auth
 JWT_SECRET=your-secret-key
@@ -112,9 +109,9 @@ NODE_ENV=production
 PORT=3000
 ```
 
-### **Frontend (Vercel)**
+### **Frontend (Render)**
 ```bash
-VITE_API_URL=https://backend-production-4a6b.up.railway.app
+VITE_API_URL=https://seu-app.onrender.com
 NODE_ENV=production
 ```
 
@@ -154,16 +151,9 @@ npm run dev
 
 ## 📦 **DEPLOY**
 
-### **Frontend (Vercel)**
+### **Render (Web Service)**
 ```bash
-npm run build
-vercel --prod
-```
-
-### **Backend (Railway)**
-```bash
-railway up
-# ou via Git push (auto-deploy configurado)
+# Deploy automático via GitHub usando render.yaml
 ```
 
 ---
@@ -172,7 +162,7 @@ railway up
 
 - ✅ **Rate Limiting**: 5 tentativas/15min (login), 3/1hr (password reset)
 - ✅ **Helmet**: CSP, HSTS, XSS Protection
-- ✅ **CORS**: Apenas domínio Vercel autorizado
+- ✅ **CORS**: Apenas domínio do app Render autorizado
 - ✅ **Sanitização**: HTML input sanitization
 - ✅ **Password Hashing**: Scrypt
 - ✅ **Session Cookies**: httpOnly, secure, sameSite
@@ -239,15 +229,13 @@ npm run test:watch
 - Express 4.21
 - tRPC 11.6
 - Drizzle ORM 0.44
-- MySQL 3.15
 - express-rate-limit
 - helmet 8.1
 - sanitize-html 2.17
 
 ### **DevOps**
-- Railway (backend + MySQL)
-- Vercel (frontend)
-- Nixpacks (build system)
+- Render (web service)
+- Supabase (PostgreSQL)
 - Drizzle Kit (migrations)
 
 ---
@@ -265,9 +253,8 @@ Role: admin
 ## 📞 **SUPORTE**
 
 Para dúvidas ou problemas, verifique:
-- Build logs: https://railway.com/project/[ID]/logs
-- Vercel logs: https://vercel.com/[project]/deployments
-- Database: Railway MySQL dashboard
+- Logs: https://dashboard.render.com
+- Database: Supabase dashboard
 
 ---
 

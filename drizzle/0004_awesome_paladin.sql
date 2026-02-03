@@ -1,1 +1,0 @@
-ALTER TABLE `appointments` ADD `calendarEventId` varchar(255);

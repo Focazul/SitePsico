@@ -47,12 +47,12 @@ async function startServer() {
   const app = express();
   const server = createServer(app);
 
-  // Trust proxy for Railway/production deployment
+  // Trust proxy for Render/production deployment
   app.set('trust proxy', true);
 
   // Middleware to disable/bypass rate limiting for testing
   app.use((req, res, next) => {
-    // Remove rate limit headers that Railway might add
+    // Remove rate limit headers that proxies might add
     res.removeHeader('X-RateLimit-Limit');
     res.removeHeader('X-RateLimit-Remaining');
     res.removeHeader('X-RateLimit-Reset');

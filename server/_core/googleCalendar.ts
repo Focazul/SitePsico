@@ -138,14 +138,18 @@ export async function handleOAuthCallback(code: string): Promise<void> {
 
   // Salvar refresh token no banco
   const db = (await getDb())!;
-  await db.insert(settings).values({
-    key: 'googleCalendar.refreshToken',
-    value: tokens.refresh_token,
-    type: 'string',
-    description: 'Google Calendar Refresh Token'
-  }).onDuplicateKeyUpdate({
-    set: { value: tokens.refresh_token }
-  });
+  await db
+    .insert(settings)
+    .values({
+      key: 'googleCalendar.refreshToken',
+      value: tokens.refresh_token,
+      type: 'string',
+      description: 'Google Calendar Refresh Token'
+    })
+    .onConflictDoUpdate({
+      target: settings.key,
+      set: { value: tokens.refresh_token }
+    });
 
   // Limpar cache
   clearCalendarConfigCache();

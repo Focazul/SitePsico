@@ -1,1 +1,0 @@
-ALTER TABLE `messages` MODIFY COLUMN `status` enum('novo','lido','respondido','arquivado') NOT NULL DEFAULT 'novo';
