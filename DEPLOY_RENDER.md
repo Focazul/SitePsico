@@ -14,18 +14,16 @@ Se você já conectou o repositório ao Render, você **DEVE** alterar manualmen
 4. Procure o campo **Build Command**.
 5. Altere o valor para:
    ```bash
-   ./scripts/render-build.sh
+   npm install --include=dev --legacy-peer-deps && npm run build
    ```
+   *(Ou use `./scripts/render-build.sh` se o arquivo existir, mas o comando acima é mais garantido).*
+
 6. Salve as alterações.
 7. Faça um novo deploy (Manual Deploy > Clear build cache & deploy).
 
-> **Nota:** Se você não quiser usar o script, pode usar o comando completo:
-> `npm install --include=dev --legacy-peer-deps && npm run build`
+## Sobre Erros de Conexão com Banco de Dados (IPv6)
 
-## Por que isso acontece?
+Se você ver erros como `ENETUNREACH` ou falha ao conectar no banco:
+Isso acontece porque o Node.js tenta conectar via IPv6 e alguns provedores (Supabase/Render) podem ter problemas com isso em certas regiões.
 
-O Render tenta adivinhar o comando de build. Se ele escolheu `pnpm`, ele vai falhar. Além disso, em produção (`NODE_ENV=production`), o `npm install` padrão não instala o `vite` (que é uma dependência de desenvolvimento), causando o erro `vite: not found`.
-
-O script `scripts/render-build.sh` resolve ambos os problemas:
-1. Garante o uso de `npm`.
-2. Garante que as dependências de desenvolvimento sejam instaladas antes do build.
+O projeto já foi atualizado para forçar IPv4 (`NODE_OPTIONS='--dns-result-order=ipv4first'`), mas certifique-se de que sua `DATABASE_URL` está correta e é acessível publicamente (não use localhost ou IPs privados).
