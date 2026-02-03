@@ -79,7 +79,7 @@ export async function getUserSchemaStatus(): Promise<Record<string, boolean>> {
     FROM information_schema.columns
     WHERE table_schema = 'public' AND table_name = 'users'
   `;
-  const cols = new Set(rows.map((r: { column_name: string }) => r.column_name));
+  const cols = new Set((rows as any[]).map((r: { column_name: string }) => r.column_name));
   const required = [
     "openId",
     "loginMethod",
@@ -280,10 +280,10 @@ export async function createAppointment(data: InsertAppointment): Promise<Appoin
 
   const dateStr = typeof data.appointmentDate === "string"
     ? data.appointmentDate
-    : data.appointmentDate.toISOString().slice(0, 10);
+    : (data.appointmentDate as any).toISOString().slice(0, 10);
   const timeStr = typeof data.appointmentTime === "string"
     ? data.appointmentTime
-    : data.appointmentTime.toISOString().slice(11, 16);
+    : (data.appointmentTime as any).toISOString().slice(11, 16);
 
   assertBusinessRules(dateStr, timeStr);
 
@@ -453,8 +453,7 @@ export async function addBlockedDate(row: InsertBlockedDate): Promise<void> {
 
 export async function getBlockedDate(dateValue: Date): Promise<BlockedDate | null> {
   const db = await ensureDb();
-  const dateStr = dateValue.toISOString().slice(0, 10);
-  const [row] = await db.select().from(blockedDates).where(eq(blockedDates.date, dateStr)).limit(1);
+  const [row] = await db.select().from(blockedDates).where(eq(blockedDates.date, dateValue.toISOString().slice(0, 10))).limit(1);
   return row ?? null;
 }
 
@@ -474,21 +473,20 @@ export async function getAvailableSlots(dateStr: string): Promise<AvailableSlot[
   const dayKeys = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"] as const;
   const dayKey = dayKeys[dayOfWeek];
 
-  let availabilityConfig: Array<{ day?: string; enabled?: boolean; start?: string; end?: string }> | null = null;
+  let availabilityConfig: Array<{ day?: string; enabled?: boolean; start?: string; end?: string }> = [];
   if (Array.isArray(availabilitySetting)) {
-    availabilityConfig = availabilitySetting as typeof availabilityConfig;
+    availabilityConfig = availabilitySetting as any[];
   } else if (typeof availabilitySetting === "string") {
     try {
-      let parsed = JSON.parse(availabilitySetting);
-      // Handle potential double stringification
-      if (typeof parsed === "string") {
-        try { parsed = JSON.parse(parsed); } catch {}
-      }
-      if (Array.isArray(parsed)) availabilityConfig = parsed as typeof availabilityConfig;
+      const parsed = JSON.parse(availabilitySetting);
+      if (Array.isArray(parsed)) availabilityConfig = parsed as any[];
     } catch {
       // ignore parse errors and fall through
     }
   }
+
+  const settingsAvail = availabilityConfig.find((slot: any) => slot.day === dayKey);
+  if (settingsAvail && settingsAvail.enabled === false) return [];
 
   const parseTime = (t: string | undefined): number | null => {
     if (!t) return null;
@@ -612,9 +610,7 @@ export async function getAvailableSlots(dateStr: string): Promise<AvailableSlot[
     .from(appointments)
     .where(
       and(
-        // Fix Drizzle Date vs string mismatch
-        // Using explicit casting to 'unknown' first to avoid TS2352
-        eq(appointments.appointmentDate as unknown as string, dateValue.toISOString().slice(0, 10)),
+        eq(appointments.appointmentDate, dateValue.toISOString().slice(0, 10)),
         inArray(appointments.status, BOOKED_STATUSES as unknown as AllowedStatus[])
       )
     );
@@ -622,7 +618,7 @@ export async function getAvailableSlots(dateStr: string): Promise<AvailableSlot[
   if (dailyLimit && existing.length >= dailyLimit) return [];
   const bookedTimes = new Set(
     existing.map((r) => {
-      const t = r.time instanceof Date ? r.time.toISOString().slice(11, 16) : String(r.time).slice(0, 5);
+      const t = (r.time as unknown) instanceof Date ? (r.time as unknown as Date).toISOString().slice(11, 16) : String(r.time).slice(0, 5);
       return t;
     })
   );
@@ -911,16 +907,16 @@ export async function deletePage(id: number): Promise<void> {
 export async function pageExists(slug: string, excludeId?: number): Promise<boolean> {
   const db = await ensureDb();
   
-  let query = db.select({ count: sql<number>`count(*)` })
-    .from(pages)
-    .where(eq(pages.slug, slug));
+  const conditions = [eq(pages.slug, slug)];
   
   if (excludeId) {
-    // @ts-ignore
-    query = query.where(sql`${pages.id} != ${excludeId}`);
+    conditions.push(sql`${pages.id} != ${excludeId}`);
   }
   
-  const result = await query;
+  const result = await db.select({ count: sql<number>`count(*)` })
+    .from(pages)
+    .where(and(...conditions));
+
   return (result[0]?.count || 0) > 0;
 }
 

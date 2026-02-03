@@ -52,7 +52,7 @@ export const bookingRouter = router({
 
       const created = await createAppointment({
         ...input,
-        appointmentDate: input.appointmentDate, // Pass string directly
+        appointmentDate: input.appointmentDate,
         appointmentTime: `${input.appointmentTime}:00`,
         status: "pendente",
       });
@@ -180,8 +180,6 @@ export const bookingRouter = router({
   blockDate: adminProcedure
     .input(z.object({ date: dateStr, reason: z.string().max(255).optional() }))
     .mutation(async ({ input }) => {
-      // The error "server/routers/booking.ts(168,30): error TS2322: Type 'Date' is not assignable to type 'string'."
-      // implies addBlockedDate expects string for date.
       await addBlockedDate({ date: input.date, reason: input.reason });
       return { success: true } as const;
     }),

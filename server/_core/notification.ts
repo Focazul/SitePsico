@@ -116,14 +116,9 @@ export async function notifyOwner(
 }
 
 function formatDateTime(appointment: Appointment): { date: string; time: string; iso: Date } {
-  // Fix TS2358: left-hand side of 'instanceof' must be of type 'any', object, or type parameter.
-  // appointment.appointmentDate might be typed as string in Drizzle schema but runtime could be Date or string.
-  // Cast to unknown first to safely check.
-  const dateVal = appointment.appointmentDate as unknown;
-  const dateStr = dateVal instanceof Date
-    ? dateVal.toISOString().slice(0, 10)
-    : String(dateVal).slice(0, 10);
-
+  const dateStr = (appointment.appointmentDate as unknown) instanceof Date
+    ? (appointment.appointmentDate as unknown as Date).toISOString().slice(0, 10)
+    : String(appointment.appointmentDate).slice(0, 10);
   const timeStr = String(appointment.appointmentTime).slice(0, 5);
   const iso = new Date(`${dateStr}T${timeStr}:00.000Z`);
   return { date: dateStr, time: timeStr, iso };
@@ -149,9 +144,9 @@ export async function sendAppointmentEmails(appointment: Appointment): Promise<{
     patientName: appointment.clientName,
     appointmentDate: displayDate,
     appointmentTime: time,
-    modalidade: modality,
-    consultorioAddress: modality === "presencial" ? config.office.fullAddress : undefined,
-    meetingLink: modality === "online" ? `${config.meeting.linkBase}${appointment.id}` : undefined,
+    modalidade: appointment.modality as "presencial" | "online",
+    consultorioAddress: appointment.modality === "presencial" ? config.office.fullAddress : undefined,
+    meetingLink: appointment.modality === "online" ? `${config.meeting.linkBase}${appointment.id}` : undefined,
     psychologistName: config.name,
     psychologistPhone: config.phone,
   });

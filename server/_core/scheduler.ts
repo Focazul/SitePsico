@@ -37,8 +37,12 @@ export async function scheduleAppointmentReminder(appointmentId: number): Promis
     }
 
     // Calcular quando enviar o lembrete (24h antes)
+    const datePart = (appointment.appointmentDate as unknown) instanceof Date
+      ? (appointment.appointmentDate as unknown as Date).toISOString().split('T')[0]
+      : String(appointment.appointmentDate);
+
     const appointmentDateTime = new Date(
-      `${appointment.appointmentDate}T${appointment.appointmentTime}`
+      `${datePart}T${appointment.appointmentTime}`
     );
     const reminderTime = new Date(appointmentDateTime.getTime() - 24 * 60 * 60 * 1000);
 
@@ -108,10 +112,9 @@ async function sendReminderEmail(appointmentId: number): Promise<void> {
     const config = await getPsychologistConfig();
 
     // Formatar data
-    const dateVal = appointment.appointmentDate as unknown;
-    const dateStr = dateVal instanceof Date
-      ? dateVal.toISOString().slice(0, 10)
-      : String(dateVal).slice(0, 10);
+    const dateStr = (appointment.appointmentDate as unknown) instanceof Date
+      ? (appointment.appointmentDate as unknown as Date).toISOString().slice(0, 10)
+      : String(appointment.appointmentDate).slice(0, 10);
     const [year, month, day] = dateStr.split("-");
     const displayDate = `${day}/${month}/${year}`;
     const timeStr = String(appointment.appointmentTime).slice(0, 5);
@@ -124,8 +127,8 @@ async function sendReminderEmail(appointmentId: number): Promise<void> {
       patientName: appointment.clientName,
       appointmentDate: displayDate,
       appointmentTime: timeStr,
-      modalidade: modality,
-      meetingLink: modality === "online" ? `${config.meeting.linkBase}${appointmentId}` : undefined,
+      modalidade: appointment.modality as "online" | "presencial",
+      meetingLink: appointment.modality === "online" ? `${config.meeting.linkBase}${appointmentId}` : undefined,
       psychologistName: config.name,
       psychologistPhone: config.phone,
     });

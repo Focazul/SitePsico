@@ -5,7 +5,7 @@ interface AuthStatus {
   isLoading: boolean;
   isAuthenticated: boolean;
   isAdmin: boolean;
-  user: { id?: number; email?: string; name?: string; role?: string } | null;
+  user: { id?: number; email?: string | null; name?: string | null; role?: string } | null;
   error: Error | null;
 }
 
@@ -40,8 +40,7 @@ export function useAuthCheck(): AuthStatus {
         isLoading: false,
         isAuthenticated: !!meQuery.data,
         isAdmin: meQuery.data?.role === 'admin',
-        user: userData,
-        // Fix TS2322: Type 'TRPCClientErrorLike<...>' is not assignable to type 'Error | null'.
+        user: meQuery.data || null,
         error: meQuery.error as Error | null,
       });
     }

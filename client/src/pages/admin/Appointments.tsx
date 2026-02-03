@@ -19,8 +19,8 @@ interface Appointment {
   clientPhone: string;
   appointmentDate: string | Date;
   appointmentTime: string;
-  modality: AppointmentType;
-  status: AppointmentStatus;
+  modality: AppointmentType | string;
+  status: AppointmentStatus | string;
   notes?: string | null;
   createdAt?: string | Date;
 }
@@ -88,11 +88,10 @@ export default function Appointments() {
   const monthAppointments = useMemo(() => {
     const monthStr = currentDate.toISOString().slice(0, 7); // "2025-12"
     return filteredAppointments.filter((apt) => {
-        // Fix TS2358: left-hand side of 'instanceof' must be of type 'any', object, or type parameter.
-        const dateVal = apt.appointmentDate as unknown;
-        const dateStr = dateVal instanceof Date
-            ? dateVal.toISOString()
-            : String(dateVal);
+        // Ensure we handle both Date objects (from superjson) and strings (fallback)
+        const dateStr = (apt.appointmentDate as unknown) instanceof Date
+            ? (apt.appointmentDate as unknown as Date).toISOString()
+            : String(apt.appointmentDate);
         return dateStr.startsWith(monthStr);
     });
   }, [filteredAppointments, currentDate]);
@@ -101,10 +100,9 @@ export default function Appointments() {
   const appointmentsByDate = useMemo(() => {
     const grouped: Record<string, Appointment[]> = {};
     monthAppointments.forEach((apt) => {
-      const dateVal = apt.appointmentDate as unknown;
-      const dateKey = dateVal instanceof Date
-        ? dateVal.toISOString().slice(0, 10)
-        : String(dateVal).slice(0, 10);
+      const dateKey = (apt.appointmentDate as unknown) instanceof Date
+        ? (apt.appointmentDate as unknown as Date).toISOString().slice(0, 10)
+        : String(apt.appointmentDate).slice(0, 10);
 
       if (!grouped[dateKey]) grouped[dateKey] = [];
       grouped[dateKey].push(apt);
@@ -181,8 +179,7 @@ export default function Appointments() {
             {dayAppointments.slice(0, 2).map((apt) => (
               <div
                 key={apt.id}
-                // Fix TS7053: implicit any. Ensure status is a valid key or provide fallback.
-                className={`text-xs px-2 py-1 rounded truncate cursor-pointer ${statusConfig[apt.status]?.bgColor || 'bg-gray-100'} ${statusConfig[apt.status]?.color || 'text-gray-700'}`}
+                className={`text-xs px-2 py-1 rounded truncate cursor-pointer ${statusConfig[apt.status as AppointmentStatus]?.bgColor || "bg-gray-100"} ${statusConfig[apt.status as AppointmentStatus]?.color || "text-gray-700"}`}
               >
                 {apt.appointmentTime} - {apt.clientName}
               </div>
@@ -292,8 +289,8 @@ export default function Appointments() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
                           <div className="font-semibold text-gray-900">{apt.clientName}</div>
-                          <Badge className={statusConfig[apt.status]?.bgColor || 'bg-gray-100'}>
-                            <span className={statusConfig[apt.status]?.color || 'text-gray-700'}>{statusConfig[apt.status]?.label || apt.status}</span>
+                          <Badge className={statusConfig[apt.status as AppointmentStatus]?.bgColor || "bg-gray-100"}>
+                            <span className={statusConfig[apt.status as AppointmentStatus]?.color || "text-gray-700"}>{statusConfig[apt.status as AppointmentStatus]?.label || apt.status}</span>
                           </Badge>
                         </div>
                         <div className="text-sm text-gray-600 flex gap-3">
@@ -306,12 +303,12 @@ export default function Appointments() {
                             {apt.appointmentTime}
                           </span>
                           <span className="flex items-center gap-1">
-                            {typeConfig[apt.modality]?.icon === MapPin ? (
+                            {typeConfig[apt.modality as AppointmentType]?.icon === MapPin ? (
                               <MapPin size={14} />
                             ) : (
                               <Calendar size={14} />
                             )}
-                            {typeConfig[apt.modality]?.label || apt.modality}
+                            {typeConfig[apt.modality as AppointmentType]?.label || apt.modality}
                           </span>
                         </div>
                       </div>
@@ -354,12 +351,12 @@ export default function Appointments() {
                           </td>
                           <td className="px-6 py-4">
                             <Badge variant="outline">
-                              {typeConfig[apt.modality]?.label || apt.modality}
+                              {typeConfig[apt.modality as AppointmentType]?.label || apt.modality}
                             </Badge>
                           </td>
                           <td className="px-6 py-4">
-                            <Badge className={statusConfig[apt.status]?.bgColor || 'bg-gray-100'}>
-                              <span className={statusConfig[apt.status]?.color || 'text-gray-700'}>{statusConfig[apt.status]?.label || apt.status}</span>
+                            <Badge className={statusConfig[apt.status as AppointmentStatus]?.bgColor || "bg-gray-100"}>
+                              <span className={statusConfig[apt.status as AppointmentStatus]?.color || "text-gray-700"}>{statusConfig[apt.status as AppointmentStatus]?.label || apt.status}</span>
                             </Badge>
                           </td>
                           <td className="px-6 py-4">
