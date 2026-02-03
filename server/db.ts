@@ -259,7 +259,7 @@ async function getBookedCountByDate(db: Awaited<ReturnType<typeof ensureDb>>, da
     .from(appointments)
     .where(
       and(
-        eq(appointments.appointmentDate, date),
+        eq(appointments.appointmentDate, date.toISOString().slice(0, 10)),
         inArray(appointments.status, BOOKED_STATUSES as unknown as AllowedStatus[])
       )
     );
@@ -303,7 +303,7 @@ export async function createAppointment(data: InsertAppointment): Promise<Appoin
     .from(appointments)
     .where(
       and(
-        eq(appointments.appointmentDate, normalizedDate),
+        eq(appointments.appointmentDate, normalizedDate.toISOString().slice(0, 10)),
         eq(appointments.appointmentTime, normalizedTime),
         inArray(appointments.status, BOOKED_STATUSES as unknown as AllowedStatus[])
       )
@@ -318,7 +318,7 @@ export async function createAppointment(data: InsertAppointment): Promise<Appoin
     .insert(appointments)
     .values({
       ...data,
-      appointmentDate: normalizedDate,
+      appointmentDate: normalizedDate.toISOString().slice(0, 10),
       appointmentTime: normalizedTime,
       status: data.status ?? "pendente",
     })
@@ -348,8 +348,8 @@ export async function getAppointmentsByStatus(status: AllowedStatus): Promise<Ap
 export async function getAppointmentsInRange(start?: Date, end?: Date): Promise<Appointment[]> {
   const db = await ensureDb();
   const clauses = [] as any[];
-  if (start) clauses.push(gte(appointments.appointmentDate, start));
-  if (end) clauses.push(lte(appointments.appointmentDate, end));
+  if (start) clauses.push(gte(appointments.appointmentDate, start.toISOString().slice(0, 10)));
+  if (end) clauses.push(lte(appointments.appointmentDate, end.toISOString().slice(0, 10)));
 
   return await db
     .select()
@@ -431,10 +431,13 @@ export async function upsertAvailability(row: InsertAvailability): Promise<void>
 
 export async function addBlockedDate(row: InsertBlockedDate): Promise<void> {
   const db = await ensureDb();
+  // Ensure we are comparing string dates
+  const dateStr = row.date instanceof Date ? row.date.toISOString().slice(0, 10) : row.date;
+
   const [existing] = await db
     .select({ id: blockedDates.id })
     .from(blockedDates)
-    .where(eq(blockedDates.date, row.date))
+    .where(eq(blockedDates.date, dateStr))
     .limit(1);
 
   if (existing?.id) {
@@ -445,12 +448,13 @@ export async function addBlockedDate(row: InsertBlockedDate): Promise<void> {
     return;
   }
 
-  await db.insert(blockedDates).values(row);
+  await db.insert(blockedDates).values({ ...row, date: dateStr });
 }
 
 export async function getBlockedDate(dateValue: Date): Promise<BlockedDate | null> {
   const db = await ensureDb();
-  const [row] = await db.select().from(blockedDates).where(eq(blockedDates.date, dateValue)).limit(1);
+  const dateStr = dateValue.toISOString().slice(0, 10);
+  const [row] = await db.select().from(blockedDates).where(eq(blockedDates.date, dateStr)).limit(1);
   return row ?? null;
 }
 
@@ -607,7 +611,7 @@ export async function getAvailableSlots(dateStr: string): Promise<AvailableSlot[
     .from(appointments)
     .where(
       and(
-        eq(appointments.appointmentDate, dateValue),
+        eq(appointments.appointmentDate, dateValue.toISOString().slice(0, 10)),
         inArray(appointments.status, BOOKED_STATUSES as unknown as AllowedStatus[])
       )
     );
@@ -909,7 +913,8 @@ export async function pageExists(slug: string, excludeId?: number): Promise<bool
     .where(eq(pages.slug, slug));
   
   if (excludeId) {
-    query = query.where(sql`${pages.id} != ${excludeId}`) as any;
+    // @ts-ignore
+    query = query.where(sql`${pages.id} != ${excludeId}`);
   }
   
   const result = await query;
