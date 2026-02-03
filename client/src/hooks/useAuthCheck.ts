@@ -32,8 +32,13 @@ export function useAuthCheck(): AuthStatus {
         isLoading: false,
         isAuthenticated: !!meQuery.data,
         isAdmin: meQuery.data?.role === 'admin',
-        user: meQuery.data || null,
-        error: meQuery.error,
+        user: meQuery.data ? {
+          id: meQuery.data.id,
+          email: meQuery.data.email || undefined,
+          name: meQuery.data.name || undefined,
+          role: meQuery.data.role
+        } : null,
+        error: meQuery.error as Error | null,
       });
     }
   }, [meQuery.data, meQuery.isLoading, meQuery.error]);

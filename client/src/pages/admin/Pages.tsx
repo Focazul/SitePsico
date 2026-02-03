@@ -41,7 +41,7 @@ export default function Pages() {
 
   // Query para buscar todas as páginas
   const { data, isLoading, refetch } = trpc.pages.getAll.useQuery();
-  const pages = data?.pages || [];
+  const pages = (data?.pages || []) as unknown as Page[];
 
   // Mutations
   const createMutation = trpc.pages.create.useMutation({
