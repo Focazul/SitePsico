@@ -49,7 +49,7 @@ async function main() {
       
       await sql`
         UPDATE users 
-        SET password = ${passwordHash}, role = 'admin', updated_at = NOW() 
+        SET password = ${passwordHash}, role = 'admin', "updatedAt" = NOW() 
         WHERE email = ${adminEmail}
       `;
       
@@ -58,7 +58,7 @@ async function main() {
       console.log('➕ Criando novo usuário...\n');
       
       await sql`
-        INSERT INTO users (name, email, password, role, login_method) 
+        INSERT INTO users (name, email, password, role, "loginMethod") 
         VALUES ('Admin User', ${adminEmail}, ${passwordHash}, 'admin', 'password')
       `;
       
@@ -67,7 +67,7 @@ async function main() {
 
     // Verificar no banco
     const users = await sql`
-      SELECT id, email, role, created_at FROM users WHERE email = ${adminEmail}
+      SELECT id, email, role, "createdAt" FROM users WHERE email = ${adminEmail}
     `;
 
     if (users.length > 0) {
@@ -76,7 +76,7 @@ async function main() {
       console.log(`   ID: ${user.id}`);
       console.log(`   Email: ${user.email}`);
       console.log(`   Role: ${user.role}`);
-      console.log(`   Criado em: ${user.created_at}\n`);
+      console.log(`   Criado em: ${user.createdAt}\n`);
     }
 
     await sql.end();
