@@ -108,8 +108,9 @@ async function startServer() {
 
           const maybeAddOrigin = (value?: string) => {
             if (!value) return;
-            if (value.startsWith("http://") || value.startsWith("https://")) {
-              connectSrc.add(value);
+            const trimmed = value.trim();
+            if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
+              connectSrc.add(trimmed);
             }
           };
 
@@ -117,12 +118,21 @@ async function startServer() {
             connectSrc.add("localhost:*");
           }
 
+          // Add resolved allowed origins (frontend URLs that call API)
           for (const origin of resolvedAllowedOrigins) {
             maybeAddOrigin(origin);
           }
 
+          // Add API URL if specified
           maybeAddOrigin(process.env.VITE_API_URL);
+          
+          // Add Frontend URL explicitly
           maybeAddOrigin(process.env.FRONTEND_URL);
+          
+          // Log CSP for debugging
+          if (isDev) {
+            console.log("[CSP] Allowed origins:", Array.from(connectSrc));
+          }
 
           return {
             defaultSrc: ["'self'"],
