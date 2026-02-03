@@ -475,15 +475,16 @@ export async function getAvailableSlots(dateStr: string): Promise<AvailableSlot[
     availabilityConfig = availabilitySetting as typeof availabilityConfig;
   } else if (typeof availabilitySetting === "string") {
     try {
-      const parsed = JSON.parse(availabilitySetting);
+      let parsed = JSON.parse(availabilitySetting);
+      // Handle potential double stringification
+      if (typeof parsed === "string") {
+        try { parsed = JSON.parse(parsed); } catch {}
+      }
       if (Array.isArray(parsed)) availabilityConfig = parsed as typeof availabilityConfig;
     } catch {
       // ignore parse errors and fall through
     }
   }
-
-  const settingsAvail = availabilityConfig?.find((slot) => slot.day === dayKey);
-  if (settingsAvail && settingsAvail.enabled === false) return [];
 
   const parseTime = (t: string | undefined): number | null => {
     if (!t) return null;
@@ -579,7 +580,12 @@ export async function getAvailableSlots(dateStr: string): Promise<AvailableSlot[
   let endM: number | null = null;
   let slotMinutes = slotMinutesFromSettings ?? null;
 
-  if (settingsAvail && settingsAvail.enabled !== false) {
+  if (availabilityConfig) {
+    const settingsAvail = availabilityConfig.find((slot) => slot.day === dayKey);
+    // Explicitly check if enabled is false OR if setting is missing for this day (implies closed/not configured in new system)
+    if (!settingsAvail || settingsAvail.enabled === false) {
+      return [];
+    }
     startM = parseTime(settingsAvail.start);
     endM = parseTime(settingsAvail.end);
   } else {
