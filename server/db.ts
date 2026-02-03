@@ -568,6 +568,7 @@ export async function getAvailableSlots(dateStr: string): Promise<AvailableSlot[
 
   // If DB is unavailable, generate slots only from settings (no booking/blocked checks)
   if (!db) {
+    const settingsAvail = availabilityConfig?.find((slot) => slot.day === dayKey);
     if (settingsAvail && settingsAvail.enabled !== false) {
       const startM = parseTime(settingsAvail.start);
       const endM = parseTime(settingsAvail.end);
@@ -611,7 +612,9 @@ export async function getAvailableSlots(dateStr: string): Promise<AvailableSlot[
     .from(appointments)
     .where(
       and(
-        eq(appointments.appointmentDate, dateValue.toISOString().slice(0, 10)),
+        // Fix Drizzle Date vs string mismatch
+        // Using explicit casting to 'unknown' first to avoid TS2352
+        eq(appointments.appointmentDate as unknown as string, dateValue.toISOString().slice(0, 10)),
         inArray(appointments.status, BOOKED_STATUSES as unknown as AllowedStatus[])
       )
     );
@@ -689,7 +692,7 @@ export async function getPostBySlug(slug: string): Promise<(Post & { tags: Tag[]
     .where(eq(postTags.postId, post.id));
 
   const category = post.categoryId
-    ? await db.select().from(categories).where(eq(categories.id, post.categoryId)).limit(1).then((rows) => rows[0] ?? null)
+    ? await db.select().from(categories).where(eq(categories.id, post.categoryId)).limit(1).then((rows) => (rows[0] as unknown) ? rows[0] : null)
     : null;
 
   // Increment views
@@ -754,7 +757,7 @@ export async function getPublishedPosts(
         .where(eq(postTags.postId, post.id));
 
       const category = post.categoryId
-        ? await db.select().from(categories).where(eq(categories.id, post.categoryId)).limit(1).then((rows) => rows[0] ?? null)
+        ? await db.select().from(categories).where(eq(categories.id, post.categoryId)).limit(1).then((rows) => (rows[0] as unknown) ? rows[0] : null)
         : null;
 
       return { ...post, tags: tagRows.map((r) => r.tag), category };

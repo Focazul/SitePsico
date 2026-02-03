@@ -120,11 +120,15 @@ export default function Appointments() {
     nextWeek.setDate(nextWeek.getDate() + 7);
 
     return filteredAppointments.filter((apt) => {
-      const aptDate = new Date(apt.appointmentDate);
+      const dateVal = apt.appointmentDate as unknown;
+      const dateStr = dateVal instanceof Date
+        ? dateVal.toISOString()
+        : String(dateVal);
+      const aptDate = new Date(dateStr);
       return aptDate >= today && aptDate <= nextWeek;
     }).sort((a, b) => {
-      const dateA = new Date(a.appointmentDate);
-      const dateB = new Date(b.appointmentDate);
+      const dateA = new Date(a.appointmentDate as string);
+      const dateB = new Date(b.appointmentDate as string);
       const dateCompare = dateA.getTime() - dateB.getTime();
       if (dateCompare !== 0) return dateCompare;
       return a.appointmentTime.localeCompare(b.appointmentTime);
@@ -177,6 +181,7 @@ export default function Appointments() {
             {dayAppointments.slice(0, 2).map((apt) => (
               <div
                 key={apt.id}
+                // Fix TS7053: implicit any. Ensure status is a valid key or provide fallback.
                 className={`text-xs px-2 py-1 rounded truncate cursor-pointer ${statusConfig[apt.status]?.bgColor || 'bg-gray-100'} ${statusConfig[apt.status]?.color || 'text-gray-700'}`}
               >
                 {apt.appointmentTime} - {apt.clientName}
