@@ -77,12 +77,53 @@ async function startServer() {
   // MIDDLEWARE ORDER CRITICAL FOR FUNCTIONALITY
   // ============================================
   
-  // 1. SECURITY: Helmet configuration
+  // 1. CORS ALLOWED ORIGINS (used by CORS + CSP)
+  const allowedOrigins = (process.env.ALLOWED_ORIGINS || "")
+    .split(",")
+    .map(origin => origin.trim())
+    .filter(Boolean);
+
+  const defaultOrigins = [
+    "http://localhost:5174",
+    "http://localhost:5173",
+    "http://127.0.0.1:5174",
+    "http://127.0.0.1:5173",
+  ];
+
+  const resolvedAllowedOrigins =
+    allowedOrigins.length > 0 ? allowedOrigins : defaultOrigins;
+
+  const hasWildcardOrigin = resolvedAllowedOrigins.includes("*");
+
+  // 2. SECURITY: Helmet configuration
   app.use(
     helmet({
       contentSecurityPolicy: {
         directives: (() => {
           const isDev = process.env.NODE_ENV === "development";
+          const connectSrc = new Set<string>([
+            "'self'",
+            "*.googleapis.com",
+          ]);
+
+          const maybeAddOrigin = (value?: string) => {
+            if (!value) return;
+            if (value.startsWith("http://") || value.startsWith("https://")) {
+              connectSrc.add(value);
+            }
+          };
+
+          if (isDev) {
+            connectSrc.add("localhost:*");
+          }
+
+          for (const origin of resolvedAllowedOrigins) {
+            maybeAddOrigin(origin);
+          }
+
+          maybeAddOrigin(process.env.VITE_API_URL);
+          maybeAddOrigin(process.env.FRONTEND_URL);
+
           return {
             defaultSrc: ["'self'"],
             scriptSrc: isDev
@@ -93,9 +134,7 @@ async function startServer() {
               : ["'self'", "fonts.googleapis.com"],
             fontSrc: ["'self'", "fonts.gstatic.com"],
             imgSrc: ["'self'", "data:", "https:"],
-            connectSrc: isDev
-              ? ["'self'", "localhost:*", "*.googleapis.com"]
-              : ["'self'", "*.googleapis.com"],
+            connectSrc: Array.from(connectSrc),
             frameSrc: ["'none'"],
             objectSrc: ["'none'"],
           };
@@ -113,23 +152,14 @@ async function startServer() {
     })
   );
 
-  // 2. CORS: MUST be before body parsers and auth middleware
-  const allowedOrigins = 
-    process.env.ALLOWED_ORIGINS?.split(",") || [
-      "http://localhost:5174",
-      "http://localhost:5173",
-      "http://127.0.0.1:5174",
-      "http://127.0.0.1:5173",
-    ];
-
+  // 3. CORS: MUST be before body parsers and auth middleware
   app.use(
     cors({
       origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin)) {
-          callback(null, true);
-        } else {
-          callback(new Error('CORS not authorized'));
-        }
+        if (!origin) return callback(null, true);
+        if (hasWildcardOrigin) return callback(null, true);
+        if (resolvedAllowedOrigins.includes(origin)) return callback(null, true);
+        return callback(new Error("CORS not authorized"));
       },
       credentials: true,
       methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
