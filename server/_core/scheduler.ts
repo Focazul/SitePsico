@@ -119,6 +119,8 @@ async function sendReminderEmail(appointmentId: number): Promise<void> {
     const displayDate = `${day}/${month}/${year}`;
     const timeStr = String(appointment.appointmentTime).slice(0, 5);
 
+    const modality = appointment.modality as "presencial" | "online";
+
     // Enviar lembrete
     const success = await sendAppointmentReminder({
       patientEmail: appointment.clientEmail,

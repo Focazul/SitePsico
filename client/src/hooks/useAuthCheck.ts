@@ -28,6 +28,14 @@ export function useAuthCheck(): AuthStatus {
 
   useEffect(() => {
     if (!meQuery.isLoading) {
+      // Fix TS2322: Types of property 'email' are incompatible.
+      // Type 'string | null' is not assignable to type 'string | undefined'.
+      const userData = meQuery.data ? {
+        ...meQuery.data,
+        email: meQuery.data.email || undefined,
+        name: meQuery.data.name || undefined,
+      } : null;
+
       setStatus({
         isLoading: false,
         isAuthenticated: !!meQuery.data,

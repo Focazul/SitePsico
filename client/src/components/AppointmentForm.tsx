@@ -49,8 +49,11 @@ export default function AppointmentForm() {
   const onSubmit = async (data: any) => {
     setIsSubmitting(true);
     try {
-      const [year, month, day] = (data.appointmentDate as string).split('-');
-      const appointmentDate = new Date(`${year}-${month}-${day}T${data.appointmentTime}:00`);
+      // The backend expects appointmentDate as string in 'YYYY-MM-DD' format based on updated types.
+      // Drizzle handles the date parsing on insert, or accepts string depending on setup.
+      // Given the error in server/routers/booking.ts (Date not assignable to string),
+      // we should send the string directly.
+      const dateStr = data.appointmentDate as string;
 
       await createAppointment.mutateAsync({
         clientName: data.clientName,

@@ -431,10 +431,13 @@ export async function upsertAvailability(row: InsertAvailability): Promise<void>
 
 export async function addBlockedDate(row: InsertBlockedDate): Promise<void> {
   const db = await ensureDb();
+  // Ensure we are comparing string dates
+  const dateStr = row.date instanceof Date ? row.date.toISOString().slice(0, 10) : row.date;
+
   const [existing] = await db
     .select({ id: blockedDates.id })
     .from(blockedDates)
-    .where(eq(blockedDates.date, row.date))
+    .where(eq(blockedDates.date, dateStr))
     .limit(1);
 
   if (existing?.id) {
@@ -445,7 +448,7 @@ export async function addBlockedDate(row: InsertBlockedDate): Promise<void> {
     return;
   }
 
-  await db.insert(blockedDates).values(row);
+  await db.insert(blockedDates).values({ ...row, date: dateStr });
 }
 
 export async function getBlockedDate(dateValue: Date): Promise<BlockedDate | null> {
@@ -563,6 +566,7 @@ export async function getAvailableSlots(dateStr: string): Promise<AvailableSlot[
 
   // If DB is unavailable, generate slots only from settings (no booking/blocked checks)
   if (!db) {
+    const settingsAvail = availabilityConfig?.find((slot) => slot.day === dayKey);
     if (settingsAvail && settingsAvail.enabled !== false) {
       const startM = parseTime(settingsAvail.start);
       const endM = parseTime(settingsAvail.end);
@@ -579,7 +583,12 @@ export async function getAvailableSlots(dateStr: string): Promise<AvailableSlot[
   let endM: number | null = null;
   let slotMinutes = slotMinutesFromSettings ?? null;
 
-  if (settingsAvail && settingsAvail.enabled !== false) {
+  if (availabilityConfig) {
+    const settingsAvail = availabilityConfig.find((slot) => slot.day === dayKey);
+    // Explicitly check if enabled is false OR if setting is missing for this day (implies closed/not configured in new system)
+    if (!settingsAvail || settingsAvail.enabled === false) {
+      return [];
+    }
     startM = parseTime(settingsAvail.start);
     endM = parseTime(settingsAvail.end);
   } else {
@@ -679,7 +688,7 @@ export async function getPostBySlug(slug: string): Promise<(Post & { tags: Tag[]
     .where(eq(postTags.postId, post.id));
 
   const category = post.categoryId
-    ? await db.select().from(categories).where(eq(categories.id, post.categoryId)).limit(1).then((rows) => rows[0] ?? null)
+    ? await db.select().from(categories).where(eq(categories.id, post.categoryId)).limit(1).then((rows) => (rows[0] as unknown) ? rows[0] : null)
     : null;
 
   // Increment views
@@ -744,7 +753,7 @@ export async function getPublishedPosts(
         .where(eq(postTags.postId, post.id));
 
       const category = post.categoryId
-        ? await db.select().from(categories).where(eq(categories.id, post.categoryId)).limit(1).then((rows) => rows[0] ?? null)
+        ? await db.select().from(categories).where(eq(categories.id, post.categoryId)).limit(1).then((rows) => (rows[0] as unknown) ? rows[0] : null)
         : null;
 
       return { ...post, tags: tagRows.map((r) => r.tag), category };
