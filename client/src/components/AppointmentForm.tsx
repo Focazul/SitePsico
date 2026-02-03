@@ -56,7 +56,7 @@ export default function AppointmentForm() {
         clientName: data.clientName,
         clientEmail: data.clientEmail,
         clientPhone: data.clientPhone,
-        appointmentDate,
+        appointmentDate: data.appointmentDate,
         appointmentTime: data.appointmentTime,
         modality: data.modality,
         subject: data.subject,

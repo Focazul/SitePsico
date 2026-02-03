@@ -79,7 +79,7 @@ export async function getUserSchemaStatus(): Promise<Record<string, boolean>> {
     FROM information_schema.columns
     WHERE table_schema = 'public' AND table_name = 'users'
   `;
-  const cols = new Set(rows.map((r: { column_name: string }) => r.column_name));
+  const cols = new Set((rows as any[]).map((r: { column_name: string }) => r.column_name));
   const required = [
     "openId",
     "loginMethod",
@@ -259,7 +259,7 @@ async function getBookedCountByDate(db: Awaited<ReturnType<typeof ensureDb>>, da
     .from(appointments)
     .where(
       and(
-        eq(appointments.appointmentDate, date),
+        eq(appointments.appointmentDate, date.toISOString().slice(0, 10)),
         inArray(appointments.status, BOOKED_STATUSES as unknown as AllowedStatus[])
       )
     );
@@ -280,10 +280,10 @@ export async function createAppointment(data: InsertAppointment): Promise<Appoin
 
   const dateStr = typeof data.appointmentDate === "string"
     ? data.appointmentDate
-    : data.appointmentDate.toISOString().slice(0, 10);
+    : (data.appointmentDate as any).toISOString().slice(0, 10);
   const timeStr = typeof data.appointmentTime === "string"
     ? data.appointmentTime
-    : data.appointmentTime.toISOString().slice(11, 16);
+    : (data.appointmentTime as any).toISOString().slice(11, 16);
 
   assertBusinessRules(dateStr, timeStr);
 
@@ -303,7 +303,7 @@ export async function createAppointment(data: InsertAppointment): Promise<Appoin
     .from(appointments)
     .where(
       and(
-        eq(appointments.appointmentDate, normalizedDate),
+        eq(appointments.appointmentDate, normalizedDate.toISOString().slice(0, 10)),
         eq(appointments.appointmentTime, normalizedTime),
         inArray(appointments.status, BOOKED_STATUSES as unknown as AllowedStatus[])
       )
@@ -318,7 +318,7 @@ export async function createAppointment(data: InsertAppointment): Promise<Appoin
     .insert(appointments)
     .values({
       ...data,
-      appointmentDate: normalizedDate,
+      appointmentDate: normalizedDate.toISOString().slice(0, 10),
       appointmentTime: normalizedTime,
       status: data.status ?? "pendente",
     })
@@ -348,8 +348,8 @@ export async function getAppointmentsByStatus(status: AllowedStatus): Promise<Ap
 export async function getAppointmentsInRange(start?: Date, end?: Date): Promise<Appointment[]> {
   const db = await ensureDb();
   const clauses = [] as any[];
-  if (start) clauses.push(gte(appointments.appointmentDate, start));
-  if (end) clauses.push(lte(appointments.appointmentDate, end));
+  if (start) clauses.push(gte(appointments.appointmentDate, start.toISOString().slice(0, 10)));
+  if (end) clauses.push(lte(appointments.appointmentDate, end.toISOString().slice(0, 10)));
 
   return await db
     .select()
@@ -450,7 +450,7 @@ export async function addBlockedDate(row: InsertBlockedDate): Promise<void> {
 
 export async function getBlockedDate(dateValue: Date): Promise<BlockedDate | null> {
   const db = await ensureDb();
-  const [row] = await db.select().from(blockedDates).where(eq(blockedDates.date, dateValue)).limit(1);
+  const [row] = await db.select().from(blockedDates).where(eq(blockedDates.date, dateValue.toISOString().slice(0, 10))).limit(1);
   return row ?? null;
 }
 
@@ -470,19 +470,19 @@ export async function getAvailableSlots(dateStr: string): Promise<AvailableSlot[
   const dayKeys = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"] as const;
   const dayKey = dayKeys[dayOfWeek];
 
-  let availabilityConfig: Array<{ day?: string; enabled?: boolean; start?: string; end?: string }> | null = null;
+  let availabilityConfig: Array<{ day?: string; enabled?: boolean; start?: string; end?: string }> = [];
   if (Array.isArray(availabilitySetting)) {
-    availabilityConfig = availabilitySetting as typeof availabilityConfig;
+    availabilityConfig = availabilitySetting as any[];
   } else if (typeof availabilitySetting === "string") {
     try {
       const parsed = JSON.parse(availabilitySetting);
-      if (Array.isArray(parsed)) availabilityConfig = parsed as typeof availabilityConfig;
+      if (Array.isArray(parsed)) availabilityConfig = parsed as any[];
     } catch {
       // ignore parse errors and fall through
     }
   }
 
-  const settingsAvail = availabilityConfig?.find((slot) => slot.day === dayKey);
+  const settingsAvail = availabilityConfig.find((slot: any) => slot.day === dayKey);
   if (settingsAvail && settingsAvail.enabled === false) return [];
 
   const parseTime = (t: string | undefined): number | null => {
@@ -601,7 +601,7 @@ export async function getAvailableSlots(dateStr: string): Promise<AvailableSlot[
     .from(appointments)
     .where(
       and(
-        eq(appointments.appointmentDate, dateValue),
+        eq(appointments.appointmentDate, dateValue.toISOString().slice(0, 10)),
         inArray(appointments.status, BOOKED_STATUSES as unknown as AllowedStatus[])
       )
     );
@@ -609,7 +609,7 @@ export async function getAvailableSlots(dateStr: string): Promise<AvailableSlot[
   if (dailyLimit && existing.length >= dailyLimit) return [];
   const bookedTimes = new Set(
     existing.map((r) => {
-      const t = r.time instanceof Date ? r.time.toISOString().slice(11, 16) : String(r.time).slice(0, 5);
+      const t = (r.time as unknown) instanceof Date ? (r.time as unknown as Date).toISOString().slice(11, 16) : String(r.time).slice(0, 5);
       return t;
     })
   );
@@ -898,15 +898,16 @@ export async function deletePage(id: number): Promise<void> {
 export async function pageExists(slug: string, excludeId?: number): Promise<boolean> {
   const db = await ensureDb();
   
-  let query = db.select({ count: sql<number>`count(*)` })
-    .from(pages)
-    .where(eq(pages.slug, slug));
+  const conditions = [eq(pages.slug, slug)];
   
   if (excludeId) {
-    query = query.where(sql`${pages.id} != ${excludeId}`) as any;
+    conditions.push(sql`${pages.id} != ${excludeId}`);
   }
   
-  const result = await query;
+  const result = await db.select({ count: sql<number>`count(*)` })
+    .from(pages)
+    .where(and(...conditions));
+
   return (result[0]?.count || 0) > 0;
 }
 

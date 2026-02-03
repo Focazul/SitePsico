@@ -37,7 +37,7 @@ export const bookingRouter = router({
     .mutation(async ({ input }) => {
       const created = await createAppointment({
         ...input,
-        appointmentDate: new Date(`${input.appointmentDate}T00:00:00.000Z`),
+        appointmentDate: input.appointmentDate,
         appointmentTime: `${input.appointmentTime}:00`,
         status: "pendente",
       });
@@ -165,7 +165,7 @@ export const bookingRouter = router({
   blockDate: adminProcedure
     .input(z.object({ date: dateStr, reason: z.string().max(255).optional() }))
     .mutation(async ({ input }) => {
-      await addBlockedDate({ date: new Date(`${input.date}T00:00:00.000Z`), reason: input.reason });
+      await addBlockedDate({ date: input.date, reason: input.reason });
       return { success: true } as const;
     }),
 });
