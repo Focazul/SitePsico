@@ -127,7 +127,7 @@ async function sendReminderEmail(appointmentId: number): Promise<void> {
       patientName: appointment.clientName,
       appointmentDate: displayDate,
       appointmentTime: timeStr,
-      modalidade: appointment.modality as "online" | "presencial",
+      modalidade: appointment.modality as "presencial" | "online",
       meetingLink: appointment.modality === "online" ? `${config.meeting.linkBase}${appointmentId}` : undefined,
       psychologistName: config.name,
       psychologistPhone: config.phone,

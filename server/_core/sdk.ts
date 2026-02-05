@@ -233,9 +233,9 @@ class SDKServer {
       }
 
       return {
-        openId,
-        appId: typeof appId === 'string' ? appId : '',
-        name: typeof name === 'string' ? name : '',
+        openId: openId as string,
+        appId: appId as string,
+        name: name as string,
       };
     } catch (error) {
       console.warn("[Auth] Session verification failed", String(error));
