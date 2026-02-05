@@ -160,8 +160,8 @@ export default function Appointments() {
   const appointmentsByDate = useMemo(() => {
     const grouped: Record<string, Appointment[]> = {};
     monthAppointments.forEach((apt) => {
-      const dateKey = apt.appointmentDate instanceof Date
-        ? apt.appointmentDate.toISOString().slice(0, 10)
+      const dateKey = (apt.appointmentDate as unknown) instanceof Date
+        ? (apt.appointmentDate as unknown as Date).toISOString().slice(0, 10)
         : String(apt.appointmentDate).slice(0, 10);
 
       if (!grouped[dateKey]) grouped[dateKey] = [];
@@ -178,11 +178,15 @@ export default function Appointments() {
     nextWeek.setDate(nextWeek.getDate() + 7);
 
     return filteredAppointments.filter((apt) => {
-      const aptDate = new Date(apt.appointmentDate);
+      const dateVal = apt.appointmentDate as unknown;
+      const dateStr = dateVal instanceof Date
+        ? dateVal.toISOString()
+        : String(dateVal);
+      const aptDate = new Date(dateStr);
       return aptDate >= today && aptDate <= nextWeek;
     }).sort((a, b) => {
-      const dateA = new Date(a.appointmentDate);
-      const dateB = new Date(b.appointmentDate);
+      const dateA = new Date(a.appointmentDate as string);
+      const dateB = new Date(b.appointmentDate as string);
       const dateCompare = dateA.getTime() - dateB.getTime();
       if (dateCompare !== 0) return dateCompare;
       return a.appointmentTime.localeCompare(b.appointmentTime);
@@ -579,7 +583,9 @@ export default function Appointments() {
                                     size="sm"
                                     variant="outline"
                                     onClick={() => {
-                                      setSelectedAppointment(apt);
+                                      // Fix TS2345: Argument not assignable to 'SetStateAction<Appointment | null>'.
+                                      // Ensure apt matches Appointment type
+                                      setSelectedAppointment(apt as Appointment);
                                       setEditNotes(apt.notes || "");
                                       setEditTags(apt.tags || "");
                                       setEditPaymentStatus((apt.paymentStatus as PaymentStatus) || "pendente");
