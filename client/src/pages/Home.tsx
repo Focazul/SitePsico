@@ -502,27 +502,27 @@ export default function Home() {
                   <Card className="p-6 text-center border-border/50">
                     <p className="text-sm text-muted-foreground mb-2">Telefone/WhatsApp</p>
                     <a
-                      href="tel:[Telefone]"
+                      href={`tel:${config.phone || '(11) 99999-9999'}`}
                       className="text-accent font-semibold hover:underline"
                     >
-                      [Telefone]
+                      {config.phone || '(11) 99999-9999'}
                     </a>
                   </Card>
 
                   <Card className="p-6 text-center border-border/50">
                     <p className="text-sm text-muted-foreground mb-2">E-mail</p>
                     <a
-                      href="mailto:[Email]"
+                      href={`mailto:${config.email || 'contato@exemplo.com'}`}
                       className="text-accent font-semibold hover:underline break-all"
                     >
-                      [Email]
+                      {config.email || 'contato@exemplo.com'}
                     </a>
                   </Card>
 
                   <Card className="p-6 text-center border-border/50">
                     <p className="text-sm text-muted-foreground mb-2">Horários</p>
                     <p className="text-accent font-semibold">
-                      [Horários de atendimento]
+                      {config.openingHours || 'Segunda a Sexta: 09h - 18h'}
                     </p>
                   </Card>
                 </div>

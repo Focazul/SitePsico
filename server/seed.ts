@@ -4,6 +4,7 @@
 
 import 'dotenv/config';
 import { drizzle } from 'drizzle-orm/postgres-js';
+import { eq } from 'drizzle-orm';
 import postgres from 'postgres';
 import { users } from '../drizzle/schema';
 import { scryptSync, randomBytes } from 'crypto';
@@ -31,10 +32,7 @@ async function seed() {
     const existingUser = await db
       .select()
       .from(users)
-      .where(
-        // @ts-ignore
-        users.email === adminEmail
-      )
+      .where(eq(users.email, adminEmail))
       .limit(1);
 
     if (existingUser.length > 0) {
@@ -45,7 +43,7 @@ async function seed() {
         await db
           .update(users)
           .set({ openId: `user_${user.id}` })
-          .where(users.id === user.id!);
+          .where(eq(users.id, user.id!));
       }
       await sql.end();
       return;

@@ -116,8 +116,8 @@ export async function notifyOwner(
 }
 
 function formatDateTime(appointment: Appointment): { date: string; time: string; iso: Date } {
-  const dateStr = appointment.appointmentDate instanceof Date
-    ? appointment.appointmentDate.toISOString().slice(0, 10)
+  const dateStr = (appointment.appointmentDate as unknown) instanceof Date
+    ? (appointment.appointmentDate as unknown as Date).toISOString().slice(0, 10)
     : String(appointment.appointmentDate).slice(0, 10);
   const timeStr = String(appointment.appointmentTime).slice(0, 5);
   const iso = new Date(`${dateStr}T${timeStr}:00.000Z`);
@@ -134,13 +134,17 @@ export async function sendAppointmentEmails(appointment: Appointment): Promise<{
   const [year, month, day] = date.split("-");
   const displayDate = `${day}/${month}/${year}`;
 
+  // Fix TS2322: 'string' is not assignable to '"presencial" | "online"'.
+  // We need to cast appointment.modality to the specific union type.
+  const modality = appointment.modality as "presencial" | "online";
+
   // Enviar email de confirmação profissional ao paciente
   const patientDelivered = await sendAppointmentConfirmation({
     patientEmail: appointment.clientEmail,
     patientName: appointment.clientName,
     appointmentDate: displayDate,
     appointmentTime: time,
-    modalidade: appointment.modality,
+    modalidade: appointment.modality as "presencial" | "online",
     consultorioAddress: appointment.modality === "presencial" ? config.office.fullAddress : undefined,
     meetingLink: appointment.modality === "online" ? `${config.meeting.linkBase}${appointment.id}` : undefined,
     psychologistName: config.name,

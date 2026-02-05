@@ -41,7 +41,7 @@ export default function Pages() {
 
   // Query para buscar todas as páginas
   const { data, isLoading, refetch } = trpc.pages.getAll.useQuery();
-  const pages = data?.pages || [];
+  const pages = (data?.pages || []) as unknown as Page[];
 
   // Mutations
   const createMutation = trpc.pages.create.useMutation({
@@ -80,7 +80,10 @@ export default function Pages() {
   });
 
   const filteredPages = useMemo(() => {
-    return pages.filter((page: Page) =>
+    // Fix TS2769: predicate mismatch. Ensure page matches expected type from backend (which might have differing optionality)
+    // The query returns { id, title, content, status, order, createdAt, updatedAt, slug, metaTitle, metaDescription }
+    // We should cast it to Page or adjust Page interface if needed.
+    return (pages as Page[]).filter((page) =>
       page.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       page.slug.toLowerCase().includes(searchQuery.toLowerCase())
     );
@@ -110,7 +113,7 @@ export default function Pages() {
       content: page.content,
       metaTitle: page.metaTitle || "",
       metaDescription: page.metaDescription || "",
-      status: page.status,
+      status: page.status as "draft" | "published",
       order: page.order,
     });
     setIsEditorOpen(true);
@@ -382,13 +385,13 @@ export default function Pages() {
             <Card className="p-6">
               <p className="text-sm font-medium text-gray-600">Publicadas</p>
               <p className="mt-2 text-2xl font-bold text-green-600">
-                {pages.filter((p: Page) => p.status === "published").length}
+                {(pages as Page[]).filter((p) => p.status === "published").length}
               </p>
             </Card>
             <Card className="p-6">
               <p className="text-sm font-medium text-gray-600">Rascunhos</p>
               <p className="mt-2 text-2xl font-bold text-yellow-600">
-                {pages.filter((p: Page) => p.status === "draft").length}
+                {(pages as Page[]).filter((p) => p.status === "draft").length}
               </p>
             </Card>
           </div>

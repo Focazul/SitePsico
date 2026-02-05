@@ -221,15 +221,21 @@ class SDKServer {
 
       console.log('[SDK] JWT verified successfully:', { openId, appId, name });
 
-      if (!isNonEmptyString(openId)) {
+      // Fix TS2322: Type 'unknown' is not assignable to type 'string'.
+      // JWT payload properties are unknown by default.
+      const safeOpenId = typeof openId === 'string' ? openId : String(openId || '');
+      const safeAppId = typeof appId === 'string' ? appId : String(appId || '');
+      const safeName = typeof name === 'string' ? name : String(name || '');
+
+      if (!isNonEmptyString(safeOpenId)) {
         console.warn("[Auth] Session payload missing required fields");
         return null;
       }
 
       return {
-        openId,
-        appId,
-        name,
+        openId: openId as string,
+        appId: appId as string,
+        name: name as string,
       };
     } catch (error) {
       console.warn("[Auth] Session verification failed", String(error));
