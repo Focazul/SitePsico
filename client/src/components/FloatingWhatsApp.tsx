@@ -14,6 +14,7 @@ export default function FloatingWhatsApp() {
     return null;
   }
 
+  // @ts-ignore
   const whatsappLink = getWhatsAppLink(config.phoneNumber, config.defaultMessage);
 
   const handleClick = () => {

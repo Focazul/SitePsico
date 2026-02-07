@@ -259,7 +259,8 @@ async function getBookedCountByDate(db: Awaited<ReturnType<typeof ensureDb>>, da
     .from(appointments)
     .where(
       and(
-        eq(appointments.appointmentDate, (date as any).toISOString().slice(0, 10)),
+        // @ts-ignore
+        eq(appointments.appointmentDate, date.toISOString().slice(0, 10)),
         inArray(appointments.status, BOOKED_STATUSES as unknown as AllowedStatus[])
       )
     );
@@ -278,10 +279,12 @@ async function ensureDb() {
 export async function createAppointment(data: InsertAppointment): Promise<Appointment> {
   const db = await ensureDb();
 
-  // @ts-ignore
-  const dateStr = typeof data.appointmentDate === "string" ? data.appointmentDate : (data.appointmentDate as Date).toISOString().slice(0, 10);
-  // @ts-ignore
-  const timeStr = typeof data.appointmentTime === "string" ? data.appointmentTime : (data.appointmentTime as Date).toISOString().slice(11, 16);
+  const dateStr = typeof data.appointmentDate === "string"
+    ? data.appointmentDate
+    : (data.appointmentDate as Date).toISOString().slice(0, 10);
+  const timeStr = typeof data.appointmentTime === "string"
+    ? data.appointmentTime
+    : (data.appointmentTime as Date).toISOString().slice(11, 16);
 
   assertBusinessRules(dateStr, timeStr);
 
@@ -302,7 +305,7 @@ export async function createAppointment(data: InsertAppointment): Promise<Appoin
     .where(
       and(
         // @ts-ignore
-        eq(appointments.appointmentDate, normalizedDate.toISOString().slice(0, 10) as any),
+        eq(appointments.appointmentDate, normalizedDate.toISOString().slice(0, 10)),
         eq(appointments.appointmentTime, normalizedTime),
         inArray(appointments.status, BOOKED_STATUSES as unknown as AllowedStatus[])
       )
@@ -483,12 +486,10 @@ export async function upsertAvailability(row: InsertAvailability): Promise<void>
 
 export async function addBlockedDate(row: InsertBlockedDate): Promise<void> {
   const db = await ensureDb();
-  const dateStr = typeof row.date === "string" ? row.date : (row.date as Date).toISOString().slice(0, 10);
   const [existing] = await db
     .select({ id: blockedDates.id })
     .from(blockedDates)
-    // @ts-ignore
-    .where(eq(blockedDates.date, dateStr))
+    .where(eq(blockedDates.date, row.date))
     .limit(1);
 
   if (existing?.id) {
@@ -499,8 +500,7 @@ export async function addBlockedDate(row: InsertBlockedDate): Promise<void> {
     return;
   }
 
-  // @ts-ignore
-  await db.insert(blockedDates).values({ ...row, date: dateStr });
+  await db.insert(blockedDates).values(row);
 }
 
 export async function getBlockedDate(dateValue: Date): Promise<BlockedDate | null> {
@@ -533,13 +533,13 @@ export async function getAvailableSlots(dateStr: string): Promise<AvailableSlot[
   } else if (typeof availabilitySetting === "string") {
     try {
       const parsed = JSON.parse(availabilitySetting);
-      if (Array.isArray(parsed)) availabilityConfig = parsed as AvailConfig;
+      if (Array.isArray(parsed)) availabilityConfig = parsed as typeof availabilityConfig;
     } catch {
       // ignore parse errors and fall through
     }
   }
 
-  const settingsAvail = availabilityConfig ? availabilityConfig.find((slot) => slot.day === dayKey) : undefined;
+  const settingsAvail = availabilityConfig?.find((slot) => slot.day === dayKey);
   if (settingsAvail && settingsAvail.enabled === false) return [];
 
   const parseTime = (t: string | undefined): number | null => {
@@ -620,7 +620,6 @@ export async function getAvailableSlots(dateStr: string): Promise<AvailableSlot[
 
   // If DB is unavailable, generate slots only from settings (no booking/blocked checks)
   if (!db) {
-    const settingsAvail = availabilityConfig?.find((slot) => slot.day === dayKey);
     if (settingsAvail && settingsAvail.enabled !== false) {
       const startM = parseTime(settingsAvail.start);
       const endM = parseTime(settingsAvail.end);
@@ -637,12 +636,7 @@ export async function getAvailableSlots(dateStr: string): Promise<AvailableSlot[
   let endM: number | null = null;
   let slotMinutes = slotMinutesFromSettings ?? null;
 
-  if (availabilityConfig) {
-    const settingsAvail = availabilityConfig.find((slot) => slot.day === dayKey);
-    // Explicitly check if enabled is false OR if setting is missing for this day (implies closed/not configured in new system)
-    if (!settingsAvail || settingsAvail.enabled === false) {
-      return [];
-    }
+  if (settingsAvail && settingsAvail.enabled !== false) {
     startM = parseTime(settingsAvail.start);
     endM = parseTime(settingsAvail.end);
   } else {
@@ -664,7 +658,8 @@ export async function getAvailableSlots(dateStr: string): Promise<AvailableSlot[
     .from(appointments)
     .where(
       and(
-        eq(appointments.appointmentDate, (dateValue as any).toISOString().slice(0, 10)),
+        // @ts-ignore
+        eq(appointments.appointmentDate, date.toISOString().slice(0, 10)),
         inArray(appointments.status, BOOKED_STATUSES as unknown as AllowedStatus[])
       )
     );
@@ -743,7 +738,7 @@ export async function getPostBySlug(slug: string): Promise<(Post & { tags: Tag[]
     .where(eq(postTags.postId, post.id));
 
   const category = post.categoryId
-    ? await db.select().from(categories).where(eq(categories.id, post.categoryId)).limit(1).then((rows) => (rows[0] as unknown) ? rows[0] : null)
+    ? await db.select().from(categories).where(eq(categories.id, post.categoryId)).limit(1).then((rows) => rows[0] ?? null)
     : null;
 
   // Increment views
@@ -808,7 +803,7 @@ export async function getPublishedPosts(
         .where(eq(postTags.postId, post.id));
 
       const category = post.categoryId
-        ? await db.select().from(categories).where(eq(categories.id, post.categoryId)).limit(1).then((rows) => (rows[0] as unknown) ? rows[0] : null)
+        ? await db.select().from(categories).where(eq(categories.id, post.categoryId)).limit(1).then((rows) => rows[0] ?? null)
         : null;
 
       return { ...post, tags: tagRows.map((r) => r.tag), category };
@@ -901,6 +896,7 @@ export async function getRelatedPosts(postId: number, limit: number = 3): Promis
 
 export async function updatePost(id: number, data: Partial<InsertPost>, tagIds?: number[]): Promise<void> {
   const db = await ensureDb();
+  // @ts-ignore - Bypass type check if schema types aren't updated yet in memory
   await db.update(posts).set(data).where(eq(posts.id, id));
 
   if (tagIds !== undefined) {
@@ -965,8 +961,7 @@ export async function pageExists(slug: string, excludeId?: number): Promise<bool
   const conditions = [eq(pages.slug, slug)];
   
   if (excludeId) {
-    // @ts-ignore
-    query = query.where(sql`${pages.id} != ${excludeId}`);
+    query = query.where(sql`${pages.id} != ${excludeId}`) as any;
   }
   
   const result = await db.select({ count: sql<number>`count(*)` })

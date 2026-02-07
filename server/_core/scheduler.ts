@@ -112,14 +112,12 @@ async function sendReminderEmail(appointmentId: number): Promise<void> {
     const config = await getPsychologistConfig();
 
     // Formatar data
-    const dateStr = (appointment.appointmentDate as unknown) instanceof Date
-      ? (appointment.appointmentDate as unknown as Date).toISOString().slice(0, 10)
+    const dateStr = appointment.appointmentDate instanceof Date
+      ? appointment.appointmentDate.toISOString().slice(0, 10)
       : String(appointment.appointmentDate).slice(0, 10);
     const [year, month, day] = dateStr.split("-");
     const displayDate = `${day}/${month}/${year}`;
     const timeStr = String(appointment.appointmentTime).slice(0, 5);
-
-    const modality = appointment.modality as "presencial" | "online";
 
     // Enviar lembrete
     const success = await sendAppointmentReminder({
@@ -127,7 +125,7 @@ async function sendReminderEmail(appointmentId: number): Promise<void> {
       patientName: appointment.clientName,
       appointmentDate: displayDate,
       appointmentTime: timeStr,
-      modalidade: appointment.modality as "presencial" | "online",
+      modalidade: appointment.modality,
       meetingLink: appointment.modality === "online" ? `${config.meeting.linkBase}${appointmentId}` : undefined,
       psychologistName: config.name,
       psychologistPhone: config.phone,
