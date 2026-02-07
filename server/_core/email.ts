@@ -27,6 +27,11 @@ export type EmailType =
   | "passwordReset"
   | "custom";
 
+export type SendEmailResult = {
+  success: boolean;
+  error?: string;
+};
+
 interface SendEmailOptions {
   to: string;
   subject: string;
@@ -40,10 +45,10 @@ const isConfigured = (): boolean =>
   Boolean(ENV.resendApiKey && ENV.resendFromEmail);
 
 // Função básica de envio (uso interno)
-async function sendEmailRaw(payload: EmailPayload): Promise<boolean> {
+async function sendEmailRaw(payload: EmailPayload): Promise<SendEmailResult> {
   if (!isConfigured()) {
     console.warn("[Email] Resend not configured; skipping email to", payload.to);
-    return false;
+    return { success: false, error: "Resend not configured (missing API Key or From Email)" };
   }
 
   try {
@@ -64,23 +69,22 @@ async function sendEmailRaw(payload: EmailPayload): Promise<boolean> {
 
     if (!response.ok) {
       const detail = await response.text().catch(() => "");
-      console.warn(
-        `[Email] Failed to send to ${payload.to} (${response.status} ${response.statusText})${detail ? `: ${detail}` : ""}`
-      );
-      return false;
+      const errorMsg = `Failed to send to ${payload.to} (${response.status} ${response.statusText})${detail ? `: ${detail}` : ""}`;
+      console.warn(`[Email] ${errorMsg}`);
+      return { success: false, error: errorMsg };
     }
 
     const result = await response.json();
     console.log(`[Email] Successfully sent to ${payload.to}. ID: ${result.id}`);
-    return true;
+    return { success: true };
   } catch (error) {
     console.warn("[Email] Error sending email", error);
-    return false;
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
   }
 }
 
 // Função principal de envio com templates
-export async function sendEmail(options: SendEmailOptions): Promise<boolean> {
+export async function sendEmail(options: SendEmailOptions): Promise<SendEmailResult> {
   console.log(`[Email] sendEmail called with to=${options.to}, type=${options.type}`);
   let html = options.customHtml;
   let text = options.customText;
@@ -118,7 +122,7 @@ export async function sendEmail(options: SendEmailOptions): Promise<boolean> {
   }
 
   // Enviar email
-  const success = await sendEmailRaw({
+  const result = await sendEmailRaw({
     to: options.to,
     subject: options.subject,
     text: text || "",
@@ -131,14 +135,14 @@ export async function sendEmail(options: SendEmailOptions): Promise<boolean> {
       recipientEmail: options.to,
       subject: options.subject,
       emailType: options.type,
-      status: success ? "sent" : "failed",
-      sentAt: success ? new Date() : null,
+      status: result.success ? "sent" : "failed",
+      sentAt: result.success ? new Date() : null,
     });
   } catch (error) {
     console.warn("[Email] Failed to log email:", error);
   }
 
-  return success;
+  return result;
 }
 
 // Helper: Enviar confirmação de agendamento
@@ -152,7 +156,7 @@ export async function sendAppointmentConfirmation(data: {
   meetingLink?: string;
   psychologistName: string;
   psychologistPhone: string;
-}): Promise<boolean> {
+}): Promise<SendEmailResult> {
   return sendEmail({
     to: data.patientEmail,
     subject: "✅ Sua consulta foi confirmada!",
@@ -173,7 +177,7 @@ export async function sendAppointmentReminder(data: {
   meetingLink?: string;
   psychologistName: string;
   psychologistPhone: string;
-}): Promise<boolean> {
+}): Promise<SendEmailResult> {
   return sendEmail({
     to: data.patientEmail,
     subject: "⏰ Lembrete: Sua consulta é amanhã!",
@@ -191,7 +195,7 @@ export async function sendNewContactNotification(data: {
   senderPhone?: string;
   subject: string;
   message: string;
-}): Promise<boolean> {
+}): Promise<SendEmailResult> {
   console.log("[Email] sendNewContactNotification called from", data.senderEmail);
   // Prioridade: ENV.ownerNotificationEmail, senão pegar email configurado no painel
   let target = ENV.ownerNotificationEmail;
@@ -208,7 +212,7 @@ export async function sendNewContactNotification(data: {
 
   if (!target) {
     console.warn("[Email] Owner notification email not configured");
-    return false;
+    return { success: false, error: "Owner notification email not configured" };
   }
 
   return sendEmail({
@@ -232,7 +236,7 @@ export async function sendContactAutoReply(data: {
   recipientEmail: string;
   senderName: string;
   psychologistName: string;
-}): Promise<boolean> {
+}): Promise<SendEmailResult> {
   console.log("[Email] sendContactAutoReply called for", data.recipientEmail);
   return sendEmail({
     to: data.recipientEmail,
@@ -253,7 +257,7 @@ export async function sendPasswordReset(data: {
   recipientEmail: string;
   userName: string;
   resetLink: string;
-}): Promise<boolean> {
+}): Promise<SendEmailResult> {
   return sendEmail({
     to: data.recipientEmail,
     subject: "🔐 Redefinição de senha",

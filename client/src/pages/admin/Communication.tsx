@@ -771,8 +771,8 @@ export default function Communication() {
                 <Button type="button" variant="outline" onClick={() => setIsTestEmailOpen(false)}>
                   Cancelar
                 </Button>
-                <Button type="submit" disabled={sendTestEmailMutation.isLoading}>
-                  {sendTestEmailMutation.isLoading ? "Enviando..." : "Enviar Teste"}
+                <Button type="submit" disabled={sendTestEmailMutation.isPending}>
+                  {sendTestEmailMutation.isPending ? "Enviando..." : "Enviar Teste"}
                 </Button>
               </DialogFooter>
             </form>
