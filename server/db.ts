@@ -659,7 +659,7 @@ export async function getAvailableSlots(dateStr: string): Promise<AvailableSlot[
     .where(
       and(
         // @ts-ignore
-        eq(appointments.appointmentDate, date.toISOString().slice(0, 10)),
+        eq(appointments.appointmentDate, dateValue.toISOString().slice(0, 10)),
         inArray(appointments.status, BOOKED_STATUSES as unknown as AllowedStatus[])
       )
     );
