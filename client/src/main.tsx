@@ -44,11 +44,11 @@ let csrfTokenPromise: Promise<string> | null = null;
 
 /**
  * Get CSRF token from server
- * Caches the token to avoid repeated requests
+ * Caches the token, but allows force refresh on CSRF errors
  */
-async function getCsrfToken(): Promise<string> {
-  if (csrfToken) return csrfToken;
-  if (csrfTokenPromise) return csrfTokenPromise;
+async function getCsrfToken(forceRefresh: boolean = false): Promise<string> {
+  if (!forceRefresh && csrfToken) return csrfToken;
+  if (!forceRefresh && csrfTokenPromise) return csrfTokenPromise;
 
   csrfTokenPromise = (async () => {
     try {
@@ -129,6 +129,31 @@ const trpcClient = trpc.createClient({
               status: response.status,
               headers: { 'content-type': 'application/json' }
             });
+          }
+
+          // If CSRF failed, refresh token and retry once
+          if (response.status === 403) {
+            try {
+              const cloned = response.clone();
+              const bodyText = await cloned.text();
+              if (bodyText.toLowerCase().includes("csrf")) {
+                console.warn("[CSRF] 403 detected. Refreshing token and retrying once...");
+                csrfToken = null;
+                const refreshedToken = await getCsrfToken(true);
+                const retryHeaders = {
+                  ...(init?.headers ?? {}),
+                  "X-CSRF-Token": refreshedToken,
+                };
+                const retryInit = {
+                  credentials: "include" as const,
+                  ...(init ?? {}),
+                  headers: retryHeaders,
+                };
+                return globalThis.fetch(input, retryInit);
+              }
+            } catch (retryError) {
+              console.error("[CSRF] Failed to retry after 403:", retryError);
+            }
           }
           
           // Clone para ler o corpo sem consumir
