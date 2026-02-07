@@ -44,6 +44,26 @@ import { ENV } from './_core/env';
 let _db: PostgresJsDatabase<typeof schema> | null = null;
 let _sql: postgres.Sql | null = null;
 
+function logDbError(context: string, error: unknown) {
+  if (error instanceof Error) {
+    const anyError = error as any;
+    const cause = anyError?.cause;
+    console.error(`[Database] ${context} failed:`, {
+      message: error.message,
+      name: error.name,
+      query: anyError?.query,
+      params: anyError?.params,
+      causeMessage: cause?.message,
+      causeName: cause?.name,
+    });
+    if (cause) {
+      console.error(`[Database] ${context} root cause:`, cause);
+    }
+  } else {
+    console.error(`[Database] ${context} failed:`, error);
+  }
+}
+
 // Lazily create the drizzle instance so local tooling can run without a DB.
 export async function getDb() {
   if (!_db && process.env.DATABASE_URL) {
@@ -299,33 +319,45 @@ export async function createAppointment(data: InsertAppointment): Promise<Appoin
     }
   }
 
-  const conflict = await db
-    .select()
-    .from(appointments)
-    .where(
-      and(
-        // @ts-ignore
-        eq(appointments.appointmentDate, normalizedDate.toISOString().slice(0, 10)),
-        eq(appointments.appointmentTime, normalizedTime),
-        inArray(appointments.status, BOOKED_STATUSES as unknown as AllowedStatus[])
+  let conflict: Appointment[] = [];
+  try {
+    conflict = await db
+      .select()
+      .from(appointments)
+      .where(
+        and(
+          // @ts-ignore
+          eq(appointments.appointmentDate, normalizedDate.toISOString().slice(0, 10)),
+          eq(appointments.appointmentTime, normalizedTime),
+          inArray(appointments.status, BOOKED_STATUSES as unknown as AllowedStatus[])
+        )
       )
-    )
-    .limit(1);
+      .limit(1);
+  } catch (error) {
+    logDbError("createAppointment.conflictCheck", error);
+    throw error;
+  }
 
   if (conflict.length) {
     throw new Error("Horário indisponível. Escolha outro horário ou data.");
   }
 
-  const [created] = await db
-    .insert(appointments)
-    .values({
-      ...data,
-      // @ts-ignore
-      appointmentDate: normalizedDate.toISOString().slice(0, 10),
-      appointmentTime: normalizedTime,
-      status: data.status ?? "pendente",
-    })
-    .returning();
+  let created: Appointment | undefined;
+  try {
+    [created] = await db
+      .insert(appointments)
+      .values({
+        ...data,
+        // @ts-ignore
+        appointmentDate: normalizedDate.toISOString().slice(0, 10),
+        appointmentTime: normalizedTime,
+        status: data.status ?? "pendente",
+      })
+      .returning();
+  } catch (error) {
+    logDbError("createAppointment.insert", error);
+    throw error;
+  }
 
   if (!created) throw new Error("Failed to create appointment");
   return created;
@@ -333,19 +365,29 @@ export async function createAppointment(data: InsertAppointment): Promise<Appoin
 
 export async function getAllAppointments(): Promise<Appointment[]> {
   const db = await ensureDb();
-  return await db
-    .select()
-    .from(appointments)
-    .orderBy(asc(appointments.appointmentDate), asc(appointments.appointmentTime));
+  try {
+    return await db
+      .select()
+      .from(appointments)
+      .orderBy(asc(appointments.appointmentDate), asc(appointments.appointmentTime));
+  } catch (error) {
+    logDbError("getAllAppointments", error);
+    throw error;
+  }
 }
 
 export async function getAppointmentsByStatus(status: AllowedStatus): Promise<Appointment[]> {
   const db = await ensureDb();
   if (!ALLOWED_STATUSES.includes(status)) throw new Error("Status inválido");
-  return await db
-    .select()
-    .from(appointments)
-    .where(eq(appointments.status, status));
+  try {
+    return await db
+      .select()
+      .from(appointments)
+      .where(eq(appointments.status, status));
+  } catch (error) {
+    logDbError("getAppointmentsByStatus", error);
+    throw error;
+  }
 }
 
 export async function getAppointmentsInRange(start?: Date, end?: Date): Promise<Appointment[]> {
@@ -356,11 +398,16 @@ export async function getAppointmentsInRange(start?: Date, end?: Date): Promise<
   // @ts-ignore
   if (end) clauses.push(lte(appointments.appointmentDate, end.toISOString().slice(0, 10)));
 
-  return await db
-    .select()
-    .from(appointments)
-    .where(clauses.length ? and(...clauses) : undefined)
-    .orderBy(asc(appointments.appointmentDate), asc(appointments.appointmentTime));
+  try {
+    return await db
+      .select()
+      .from(appointments)
+      .where(clauses.length ? and(...clauses) : undefined)
+      .orderBy(asc(appointments.appointmentDate), asc(appointments.appointmentTime));
+  } catch (error) {
+    logDbError("getAppointmentsInRange", error);
+    throw error;
+  }
 }
 
 export async function createManualAppointment(data: InsertAppointment): Promise<Appointment> {
@@ -376,33 +423,45 @@ export async function createManualAppointment(data: InsertAppointment): Promise<
 
   // Verifica conflito apenas se não for forçado (mas aqui assumimos que admin pode tudo, ou mostramos warning.
   // Vamos manter check de conflito básico para evitar duplicidade exata, mas sem business rules de 24h)
-  const conflict = await db
-    .select()
-    .from(appointments)
-    .where(
-      and(
-        // @ts-ignore
-        eq(appointments.appointmentDate, normalizedDate.toISOString().slice(0, 10) as any),
-        eq(appointments.appointmentTime, normalizedTime),
-        inArray(appointments.status, BOOKED_STATUSES as unknown as AllowedStatus[])
+  let conflict: Appointment[] = [];
+  try {
+    conflict = await db
+      .select()
+      .from(appointments)
+      .where(
+        and(
+          // @ts-ignore
+          eq(appointments.appointmentDate, normalizedDate.toISOString().slice(0, 10) as any),
+          eq(appointments.appointmentTime, normalizedTime),
+          inArray(appointments.status, BOOKED_STATUSES as unknown as AllowedStatus[])
+        )
       )
-    )
-    .limit(1);
+      .limit(1);
+  } catch (error) {
+    logDbError("createManualAppointment.conflictCheck", error);
+    throw error;
+  }
 
   if (conflict.length) {
     throw new Error("Horário já ocupado por outro agendamento.");
   }
 
-  const [created] = await db
-    .insert(appointments)
-    .values({
-      ...data,
-      // @ts-ignore
-      appointmentDate: normalizedDate.toISOString().slice(0, 10),
-      appointmentTime: normalizedTime,
-      status: data.status ?? "confirmado", // Manual costuma ser confirmado
-    })
-    .returning();
+  let created: Appointment | undefined;
+  try {
+    [created] = await db
+      .insert(appointments)
+      .values({
+        ...data,
+        // @ts-ignore
+        appointmentDate: normalizedDate.toISOString().slice(0, 10),
+        appointmentTime: normalizedTime,
+        status: data.status ?? "confirmado", // Manual costuma ser confirmado
+      })
+      .returning();
+  } catch (error) {
+    logDbError("createManualAppointment.insert", error);
+    throw error;
+  }
 
   if (!created) throw new Error("Failed to create appointment");
   return created;
