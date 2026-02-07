@@ -8,7 +8,7 @@ export const emailRouter = router({
   sendTestEmail: adminProcedure
     .input(z.object({ email: z.string().email() }))
     .mutation(async ({ input }) => {
-      const success = await sendEmail({
+      const result = await sendEmail({
         to: input.email,
         subject: "Teste de Configuração de Email",
         type: "custom",
@@ -23,8 +23,8 @@ export const emailRouter = router({
         customText: "Teste de Configuração: Se você recebeu isso, o sistema de emails está funcionando.",
       });
 
-      if (!success) {
-        throw new Error("Falha ao enviar email. Verifique os logs do servidor.");
+      if (!result.success) {
+        throw new Error(result.error || "Falha ao enviar email. Verifique os logs do servidor.");
       }
 
       return { success: true };
