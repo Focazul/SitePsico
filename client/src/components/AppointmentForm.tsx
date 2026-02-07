@@ -49,14 +49,14 @@ export default function AppointmentForm() {
   const onSubmit = async (data: any) => {
     setIsSubmitting(true);
     try {
-      // const [year, month, day] = (data.appointmentDate as string).split('-');
-      // const appointmentDate = new Date(`${year}-${month}-${day}T${data.appointmentTime}:00`);
+      const [year, month, day] = (data.appointmentDate as string).split('-');
+      const appointmentDate = new Date(`${year}-${month}-${day}T${data.appointmentTime}:00`);
 
       await createAppointment.mutateAsync({
         clientName: data.clientName,
         clientEmail: data.clientEmail,
         clientPhone: data.clientPhone,
-        appointmentDate: data.appointmentDate,
+        appointmentDate,
         appointmentTime: data.appointmentTime,
         modality: data.modality,
         subject: data.subject,

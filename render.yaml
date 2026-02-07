@@ -26,3 +26,9 @@ services:
         sync: false
       - key: ADMIN_NAME
         sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: RESEND_FROM_EMAIL
+        sync: false
+      - key: OWNER_NOTIFICATION_EMAIL
+        sync: false

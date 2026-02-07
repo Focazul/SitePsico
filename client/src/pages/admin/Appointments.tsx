@@ -149,6 +149,7 @@ export default function Appointments() {
   const monthAppointments = useMemo(() => {
     const monthStr = currentDate.toISOString().slice(0, 7);
     return filteredAppointments.filter((apt) => {
+        // Ensure we handle both Date objects (from superjson) and strings (fallback)
         const dateStr = apt.appointmentDate instanceof Date
             ? apt.appointmentDate.toISOString()
             : String(apt.appointmentDate);
@@ -249,13 +250,7 @@ export default function Appointments() {
             {dayAppointments.slice(0, 2).map((apt) => (
               <div
                 key={apt.id}
-                className={`text-xs px-2 py-1 rounded truncate cursor-pointer ${statusConfig[apt.status]?.bgColor || "bg-gray-100"} ${statusConfig[apt.status]?.color || "text-gray-700"}`}
-                onClick={() => {
-                  setSelectedAppointment(apt);
-                  setEditNotes(apt.notes || "");
-                  setEditTags(apt.tags || "");
-                  setEditPaymentStatus((apt.paymentStatus as PaymentStatus) || "pendente");
-                }}
+                className={`text-xs px-2 py-1 rounded truncate cursor-pointer ${statusConfig[apt.status].bgColor} ${statusConfig[apt.status].color}`}
               >
                 {apt.appointmentTime} - {apt.clientName}
               </div>
@@ -311,7 +306,7 @@ export default function Appointments() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Telefone</Label>
+                  <Label>Telefone (opcional)</Label>
                   <Input
                     value={createForm.clientPhone}
                     onChange={(e) => setCreateForm({...createForm, clientPhone: e.target.value})}
@@ -479,8 +474,8 @@ export default function Appointments() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
                           <div className="font-semibold text-gray-900">{apt.clientName}</div>
-                          <Badge className={statusConfig[apt.status]?.bgColor}>
-                            <span className={statusConfig[apt.status]?.color}>{statusConfig[apt.status]?.label}</span>
+                          <Badge className={statusConfig[apt.status].bgColor}>
+                            <span className={statusConfig[apt.status].color}>{statusConfig[apt.status].label}</span>
                           </Badge>
                           {apt.paymentStatus && paymentConfig[apt.paymentStatus] && (
                              <Badge className={paymentConfig[apt.paymentStatus].bgColor}>
@@ -498,12 +493,12 @@ export default function Appointments() {
                             {apt.appointmentTime}
                           </span>
                           <span className="flex items-center gap-1">
-                            {typeConfig[apt.modality]?.icon === MapPin ? (
+                            {typeConfig[apt.modality].icon === MapPin ? (
                               <MapPin size={14} />
                             ) : (
                               <Calendar size={14} />
                             )}
-                            {typeConfig[apt.modality]?.label || apt.modality}
+                            {typeConfig[apt.modality].label}
                           </span>
                         </div>
                       </div>
@@ -554,12 +549,12 @@ export default function Appointments() {
                           </td>
                           <td className="px-6 py-4">
                             <Badge variant="outline">
-                              {typeConfig[apt.modality]?.label || apt.modality}
+                              {typeConfig[apt.modality].label}
                             </Badge>
                           </td>
                           <td className="px-6 py-4">
-                            <Badge className={statusConfig[apt.status]?.bgColor}>
-                              <span className={statusConfig[apt.status]?.color}>{statusConfig[apt.status]?.label}</span>
+                            <Badge className={statusConfig[apt.status].bgColor}>
+                              <span className={statusConfig[apt.status].color}>{statusConfig[apt.status].label}</span>
                             </Badge>
                           </td>
                           <td className="px-6 py-4">
