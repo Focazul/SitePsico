@@ -617,7 +617,7 @@ export default function Communication() {
 
         {/* Dialog de Visualização Detalhada de Mensagem */}
         <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
-          <DialogContent className="max-w-2xl">
+          <DialogContent className="max-w-2xl w-[95vw] max-h-[90vh] overflow-y-auto">
             {selectedMessage && (
               <>
                 <DialogHeader>
