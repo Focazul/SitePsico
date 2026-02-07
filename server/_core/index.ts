@@ -34,8 +34,10 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
 }
 
 async function startServer() {
-  // Optional: auto-run migrations at startup
-  if (process.env.AUTO_MIGRATE === "true") {
+  // Always try to run migrations on startup in production to ensure schema sync
+  // or if explicitly requested.
+  // Using a relaxed check to allow default behavior if env var is missing but we want safety.
+  if (process.env.NODE_ENV === "production" || process.env.AUTO_MIGRATE === "true") {
     try {
       const { runMigrations } = await import("./migrate");
       await runMigrations();
