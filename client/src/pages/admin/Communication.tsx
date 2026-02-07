@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Mail, MessageSquare, MailOpen, Reply, Trash2, Archive, Search, Filter, Clock, Phone, User, ChevronLeft, MoreVertical, Check, X, RefreshCw, BarChart3, CheckCircle2, XCircle, Send, Info } from "lucide-react";
+import { Mail, MessageSquare, MailOpen, Reply, Trash2, Archive, Search, Filter, Clock, Phone, User, ChevronLeft, MoreVertical, Check, X, RefreshCw, BarChart3, CheckCircle2, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -57,8 +57,6 @@ export default function Communication() {
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
-  const [testEmail, setTestEmail] = useState("");
-  const [isTestEmailOpen, setIsTestEmailOpen] = useState(false);
 
   // === MENSAGENS ===
   const messagesQuery = trpc.contact.getMessages.useQuery({});
@@ -146,18 +144,6 @@ export default function Communication() {
 
   const { data: stats } = trpc.email.getStats.useQuery();
 
-  const sendTestEmailMutation = trpc.email.sendTestEmail.useMutation({
-    onSuccess: () => {
-      toast.success("Email de teste enviado com sucesso!");
-      setIsTestEmailOpen(false);
-      setTestEmail("");
-      refetchLogs();
-    },
-    onError: (error) => {
-      toast.error(error.message || "Erro ao enviar email de teste");
-    }
-  });
-
   // === HANDLERS ===
   const handleViewMessage = (message: Message) => {
     setSelectedMessage(message);
@@ -187,12 +173,6 @@ export default function Communication() {
 
   const handleDelete = (id: string) => {
     deleteMutation.mutate({ id: Number(id) });
-  };
-
-  const handleSendTestEmail = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!testEmail) return;
-    sendTestEmailMutation.mutate({ email: testEmail });
   };
 
   const formatDate = (dateString: string) => {
@@ -542,17 +522,11 @@ export default function Communication() {
 
             {/* Email Logs Table */}
             <Card>
-              <div className="flex flex-row items-center justify-between space-y-0 p-6 pb-2 border-b">
-                <div>
-                  <h3 className="text-lg font-semibold">Logs de Emails</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Mostrando {logs?.length || 0} emails (últimos 100)
-                  </p>
-                </div>
-                <Button onClick={() => setIsTestEmailOpen(true)} variant="outline" size="sm" className="gap-2">
-                  <Send size={14} />
-                  Enviar Email de Teste
-                </Button>
+              <div className="p-6 border-b">
+                <h3 className="text-lg font-semibold">Logs de Emails</h3>
+                <p className="text-sm text-muted-foreground">
+                  Mostrando {logs?.length || 0} emails (últimos 100)
+                </p>
               </div>
               <div className="p-6">
                 {logsLoading ? (
@@ -674,24 +648,6 @@ export default function Communication() {
                     </p>
                   </div>
 
-                  {/* Info de que o sistema usa cliente de email externo */}
-                  <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 flex items-start gap-3">
-                    <Info className="text-blue-600 mt-0.5 flex-shrink-0" size={18} />
-                    <div className="text-sm text-blue-800">
-                      <p className="font-semibold mb-1">Sobre a resposta de mensagens</p>
-                      <p>
-                        Ao clicar em "Responder", o sistema abrirá seu <strong>cliente de email padrão</strong> (Outlook, Gmail, etc).
-                        A resposta será enviada diretamente do seu email pessoal/profissional.
-                      </p>
-                      <p className="mt-2 text-blue-700">
-                        Para verificar se uma resposta automática foi enviada pelo site (se configurado), verifique a aba
-                        <button onClick={() => { setIsDetailOpen(false); setActiveTab("emails"); }} className="underline hover:text-blue-900 mx-1 font-medium">
-                          Histórico de Emails
-                        </button>.
-                      </p>
-                    </div>
-                  </div>
-
                   {/* Info de Resposta */}
                   {selectedMessage.repliedAt && (
                     <div className="flex items-center gap-2 text-sm text-green-600 bg-green-50 p-3 rounded-lg">
@@ -715,7 +671,7 @@ export default function Communication() {
                     className="bg-blue-600 hover:bg-blue-700 text-white gap-2"
                   >
                     <Reply size={16} />
-                    Responder (Cliente de Email)
+                    Responder por Email
                   </Button>
                 </DialogFooter>
               </>
@@ -743,39 +699,6 @@ export default function Communication() {
                 Excluir
               </Button>
             </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        {/* Dialog de Envio de Email de Teste */}
-        <Dialog open={isTestEmailOpen} onOpenChange={setIsTestEmailOpen}>
-          <DialogContent className="max-w-sm">
-            <DialogHeader>
-              <DialogTitle>Enviar Email de Teste</DialogTitle>
-              <DialogDescription>
-                Digite um email para receber uma mensagem de teste e verificar a configuração.
-              </DialogDescription>
-            </DialogHeader>
-            <form onSubmit={handleSendTestEmail} className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="testEmail">Email de Destino</Label>
-                <Input
-                  id="testEmail"
-                  type="email"
-                  placeholder="seu@email.com"
-                  value={testEmail}
-                  onChange={(e) => setTestEmail(e.target.value)}
-                  required
-                />
-              </div>
-              <DialogFooter>
-                <Button type="button" variant="outline" onClick={() => setIsTestEmailOpen(false)}>
-                  Cancelar
-                </Button>
-                <Button type="submit" disabled={sendTestEmailMutation.isPending}>
-                  {sendTestEmailMutation.isPending ? "Enviando..." : "Enviar Teste"}
-                </Button>
-              </DialogFooter>
-            </form>
           </DialogContent>
         </Dialog>
       </div>

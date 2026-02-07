@@ -5,7 +5,7 @@ interface AuthStatus {
   isLoading: boolean;
   isAuthenticated: boolean;
   isAdmin: boolean;
-  user: { id?: number; email?: string | null; name?: string | null; role?: string } | null;
+  user: { id?: number; email?: string; name?: string; role?: string } | null;
   error: Error | null;
 }
 

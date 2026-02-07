@@ -958,16 +958,15 @@ export async function deletePage(id: number): Promise<void> {
 export async function pageExists(slug: string, excludeId?: number): Promise<boolean> {
   const db = await ensureDb();
   
-  const conditions = [eq(pages.slug, slug)];
+  let query = db.select({ count: sql<number>`count(*)` })
+    .from(pages)
+    .where(eq(pages.slug, slug));
   
   if (excludeId) {
     query = query.where(sql`${pages.id} != ${excludeId}`) as any;
   }
   
-  const result = await db.select({ count: sql<number>`count(*)` })
-    .from(pages)
-    .where(and(...conditions));
-
+  const result = await query;
   return (result[0]?.count || 0) > 0;
 }
 

@@ -110,7 +110,7 @@ export default function Pages() {
       content: page.content,
       metaTitle: page.metaTitle || "",
       metaDescription: page.metaDescription || "",
-      status: page.status as "draft" | "published",
+      status: page.status,
       order: page.order,
     });
     setIsEditorOpen(true);

@@ -1,28 +1,29 @@
-import { drizzle } from "drizzle-orm/postgres-js";
-import postgres from "postgres";
-import { migrate } from "drizzle-orm/postgres-js/migrator";
-import { ENV } from "./env";
 
-/**
- * Run database migrations at runtime using Drizzle migrator.
- * Enable by setting AUTO_MIGRATE=true in environment variables.
- */
+import { drizzle } from "drizzle-orm/postgres-js";
+import { migrate } from "drizzle-orm/postgres-js/migrator";
+import postgres from "postgres";
+
 export async function runMigrations() {
-  if (!ENV.databaseUrl) {
-    console.warn("[Migrate] DATABASE_URL not set; skipping migrations");
+  if (!process.env.DATABASE_URL) {
+    console.warn("[Migration] DATABASE_URL not set, skipping auto-migration.");
     return;
   }
 
-  console.log("[Migrate] Applying migrations...");
-  const sql = postgres(ENV.databaseUrl, { max: 1 });
-  const db = drizzle(sql);
   try {
+    console.log("[Migration] Running database migrations...");
+
+    // Create a temporary connection specifically for migrations
+    const migrationClient = postgres(process.env.DATABASE_URL, { max: 1 });
+    const db = drizzle(migrationClient);
+
+    // Run migrations from the "drizzle" folder
     await migrate(db, { migrationsFolder: "drizzle" });
-    console.log("[Migrate] ✅ Migrations applied successfully");
+
+    console.log("[Migration] Migrations completed successfully.");
+
+    await migrationClient.end();
   } catch (error) {
-    console.error("[Migrate] ❌ Migration failed:", error);
-    throw error;
-  } finally {
-    await sql.end();
+    console.error("[Migration] Failed to run migrations:", error);
+    // Don't kill the process, let the app start even if migration failed (though it might crash later)
   }
 }

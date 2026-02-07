@@ -18,7 +18,7 @@ export default function FloatingWhatsApp() {
   const whatsappLink = getWhatsAppLink(config.phoneNumber, config.defaultMessage);
 
   const handleClick = () => {
-    trackWhatsAppClick("floating_button");
+    trackWhatsAppClick(config.phoneNumber, "floating_button");
   };
 
   return (
