@@ -84,6 +84,8 @@ export const appointments = pgTable(
     modality: varchar("modality", { length: 20 }).notNull(),
     subject: text("subject"),
     notes: text("notes"),
+    tags: text("tags"), // Comma separated tags
+    paymentStatus: varchar("paymentStatus", { length: 20 }).default("pendente").notNull(), // pendente, pago, reembolsado
     status: varchar("status", { length: 20 }).default("pendente").notNull(),
     calendarEventId: varchar("calendarEventId", { length: 255 }), // ID do evento no Google Calendar
     createdAt: timestamp("createdAt").defaultNow().notNull(),

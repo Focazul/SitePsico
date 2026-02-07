@@ -11,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import { useMapConfig } from '@/hooks/useMapConfig';
 import { useSiteConfig } from '@/hooks/useSiteConfig';
+import { getWhatsAppLink } from '@/hooks/useWhatsAppConfig';
 import { BookOpen, CheckCircle2, Clock, Info, Mail, MapPin, Phone, Send, Shield, User } from 'lucide-react';
 import { trackFormSubmission } from '@/lib/analytics';
 import { trpc } from '@/lib/trpc';
@@ -336,17 +337,23 @@ export default function Contact() {
               <Card className="p-5 border-border/60 space-y-3 interactive-card">
                 <p className="font-semibold text-foreground">Redes e contato rápido</p>
                 <div className="flex flex-wrap gap-2">
-                  <Button variant="outline" onClick={() => (window.location.href = 'https://www.instagram.com')}>
-                    Instagram
-                  </Button>
-                  <Button variant="outline" onClick={() => (window.location.href = 'https://www.linkedin.com')}>
-                    LinkedIn
-                  </Button>
-                  <Button variant="outline" onClick={() => (window.location.href = 'https://wa.me/5511999999999')}>
+                  {siteConfig.instagramUrl && (
+                    <Button variant="outline" onClick={() => window.open(siteConfig.instagramUrl, '_blank')}>
+                      Instagram
+                    </Button>
+                  )}
+                  {siteConfig.linkedinUrl && (
+                    <Button variant="outline" onClick={() => window.open(siteConfig.linkedinUrl, '_blank')}>
+                      LinkedIn
+                    </Button>
+                  )}
+                  <Button
+                    variant="outline"
+                    onClick={() => window.open(getWhatsAppLink(siteConfig.whatsappNumber, 'Olá! Gostaria de entrar em contato.'), '_blank')}
+                  >
                     WhatsApp
                   </Button>
                 </div>
-                <p className="text-xs text-muted-foreground">Links placeholder — atualizar com dados reais.</p>
               </Card>
             </div>
           </div>
@@ -391,7 +398,12 @@ export default function Contact() {
                     Endereço completo será compartilhado após confirmação do agendamento.
                   </p>
                 </div>
-                <Button variant="outline" onClick={() => window.location.href = 'https://wa.me/5511999999999'}>
+                <Button
+                  variant="outline"
+                  onClick={() =>
+                    window.open(getWhatsAppLink(siteConfig.whatsappNumber, 'Olá! Gostaria de saber o endereço do consultório.'), '_blank')
+                  }
+                >
                   Solicitar endereço via WhatsApp
                 </Button>
               </Card>

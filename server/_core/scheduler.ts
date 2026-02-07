@@ -37,8 +37,12 @@ export async function scheduleAppointmentReminder(appointmentId: number): Promis
     }
 
     // Calcular quando enviar o lembrete (24h antes)
+    const datePart = (appointment.appointmentDate as unknown) instanceof Date
+      ? (appointment.appointmentDate as unknown as Date).toISOString().split('T')[0]
+      : String(appointment.appointmentDate);
+
     const appointmentDateTime = new Date(
-      `${appointment.appointmentDate}T${appointment.appointmentTime}`
+      `${datePart}T${appointment.appointmentTime}`
     );
     const reminderTime = new Date(appointmentDateTime.getTime() - 24 * 60 * 60 * 1000);
 

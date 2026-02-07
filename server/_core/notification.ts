@@ -135,7 +135,7 @@ export async function sendAppointmentEmails(appointment: Appointment): Promise<{
   const displayDate = `${day}/${month}/${year}`;
 
   // Enviar email de confirmação profissional ao paciente
-  const patientDelivered = await sendAppointmentConfirmation({
+  const patientResult = await sendAppointmentConfirmation({
     patientEmail: appointment.clientEmail,
     patientName: appointment.clientName,
     appointmentDate: displayDate,
@@ -146,6 +146,7 @@ export async function sendAppointmentEmails(appointment: Appointment): Promise<{
     psychologistName: config.name,
     psychologistPhone: config.phone,
   });
+  const patientDelivered = patientResult.success;
 
   // Notificar o psicólogo (owner)
   const ownerEmail = ENV.ownerNotificationEmail;
@@ -155,7 +156,7 @@ export async function sendAppointmentEmails(appointment: Appointment): Promise<{
     // Importar sendNewContactNotification para enviar notificação ao owner
     const { sendNewContactNotification } = await import("./email");
     
-    ownerDelivered = await sendNewContactNotification({
+    const ownerResult = await sendNewContactNotification({
       senderName: appointment.clientName,
       senderEmail: appointment.clientEmail,
       senderPhone: appointment.clientPhone,
@@ -166,6 +167,7 @@ export async function sendAppointmentEmails(appointment: Appointment): Promise<{
         appointment.notes ? `Observações: ${appointment.notes}` : "",
       ].filter(Boolean).join("\n"),
     });
+    ownerDelivered = ownerResult.success;
   } else {
     // Fallback to Manus notification service when owner email is missing
     const summary = `${appointment.modality === "online" ? "Sessão online" : "Sessão presencial"} em ${displayDate} às ${time}`;
