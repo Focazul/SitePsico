@@ -28,21 +28,12 @@ export function useAuthCheck(): AuthStatus {
 
   useEffect(() => {
     if (!meQuery.isLoading) {
-      // Fix TS2322: Types of property 'email' are incompatible.
-      // Type 'string | null' is not assignable to type 'string | undefined'.
-      const userData = meQuery.data ? {
-        ...meQuery.data,
-        email: meQuery.data.email || undefined,
-        name: meQuery.data.name || undefined,
-      } : null;
-
       setStatus({
         isLoading: false,
         isAuthenticated: !!meQuery.data,
         isAdmin: meQuery.data?.role === 'admin',
-        user: userData,
-        // Fix TS2322: Type 'TRPCClientErrorLike<...>' is not assignable to type 'Error | null'.
-        error: meQuery.error as Error | null,
+        user: meQuery.data || null,
+        error: meQuery.error,
       });
     }
   }, [meQuery.data, meQuery.isLoading, meQuery.error]);

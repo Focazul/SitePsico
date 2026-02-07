@@ -35,24 +35,9 @@ export const bookingRouter = router({
       notes: z.string().max(2000).optional(),
     }))
     .mutation(async ({ input }) => {
-      // Use string date as required by the updated insert schema if needed,
-      // or ensure db.ts handles Date -> string conversion properly.
-      // Based on the error: Type 'Date' is not assignable to type 'string' (likely in db.ts InsertAppointment)
-      // We will cast to any to let db.ts helper handle it, or pass string if that's what InsertAppointment expects.
-      // Drizzle pgTable often defines dates as strings or Dates depending on config.
-      // Let's pass the string directly and let db.ts `createAppointment` handle parsing/validation
-      // The error says createAppointment expects InsertAppointment which has appointmentDate as string?
-      // Wait, db.ts:createAppointment takes InsertAppointment.
-      // In db.ts: "const dateStr = typeof data.appointmentDate === 'string' ? ..."
-      // So it handles both?
-      // The error says: "server/routers/booking.ts(40,9): error TS2322: Type 'Date' is not assignable to type 'string'."
-      // This implies InsertAppointment.appointmentDate is strict string.
-      // But db.ts logic handles Date objects.
-      // The issue is Drizzle's inference. Let's pass string to satisfy Drizzle type, db.ts will handle it.
-
       const created = await createAppointment({
         ...input,
-        appointmentDate: input.appointmentDate, // Pass string directly
+        appointmentDate: new Date(`${input.appointmentDate}T00:00:00.000Z`),
         appointmentTime: `${input.appointmentTime}:00`,
         status: "pendente",
       });
@@ -180,9 +165,7 @@ export const bookingRouter = router({
   blockDate: adminProcedure
     .input(z.object({ date: dateStr, reason: z.string().max(255).optional() }))
     .mutation(async ({ input }) => {
-      // The error "server/routers/booking.ts(168,30): error TS2322: Type 'Date' is not assignable to type 'string'."
-      // implies addBlockedDate expects string for date.
-      await addBlockedDate({ date: input.date, reason: input.reason });
+      await addBlockedDate({ date: new Date(`${input.date}T00:00:00.000Z`), reason: input.reason });
       return { success: true } as const;
     }),
 });

@@ -30,7 +30,7 @@ import { ManusDialog } from "./components/ManusDialog";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { QuickBookingProvider, useQuickBooking } from "./contexts/QuickBookingContext";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Route, Switch, useLocation } from "wouter";
 import { useGA4Config } from "./hooks/useGA4Config";
 

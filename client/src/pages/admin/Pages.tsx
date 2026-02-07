@@ -80,10 +80,7 @@ export default function Pages() {
   });
 
   const filteredPages = useMemo(() => {
-    // Fix TS2769: predicate mismatch. Ensure page matches expected type from backend (which might have differing optionality)
-    // The query returns { id, title, content, status, order, createdAt, updatedAt, slug, metaTitle, metaDescription }
-    // We should cast it to Page or adjust Page interface if needed.
-    return (pages as Page[]).filter((page) =>
+    return pages.filter((page: Page) =>
       page.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       page.slug.toLowerCase().includes(searchQuery.toLowerCase())
     );
@@ -385,13 +382,13 @@ export default function Pages() {
             <Card className="p-6">
               <p className="text-sm font-medium text-gray-600">Publicadas</p>
               <p className="mt-2 text-2xl font-bold text-green-600">
-                {(pages as Page[]).filter((p) => p.status === "published").length}
+                {pages.filter((p: Page) => p.status === "published").length}
               </p>
             </Card>
             <Card className="p-6">
               <p className="text-sm font-medium text-gray-600">Rascunhos</p>
               <p className="mt-2 text-2xl font-bold text-yellow-600">
-                {(pages as Page[]).filter((p) => p.status === "draft").length}
+                {pages.filter((p: Page) => p.status === "draft").length}
               </p>
             </Card>
           </div>
