@@ -87,7 +87,7 @@ export const bookingRouter = router({
     .input(z.object({
       clientName: z.string().min(2),
       clientEmail: z.string().email(),
-      clientPhone: z.string().min(8),
+      clientPhone: z.string().min(8).optional().or(z.literal("")),
       appointmentDate: dateStr,
       appointmentTime: timeStr,
       modality,
@@ -99,6 +99,7 @@ export const bookingRouter = router({
     .mutation(async ({ input }) => {
       const created = await createManualAppointment({
         ...input,
+        clientPhone: (input.clientPhone ?? "").trim() || "Não informado",
         // @ts-ignore
         appointmentDate: input.appointmentDate,
         appointmentTime: `${input.appointmentTime}:00`,

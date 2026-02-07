@@ -306,7 +306,7 @@ export default function Appointments() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Telefone</Label>
+                  <Label>Telefone (opcional)</Label>
                   <Input
                     value={createForm.clientPhone}
                     onChange={(e) => setCreateForm({...createForm, clientPhone: e.target.value})}
