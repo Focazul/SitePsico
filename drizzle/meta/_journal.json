@@ -8,6 +8,13 @@
       "when": 1769974135877,
       "tag": "0000_graceful_gargoyle",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1770503164927,
+      "tag": "0001_mighty_sumo",
+      "breakpoints": true
     }
   ]
 }

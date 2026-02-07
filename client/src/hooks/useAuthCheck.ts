@@ -5,7 +5,7 @@ interface AuthStatus {
   isLoading: boolean;
   isAuthenticated: boolean;
   isAdmin: boolean;
-  user: { id?: number; email?: string | null; name?: string | null; role?: string } | null;
+  user: { id?: number; email?: string; name?: string; role?: string } | null;
   error: Error | null;
 }
 
@@ -28,14 +28,6 @@ export function useAuthCheck(): AuthStatus {
 
   useEffect(() => {
     if (!meQuery.isLoading) {
-      // Fix TS2322: Types of property 'email' are incompatible.
-      // Type 'string | null' is not assignable to type 'string | undefined'.
-      const userData = meQuery.data ? {
-        ...meQuery.data,
-        email: meQuery.data.email || undefined,
-        name: meQuery.data.name || undefined,
-      } : null;
-
       setStatus({
         isLoading: false,
         isAuthenticated: !!meQuery.data,
