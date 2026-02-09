@@ -14,11 +14,13 @@ export default function FloatingWhatsApp() {
     return null;
   }
 
-  // @ts-ignore
-  const whatsappLink = getWhatsAppLink(config.phoneNumber, config.defaultMessage);
+  const whatsappLink = getWhatsAppLink({
+    phoneNumber: config.phoneNumber,
+    message: config.defaultMessage
+  });
 
   const handleClick = () => {
-    trackWhatsAppClick(config.phoneNumber, "floating_button");
+    trackWhatsAppClick("floating_button");
   };
 
   return (

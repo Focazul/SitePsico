@@ -30,7 +30,8 @@ export function useWhatsAppConfig() {
 /**
  * Gera link do WhatsApp com mensagem customizada
  */
-export function getWhatsAppLink(phoneNumber: string, message: string): string {
+export function getWhatsAppLink(params: { phoneNumber: string; message: string }): string {
+  const { phoneNumber, message } = params;
   const encodedMessage = encodeURIComponent(message);
   return `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
 }
