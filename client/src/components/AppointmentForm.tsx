@@ -265,7 +265,7 @@ export default function AppointmentForm() {
           <Button
             type="submit"
             disabled={isSubmitting || createAppointment.isPending}
-            className="bg-accent hover:bg-accent/90 text-accent-foreground flex-1 transition-all duration-200"
+            className="btn-lapis-lazuli flex-1 transition-all duration-200"
             size="lg"
           >
             {isSubmitting || createAppointment.isPending ? 'Agendando...' : 'Agendar Consulta'}

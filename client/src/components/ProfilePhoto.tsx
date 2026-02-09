@@ -42,21 +42,25 @@ export default function ProfilePhoto({
 
   return (
     <div
-      className={`${sizeClasses[size]} rounded-full overflow-hidden border-4 border-accent/20 shadow-lg ${className}`}
+      className={`${sizeClasses[size]} rounded-full overflow-hidden border-4 border-accent/40 shadow-xl hover:shadow-2xl transition-all duration-500 hover:border-accent/60 bg-gradient-to-br from-primary/20 via-accent/10 to-secondary/20 ${className}`}
     >
       {hasImage ? (
-        <img
-          src={src}
-          alt={alt}
-          width="400"
-          height="400"
-          className="w-full h-full object-cover"
-          loading="lazy"
-        />
+        <div className="relative w-full h-full group">
+          <img
+            src={src}
+            alt={alt}
+            width="400"
+            height="400"
+            className="w-full h-full object-cover filter group-hover:brightness-110 group-hover:contrast-105 transition-all duration-500"
+            loading="lazy"
+          />
+          {/* Overlay sutil para integração com tema */}
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-accent/5 opacity-40 group-hover:opacity-20 transition-opacity duration-500 rounded-full"></div>
+        </div>
       ) : (
         // Placeholder quando não houver imagem
-        <div className="w-full h-full bg-accent/10 flex items-center justify-center">
-          <User className={`${iconSizes[size]} text-accent/50`} />
+        <div className="w-full h-full bg-gradient-to-br from-primary/20 via-accent/10 to-secondary/20 flex items-center justify-center border-2 border-accent/30">
+          <User className={`${iconSizes[size]} text-accent/70`} />
         </div>
       )}
     </div>

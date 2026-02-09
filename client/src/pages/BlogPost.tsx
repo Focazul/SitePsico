@@ -163,7 +163,7 @@ export default function BlogPost({ params }: BlogPostParams) {
             <Card className="p-6 bg-accent/10 border-accent/40 space-y-3">
               <p className="text-foreground font-semibold">Gostou do tema e quer falar sobre sua situação?</p>
               <div className="flex flex-wrap gap-3">
-                <Button className="bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => (window.location.href = '/#agendamento')}>
+                <Button className="btn-lapis-lazuli hover:scale-105" onClick={() => (window.location.href = '/#agendamento')}>
                   Agendar consulta
                 </Button>
                 <Button variant="outline" onClick={() => (window.location.href = '/#contato')}>

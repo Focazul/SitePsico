@@ -54,12 +54,12 @@ const values: Value[] = [
 
 export default function ValuesSection() {
   return (
-    <section id="valores" className="py-16 md:py-24 section-contrast">
+    <section id="valores" className="py-16 md:py-24 section-light">
       <div className="container">
         <div className="max-w-5xl mx-auto space-y-12">
           {/* Header */}
           <div className="text-center space-y-4">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground title-accent-bg">
               Valores e Princípios
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -72,11 +72,11 @@ export default function ValuesSection() {
             {values.map((value, index) => (
               <Card
                 key={index}
-                className="p-6 border-border/50 hover:border-accent/50 hover:shadow-md transition-all duration-300 group"
+                className="p-6 border-accent/20 hover:border-accent/40 hover:shadow-md transition-all duration-300 group"
               >
                 <div className="space-y-4">
                   {/* Icon Container */}
-                  <div className="w-14 h-14 rounded-lg bg-accent/20 flex items-center justify-center group-hover:bg-accent/30 transition-colors duration-300">
+                  <div className="w-14 h-14 rounded-full bg-accent/15 flex items-center justify-center group-hover:bg-accent/25 transition-colors duration-300">
                     {value.icon}
                   </div>
 

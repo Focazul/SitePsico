@@ -10,7 +10,7 @@ export default function Footer() {
   return (
     <footer 
       role="contentinfo"
-      className="bg-background/90 border-t border-border/80 pt-12 md:pt-16 pb-10"
+      className="bg-gradient-to-b from-background/90 to-background border-t border-border/80 pt-12 md:pt-16 pb-10"
     >
       <div className="container space-y-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
@@ -91,8 +91,8 @@ export default function Footer() {
                 alert('Inscrição registrada (placeholder). Integração virá na fase de backend.');
               }}
             >
-              <Input type="email" name="email" placeholder="seuemail@exemplo.com" required className="bg-background" />
-              <Button type="submit" className="w-full bg-accent text-accent-foreground hover:bg-accent/90">
+              <Input type="email" name="email" placeholder="seuemail@exemplo.com" required className="bg-card/95" />
+              <Button type="submit" className="w-full btn-lapis-lazuli">
                 Inscrever
               </Button>
               <p className="text-xs text-muted-foreground/80">Você pode cancelar a inscrição a qualquer momento.</p>

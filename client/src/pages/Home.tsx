@@ -10,6 +10,7 @@ import BackToTop from '@/components/BackToTop';
 import ImageGallery from '@/components/ImageGallery';
 import FadeIn from '@/components/FadeIn';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { Link } from 'wouter';
 import { Heart, Shield, BookOpen, MessageCircle, ArrowRight, CheckCircle, Calendar } from 'lucide-react';
@@ -79,7 +80,7 @@ export default function Home() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                   <div className="space-y-6">
                   <div className="space-y-2">
-                    <p className="text-accent font-semibold text-sm md:text-base uppercase tracking-wide">
+                    <p className="text-accent font-semibold text-sm md:text-base uppercase tracking-[0.3em]">
                       Bem-vindo(a)
                     </p>
                     <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight">
@@ -102,7 +103,7 @@ export default function Home() {
                       onClick={() => scrollToSection('sobre')}
                       variant="outline"
                       size="lg"
-                      className="border-border hover:bg-muted hover:border-accent transition-all duration-200"
+                      className="btn-outline-blue"
                     >
                       Conhecer Mais
                     </Button>
@@ -151,13 +152,13 @@ export default function Home() {
         {/* SOBRE MIM SECTION */}
         <section
           id="sobre"
-          className="py-16 md:py-24 section-contrast"
+          className="py-16 md:py-24 section-soft"
         >
           <div className="container">
             <FadeIn>
               <div className="max-w-4xl mx-auto space-y-12">
                 <div className="text-center space-y-4">
-                  <h2 className="text-3xl md:text-4xl font-bold text-foreground">
+                  <h2 className="text-3xl md:text-4xl font-bold text-foreground title-accent-bg">
                     Sobre Mim
                   </h2>
                   <p className="text-lg text-muted-foreground">
@@ -225,12 +226,12 @@ export default function Home() {
         <OrganicDivider color="accent" className="mb-0" />
 
         {/* AMBIENTE E CONSULTÓRIO SECTION */}
-        <section className="py-16 md:py-24">
+        <section className="py-16 md:py-24 section-light">
           <div className="container">
             <FadeIn>
               <div className="max-w-5xl mx-auto space-y-12">
                 <div className="text-center space-y-4">
-                  <h2 className="text-3xl md:text-4xl font-bold text-foreground">
+                  <h2 className="text-3xl md:text-4xl font-bold text-foreground title-accent-bg">
                     Ambiente Acolhedor
                   </h2>
                   <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -268,13 +269,13 @@ export default function Home() {
         {/* SERVIÇOS SECTION */}
         <section
           id="servicos"
-          className="py-16 md:py-24"
+          className="py-16 md:py-24 section-soft"
         >
           <div className="container">
             <FadeIn>
               <div className="max-w-4xl mx-auto space-y-12">
                 <div className="text-center space-y-4">
-                  <h2 className="text-3xl md:text-4xl font-bold text-foreground">
+                  <h2 className="text-3xl md:text-4xl font-bold text-foreground title-accent-bg">
                     Áreas de Atuação
                   </h2>
                   <p className="text-lg text-muted-foreground">
@@ -282,7 +283,7 @@ export default function Home() {
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="flex flex-wrap justify-center gap-3">
                   {[
                     'Ansiedade e Estresse',
                     'Autoestima e Autoimagem',
@@ -294,14 +295,9 @@ export default function Home() {
                     'Orientação de Carreira',
                     'Conflitos Familiares',
                   ].map((area) => (
-                    <div
-                      key={area}
-                      className="p-4 rounded-lg bg-background border border-border/50 hover:border-accent hover:shadow-md transition-all duration-200 group"
-                    >
-                      <p className="text-foreground font-medium group-hover:text-accent transition-colors">
-                        {area}
-                      </p>
-                    </div>
+                    <Badge key={area} className="px-4 py-2 text-sm">
+                      {area}
+                    </Badge>
                   ))}
                 </div>
 
@@ -310,7 +306,7 @@ export default function Home() {
                     Modalidades de Atendimento
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <Card className="p-6 bg-accent/10 border-accent/30 hover:shadow-lg transition-all duration-300">
+                    <Card className="p-6 bg-card/95 border-accent/20 hover:shadow-lg transition-all duration-300">
                       <div className="space-y-3">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center">
@@ -333,7 +329,7 @@ export default function Home() {
                       </div>
                     </Card>
 
-                    <Card className="p-6 bg-accent/10 border-accent/30 hover:shadow-lg transition-all duration-300">
+                    <Card className="p-6 bg-card/95 border-accent/20 hover:shadow-lg transition-all duration-300">
                       <div className="space-y-3">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center">
@@ -361,7 +357,7 @@ export default function Home() {
                   <Button
                     onClick={() => scrollToSection('agendamento')}
                     size="lg"
-                    className="bg-accent hover:bg-accent/90 text-accent-foreground shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105"
+                    className="btn-lapis-lazuli transition-all duration-200 hover:scale-105"
                   >
                     Ver Disponibilidade
                     <ArrowRight className="ml-2 w-5 h-5" />
@@ -388,7 +384,7 @@ export default function Home() {
             <FadeIn>
               <div className="max-w-5xl mx-auto space-y-12">
                 <div className="text-center space-y-4">
-                  <h2 className="text-3xl md:text-4xl font-bold text-foreground">
+                  <h2 className="text-3xl md:text-4xl font-bold text-foreground title-accent-bg">
                     Conteúdo Educativo
                   </h2>
                   <p className="text-lg text-muted-foreground">
@@ -472,7 +468,7 @@ export default function Home() {
         <OrganicDivider color="accent" className="mb-0" />
 
         {/* AGENDAMENTO SECTION */}
-        <section id="agendamento" className="py-16 md:py-24 bg-gradient-to-br from-accent/5 to-primary/5">
+        <section id="agendamento" className="py-16 md:py-24 section-soft">
           <div className="container">
             <FadeIn>
               <div className="max-w-4xl mx-auto space-y-12">
@@ -484,7 +480,7 @@ export default function Home() {
                       Agende sua consulta
                     </span>
                   </div>
-                  <h2 className="text-3xl md:text-4xl font-bold text-foreground">
+                  <h2 className="text-3xl md:text-4xl font-bold text-foreground title-accent-bg">
                     Dê o primeiro passo
                   </h2>
                   <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -522,12 +518,12 @@ export default function Home() {
         <OrganicDivider color="secondary" className="mb-0" />
 
         {/* CONTATO SECTION */}
-        <section id="contato" className="py-16 md:py-24 section-accent-bg">
+        <section id="contato" className="py-16 md:py-24 section-light">
           <div className="container">
             <FadeIn>
               <div className="max-w-2xl mx-auto space-y-12">
                 <div className="text-center space-y-4">
-                  <h2 className="text-foreground">Entre em Contato</h2>
+                  <h2 className="text-foreground title-accent-bg">Entre em Contato</h2>
                   <p className="text-lg text-muted-foreground">
                     Estou disponível para agendar sua primeira consulta
                   </p>

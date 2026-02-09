@@ -203,7 +203,7 @@ export default function Contact() {
               }`}
             >
               <div className="space-y-2 mb-6">
-                <h2 className="text-2xl md:text-3xl font-bold text-foreground">Envie sua mensagem</h2>
+                <h2 className="text-2xl md:text-3xl font-bold text-foreground title-accent-bg">Envie sua mensagem</h2>
                 <p className="text-muted-foreground">Preencha os campos para receber retorno em até 24h úteis.</p>
               </div>
 
@@ -362,7 +362,7 @@ export default function Contact() {
             }`}
           >
             <div className="space-y-2">
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground flex items-center gap-2">
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground flex items-center gap-2 title-accent-bg">
                 <MapPin className="w-6 h-6 text-accent" />
                 Localização do consultório
               </h2>

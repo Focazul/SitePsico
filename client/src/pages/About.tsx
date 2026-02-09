@@ -95,7 +95,7 @@ export default function About() {
                 <div className="flex flex-col sm:flex-row gap-4 pt-4">
                   <Button
                     onClick={scrollToHomeCTA}
-                    className="bg-accent hover:bg-accent/90 text-accent-foreground shadow-md hover:shadow-lg transition-all duration-200"
+                    className="btn-lapis-lazuli transition-all duration-200"
                     size="lg"
                   >
                     Agendar Consulta
@@ -138,7 +138,7 @@ export default function About() {
           <div className="container">
             <div className="max-w-5xl mx-auto space-y-10">
               <div className="text-center space-y-3">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground">Formação e Especialização</h2>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground title-accent-bg">Formação e Especialização</h2>
                 <p className="text-muted-foreground max-w-3xl mx-auto">
                   Trajetória acadêmica e desenvolvimento contínuo para oferecer um cuidado fundamentado em ciência.
                 </p>
@@ -172,7 +172,7 @@ export default function About() {
               }`}
             >
               <div className="text-center space-y-3">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground">Trajetória Profissional</h2>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground title-accent-bg">Trajetória Profissional</h2>
                 <p className="text-muted-foreground max-w-2xl mx-auto">
                   Experiências que moldam minha forma de atuar com responsabilidade e empatia.
                 </p>
@@ -211,7 +211,7 @@ export default function About() {
             <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
               <div className="space-y-4">
                 <Badge variant="outline" className="border-border/60">Filosofia de Trabalho</Badge>
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground">Minha missão como psicólogo(a)</h2>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground title-accent-bg">Minha missão como psicólogo(a)</h2>
                 <p className="text-muted-foreground leading-relaxed">
                   Construir um espaço onde você possa se sentir ouvido(a), compreendido(a) e seguro(a) para explorar suas
                   experiências. Acredito na psicoterapia como um processo colaborativo, pautado em evidências científicas e
@@ -289,7 +289,7 @@ export default function About() {
               }`}
             >
               <div className="text-center space-y-3">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground">Consultório e Ambiente</h2>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground title-accent-bg">Consultório e Ambiente</h2>
                 <p className="text-muted-foreground max-w-3xl mx-auto">
                   Um espaço pensado para acolher, com conforto e privacidade.
                 </p>

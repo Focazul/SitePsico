@@ -4,6 +4,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import { Button } from '@/components/ui/button';
 
 /**
  * FAQ Section Component
@@ -71,12 +72,12 @@ const faqData: FAQItem[] = [
 
 export default function FAQSection() {
   return (
-    <section id="faq" className="py-16 md:py-24 bg-secondary/10">
+    <section id="faq" className="py-16 md:py-24 section-light">
       <div className="container">
         <div className="max-w-3xl mx-auto space-y-12">
           {/* Header */}
           <div className="text-center space-y-4">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground title-accent-bg">
               Perguntas Frequentes
             </h2>
             <p className="text-lg text-muted-foreground">
@@ -90,7 +91,7 @@ export default function FAQSection() {
               <AccordionItem
                 key={index}
                 value={`item-${index}`}
-                className="bg-background border border-border/50 rounded-lg px-6 hover:border-accent/50 transition-colors duration-200"
+                className="bg-card/95 border border-accent/20 rounded-xl px-6 hover:border-accent/40 transition-colors duration-200"
               >
                 <AccordionTrigger className="text-left font-semibold text-foreground hover:text-accent transition-colors py-4">
                   {item.question}
@@ -107,12 +108,9 @@ export default function FAQSection() {
             <p className="text-muted-foreground mb-4">
               Ainda tem dúvidas? Entre em contato!
             </p>
-            <a
-              href="#contato"
-              className="inline-block bg-accent hover:bg-accent/90 text-accent-foreground font-semibold px-6 py-3 rounded-lg transition-all duration-200"
-            >
-              Falar Comigo
-            </a>
+            <Button asChild className="btn-lapis-lazuli">
+              <a href="#contato">Falar Comigo</a>
+            </Button>
           </div>
         </div>
       </div>

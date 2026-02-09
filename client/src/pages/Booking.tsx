@@ -207,7 +207,7 @@ export default function Booking() {
               <div className="h-8 w-1 rounded-full bg-accent" />
               <div>
                 <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Passo {step} de {steps.length}</p>
-                <h2 className="text-2xl md:text-3xl font-bold text-foreground">Complete o agendamento</h2>
+                <h2 className="text-2xl md:text-3xl font-bold text-foreground title-accent-bg">Complete o agendamento</h2>
               </div>
             </div>
 
@@ -295,7 +295,7 @@ export default function Booking() {
                             key={time}
                             type="button"
                             variant={data.time === time ? 'default' : 'outline'}
-                            className={data.time === time ? 'bg-accent text-accent-foreground' : ''}
+                            className={data.time === time ? 'btn-filter-selected' : 'border-accent text-accent hover:bg-accent/10'}
                             onClick={() => setField('time', time)}
                           >
                             {time}

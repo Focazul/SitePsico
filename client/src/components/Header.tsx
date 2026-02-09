@@ -107,12 +107,12 @@ export default function Header() {
               {navItems.map((item) => (
                 <NavigationMenuItem key={item.label}>
                   {item.dropdown ? (
-                    <NavigationMenuTrigger className={cn(isActive(item.href) && 'bg-primary/15 text-foreground border border-primary/20')}>{item.label}</NavigationMenuTrigger>
+                    <NavigationMenuTrigger className={cn('nav-link', isActive(item.href) && 'bg-primary/10 text-foreground border border-accent/30')}>{item.label}</NavigationMenuTrigger>
                   ) : (
                     <NavigationMenuLink
                       href={item.href}
                       data-active={isActive(item.href)}
-                      className={cn('px-3 py-2 font-medium rounded-full', isActive(item.href) && 'bg-primary/15 text-foreground border border-primary/20')}
+                      className={cn('nav-link px-3 py-2 rounded-full', isActive(item.href) && 'bg-primary/10 text-foreground border border-accent/30')}
                       onClick={(e) => {
                         e.preventDefault();
                         navigate(item.href);
@@ -123,14 +123,14 @@ export default function Header() {
                   )}
 
                   {item.dropdown && (
-                    <NavigationMenuContent className="md:min-w-[320px] bg-background border-border/60">
+                    <NavigationMenuContent className="md:min-w-[320px] bg-background border-border/60 shadow-lg">
                       <div className="grid gap-2 p-3">
                         {item.dropdown.map((sub) => (
                           <NavigationMenuLink
                             key={sub.title}
                             href={sub.href}
                             data-active={isActive(sub.href)}
-                            className="font-medium"
+                            className="font-medium nav-link"
                             onClick={(e) => {
                               e.preventDefault();
                               navigate(sub.href);
@@ -179,7 +179,7 @@ export default function Header() {
                 key={item.label}
                 href={item.href}
                 className={cn(
-                  'text-foreground hover:text-accent transition-colors py-3 font-medium rounded-md px-1',
+                  'nav-link py-3 font-medium rounded-md px-1',
                   isActive(item.href) && 'text-accent'
                 )}
                 onClick={() => setIsMenuOpen(false)}

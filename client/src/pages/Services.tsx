@@ -122,7 +122,7 @@ export default function Services() {
                 <div className="flex flex-col sm:flex-row gap-4 pt-4">
                   <Button
                     onClick={goToBooking}
-                    className="bg-accent hover:bg-accent/90 text-accent-foreground shadow-md hover:shadow-lg transition-all duration-200"
+                    className="btn-lapis-lazuli transition-all duration-200"
                     size="lg"
                   >
                     Ver Disponibilidade
@@ -169,7 +169,7 @@ export default function Services() {
           <div className="container">
             <div className={`max-w-5xl mx-auto space-y-10 transition-all duration-700 ${areasRef.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
               <div className="text-center space-y-3">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground">Áreas de Atuação</h2>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground title-accent-bg">Áreas de Atuação</h2>
                 <p className="text-muted-foreground max-w-3xl mx-auto">
                   Demandas atendidas com abordagem integrativa e acolhedora.
                 </p>
@@ -220,7 +220,7 @@ export default function Services() {
           <div className="container">
             <div className={`max-w-5xl mx-auto space-y-10 transition-all duration-700 ${modalitiesRef.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
               <div className="text-center space-y-3">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground">Modalidades de Atendimento</h2>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground title-accent-bg">Modalidades de Atendimento</h2>
                 <p className="text-muted-foreground max-w-3xl mx-auto">
                   Escolha entre presencial ou online, mantendo a mesma qualidade de cuidado.
                 </p>
@@ -265,7 +265,7 @@ export default function Services() {
           <div className="container">
             <div className={`max-w-5xl mx-auto space-y-10 transition-all duration-700 ${galleryRef.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
               <div className="text-center space-y-3">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground">Consultório e Ambiente</h2>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground title-accent-bg">Consultório e Ambiente</h2>
                 <p className="text-muted-foreground max-w-3xl mx-auto">
                   Um espaço pensado para acolher com conforto e privacidade.
                 </p>

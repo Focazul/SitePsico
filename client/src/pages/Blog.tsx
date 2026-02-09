@@ -219,7 +219,7 @@ export default function Blog() {
                   <Button
                     size="sm"
                     variant={category ? 'outline' : 'default'}
-                    className={!category ? 'bg-accent text-accent-foreground' : ''}
+                    className={!category ? 'btn-filter-selected' : 'border-accent text-accent hover:bg-accent/10'}
                     onClick={() => {
                       setCategory(null);
                       setPage(1);
@@ -232,7 +232,7 @@ export default function Blog() {
                       key={c.id}
                       size="sm"
                       variant={category === c.name ? 'default' : 'outline'}
-                      className={category === c.name ? 'bg-accent text-accent-foreground' : ''}
+                      className={category === c.name ? 'btn-filter-selected' : 'border-accent text-accent hover:bg-accent/10'}
                       onClick={() => {
                         setCategory(c.name);
                         setPage(1);
@@ -249,7 +249,7 @@ export default function Blog() {
                 <span className="text-sm text-muted-foreground">Tags:</span>
                 <Badge
                   variant={tag ? 'outline' : 'default'}
-                  className={!tag ? 'bg-accent text-accent-foreground cursor-pointer' : 'cursor-pointer'}
+                  className={!tag ? 'btn-filter-selected' : 'border-accent text-accent hover:bg-accent/10 cursor-pointer'}
                   onClick={() => {
                     setTag(null);
                     setPage(1);
@@ -261,7 +261,7 @@ export default function Blog() {
                   <Badge
                     key={t.id}
                     variant={tag === t.name ? 'default' : 'outline'}
-                    className={tag === t.name ? 'bg-accent text-accent-foreground cursor-pointer' : 'cursor-pointer'}
+                    className={tag === t.name ? 'btn-filter-selected cursor-pointer' : 'border-accent text-accent hover:bg-accent/10 cursor-pointer'}
                     onClick={() => {
                       setTag(t.name);
                       setPage(1);
@@ -389,7 +389,7 @@ export default function Blog() {
                       <Badge
                         key={c.id}
                         variant={category === c.name ? 'default' : 'outline'}
-                        className={category === c.name ? 'bg-accent text-accent-foreground cursor-pointer' : 'cursor-pointer'}
+                        className={category === c.name ? 'btn-filter-selected cursor-pointer' : 'border-accent text-accent hover:bg-accent/10 cursor-pointer'}
                         onClick={() => {
                           setCategory(category === c.name ? null : c.name);
                           setPage(1);
@@ -412,7 +412,7 @@ export default function Blog() {
                     <Badge
                       key={t.id}
                       variant={tag === t.name ? 'default' : 'outline'}
-                      className={tag === t.name ? 'bg-accent text-accent-foreground cursor-pointer' : 'cursor-pointer'}
+                      className={tag === t.name ? 'btn-filter-selected cursor-pointer' : 'border-accent text-accent hover:bg-accent/10 cursor-pointer'}
                       onClick={() => {
                         setTag(tag === t.name ? null : t.name);
                         setPage(1);
@@ -428,7 +428,7 @@ export default function Blog() {
                 <p className="text-sm text-muted-foreground">
                   Gostou de algum tema? Traga para a sessão ou marque um horário para conversar sobre sua necessidade.
                 </p>
-                <Button className="w-full bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => (window.location.href = '/#agendamento')}>
+                <Button className="w-full btn-lapis-lazuli hover:scale-105" onClick={() => (window.location.href = '/#agendamento')}>
                   Agendar consulta
                 </Button>
               </Card>
