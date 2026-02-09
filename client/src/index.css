@@ -58,12 +58,12 @@
   --sidebar-primary: #1B3A7A;
   --sidebar-primary-foreground: #FFFFFF;
   
-  /* Ouro Antigo - Acento luxuoso (pirita na pedra) */
-  --accent: #D4AF37;
+  /* Ouro Sofisticado - Acento luxuoso (pirita na pedra) */
+  --accent: #c9a961;
   --accent-foreground: #0F1F3D;
   
   /* Cores de suporte */
-  --chart-1: #D4AF37; /* Ouro */
+  --chart-1: #c9a961; /* Ouro */
   --chart-2: #1B3A7A; /* Azul Profundo */
   --chart-3: #2E5EA8; /* Azul Secundário */
   --chart-4: #87A8D1; /* Azul Claro */
@@ -92,14 +92,14 @@
 
   --border: #C5DBEF; /* Azul Muito Claro */
   --input: #C5DBEF;
-  --ring: #D4AF37; /* Ouro para foco */
+  --ring: #c9a961; /* Ouro para foco */
 
   --sidebar: #FFFFFF;
   --sidebar-foreground: #0F1F3D;
-  --sidebar-accent: #D4AF37;
+  --sidebar-accent: #c9a961;
   --sidebar-accent-foreground: #0F1F3D;
   --sidebar-border: #C5DBEF;
-  --sidebar-ring: #D4AF37;
+  --sidebar-ring: #c9a961;
 }
 
 .dark {
@@ -124,7 +124,7 @@
   --muted: #152856;
   --muted-foreground: #87A8D1; /* Azul Claro (Variant) */
 
-  --accent: #D4AF37; /* Ouro */
+  --accent: #c9a961; /* Ouro */
   --accent-foreground: #0F1F3D;
 
   --destructive: oklch(0.704 0.191 22.216);
@@ -132,20 +132,20 @@
 
   --border: #1B3A7A; /* Azul Profundo para bordas sutis */
   --input: #1B3A7A;
-  --ring: #D4AF37;
+  --ring: #c9a961;
 
   --chart-1: #4A6FA5;
   --chart-2: #2E5EA8;
-  --chart-3: #D4AF37;
+  --chart-3: #c9a961;
   --chart-4: #87A8D1;
   --chart-5: #5A6B7F;
 
   --sidebar: #0D1A35;
   --sidebar-foreground: #E8F0FF;
-  --sidebar-accent: #D4AF37;
+  --sidebar-accent: #c9a961;
   --sidebar-accent-foreground: #0F1F3D;
   --sidebar-border: #1B3A7A;
-  --sidebar-ring: #D4AF37;
+  --sidebar-ring: #c9a961;
 }
 
 @layer base {
