@@ -5,7 +5,8 @@ interface AuthStatus {
   isLoading: boolean;
   isAuthenticated: boolean;
   isAdmin: boolean;
-  user: { id?: number; email?: string; name?: string; role?: string } | null;
+  // Allow null for optional fields to match TRPC return type
+  user: { id?: number; email?: string | null; name?: string | null; role?: string } | null;
   error: Error | null;
 }
 
@@ -33,7 +34,7 @@ export function useAuthCheck(): AuthStatus {
         isAuthenticated: !!meQuery.data,
         isAdmin: meQuery.data?.role === 'admin',
         user: meQuery.data || null,
-        error: meQuery.error,
+        error: (meQuery.error as Error | null) || null,
       });
     }
   }, [meQuery.data, meQuery.isLoading, meQuery.error]);

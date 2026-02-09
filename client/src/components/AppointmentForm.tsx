@@ -50,7 +50,7 @@ export default function AppointmentForm() {
     setIsSubmitting(true);
     try {
       const [year, month, day] = (data.appointmentDate as string).split('-');
-      const appointmentDate = new Date(`${year}-${month}-${day}T${data.appointmentTime}:00`);
+      const appointmentDate = `${year}-${month}-${day}`;
 
       await createAppointment.mutateAsync({
         clientName: data.clientName,

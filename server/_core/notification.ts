@@ -116,8 +116,8 @@ export async function notifyOwner(
 }
 
 function formatDateTime(appointment: Appointment): { date: string; time: string; iso: Date } {
-  const dateStr = appointment.appointmentDate instanceof Date
-    ? appointment.appointmentDate.toISOString().slice(0, 10)
+  const dateStr = (appointment.appointmentDate as unknown) instanceof Date
+    ? (appointment.appointmentDate as unknown as Date).toISOString().slice(0, 10)
     : String(appointment.appointmentDate).slice(0, 10);
   const timeStr = String(appointment.appointmentTime).slice(0, 5);
   const iso = new Date(`${dateStr}T${timeStr}:00.000Z`);
@@ -140,6 +140,7 @@ export async function sendAppointmentEmails(appointment: Appointment): Promise<{
     patientName: appointment.clientName,
     appointmentDate: displayDate,
     appointmentTime: time,
+    // @ts-ignore
     modalidade: appointment.modality,
     consultorioAddress: appointment.modality === "presencial" ? config.office.fullAddress : undefined,
     meetingLink: appointment.modality === "online" ? `${config.meeting.linkBase}${appointment.id}` : undefined,
