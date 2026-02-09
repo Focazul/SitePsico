@@ -825,7 +825,7 @@ export async function getPublishedPosts(
   offset: number = 0,
   categoryId?: number | null,
   tagId?: number | null
-): Promise<PostWithRelations[]> {
+): Promise<{ posts: PostWithRelations[]; count: number }> {
   const db = await ensureDb();
   const clauses = [
     sql`${posts.publishedAt} IS NOT NULL`,
@@ -840,12 +840,17 @@ export async function getPublishedPosts(
       .where(eq(postTags.tagId, tagId));
 
     if (pIds.length === 0) {
-      return [];
+      return { posts: [], count: 0 };
     }
 
     const ids = pIds.map((p) => p.postId);
     clauses.push(inArray(posts.id, ids));
   }
+
+  const [{ count } = { count: 0 }] = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(posts)
+    .where(and(...clauses));
 
   const results = await db
     .select()
@@ -855,7 +860,7 @@ export async function getPublishedPosts(
     .limit(limit)
     .offset(offset);
 
-  return Promise.all(
+  const mapped = await Promise.all(
     results.map(async (post) => {
       const tagRows = await db
         .select({ tag: tags })
@@ -870,27 +875,38 @@ export async function getPublishedPosts(
       return { ...post, tags: tagRows.map((r) => r.tag), category };
     })
   );
+
+  return { posts: mapped, count: Number(count) };
 }
 
-export async function searchPosts(query: string, limit: number = 10, offset: number = 0): Promise<PostWithRelations[]> {
+export async function searchPosts(
+  query: string,
+  limit: number = 10,
+  offset: number = 0
+): Promise<{ posts: PostWithRelations[]; count: number }> {
   const db = await ensureDb();
   const searchPattern = `%${query}%`;
+
+  const searchClause = and(
+    sql`${posts.publishedAt} IS NOT NULL`,
+    sql`${posts.publishedAt} <= NOW()`,
+    sql`(${posts.title} LIKE ${searchPattern} OR ${posts.excerpt} LIKE ${searchPattern} OR ${posts.content} LIKE ${searchPattern})`
+  );
+
+  const [{ count } = { count: 0 }] = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(posts)
+    .where(searchClause);
 
   const results = await db
     .select()
     .from(posts)
-    .where(
-      and(
-        sql`${posts.publishedAt} IS NOT NULL`,
-        sql`${posts.publishedAt} <= NOW()`,
-        sql`(${posts.title} LIKE ${searchPattern} OR ${posts.excerpt} LIKE ${searchPattern} OR ${posts.content} LIKE ${searchPattern})`
-      )
-    )
+    .where(searchClause)
     .orderBy(desc(posts.publishedAt))
     .limit(limit)
     .offset(offset);
 
-  return Promise.all(
+  const mapped = await Promise.all(
     results.map(async (post) => {
       const tagRows = await db
         .select({ tag: tags })
@@ -905,6 +921,8 @@ export async function searchPosts(query: string, limit: number = 10, offset: num
       return { ...post, tags: tagRows.map((r) => r.tag), category };
     })
   );
+
+  return { posts: mapped, count: Number(count) };
 }
 
 export async function getRelatedPosts(postId: number, limit: number = 3): Promise<PostWithRelations[]> {

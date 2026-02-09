@@ -30,7 +30,7 @@ export default function FloatingWhatsApp() {
       rel="noreferrer"
       aria-label="Fale conosco pelo WhatsApp"
       onClick={handleClick}
-      className="fixed bottom-5 right-5 z-50 inline-flex items-center gap-2 rounded-full bg-[#25D366] px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-[#25d366]/30 transition-all hover:translate-y-[-2px] hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#25D366]"
+      className="fixed bottom-5 right-5 z-50 inline-flex items-center gap-2 rounded-full border border-accent/30 bg-[#25D366] px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-[#25d366]/30 transition-all hover:translate-y-[-2px] hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-accent"
     >
       <MessageCircle className="h-5 w-5" />
       <span className="hidden sm:inline">Fale no WhatsApp</span>

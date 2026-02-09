@@ -40,8 +40,7 @@ export const blogRouter = router({
       })
     )
     .query(async ({ input }) => {
-      const posts = await getPublishedPosts(input.limit, input.offset, input.categoryId, input.tagId);
-      return { posts, count: posts.length };
+      return await getPublishedPosts(input.limit, input.offset, input.categoryId, input.tagId);
     }),
 
   getPost: publicProcedure
@@ -63,8 +62,7 @@ export const blogRouter = router({
       })
     )
     .query(async ({ input }) => {
-      const posts = await searchPosts(input.query, input.limit, input.offset);
-      return { posts, count: posts.length };
+      return await searchPosts(input.query, input.limit, input.offset);
     }),
 
   getRelatedPosts: publicProcedure

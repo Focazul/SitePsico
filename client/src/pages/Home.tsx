@@ -11,9 +11,13 @@ import ImageGallery from '@/components/ImageGallery';
 import FadeIn from '@/components/FadeIn';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Link } from 'wouter';
 import { Heart, Shield, BookOpen, MessageCircle, ArrowRight, CheckCircle, Calendar } from 'lucide-react';
 import { useSiteConfig } from '@/hooks/useSiteConfig';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
+import { trpc } from '@/lib/trpc';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 /**
  * Home Page - Site Psicólogo SP
@@ -34,6 +38,25 @@ export default function Home() {
   
   // Update document title
   useDocumentTitle();
+
+  const postsQuery = trpc.blog.getPosts.useQuery({ limit: 3, offset: 0 });
+  const posts = postsQuery.data?.posts || [];
+
+  const getExcerpt = (post: { excerpt?: string | null; content: string }) => {
+    if (post.excerpt && post.excerpt.trim().length > 0) return post.excerpt;
+    const plain = post.content
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/[_*`>#-]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+    return plain.length > 140 ? `${plain.slice(0, 140).trim()}...` : plain;
+  };
+
+  const formatDate = (date: Date | null | string) => {
+    if (!date) return '';
+    const parsed = typeof date === 'string' ? new Date(date) : date;
+    return format(parsed, 'dd MMM yyyy', { locale: ptBR });
+  };
 
   // Smooth scroll handler
   const scrollToSection = (sectionId: string) => {
@@ -110,7 +133,7 @@ export default function Home() {
                     width="1200"
                     height="800"
                     fetchPriority="high"
-                    className="w-full h-auto rounded-lg shadow-2xl object-cover hover:scale-105 transition-transform duration-500"
+                    className="w-full h-auto rounded-2xl border border-border/60 shadow-2xl object-cover hover:scale-103 transition-transform duration-500"
                   />
                 </div>
               </div>
@@ -369,66 +392,73 @@ export default function Home() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {[
-                    {
-                      title: 'O que é psicoterapia?',
-                      excerpt:
-                        'Entenda como funciona o processo terapêutico e seus benefícios.',
-                      date: 'Em breve',
-                      category: 'Sobre Terapia',
-                    },
-                    {
-                      title: 'Como saber se preciso de terapia?',
-                      excerpt:
-                        'Sinais de que pode ser o momento de buscar ajuda profissional.',
-                      date: 'Em breve',
-                      category: 'Autoconhecimento',
-                    },
-                    {
-                      title: 'Ansiedade: quando buscar ajuda',
-                      excerpt:
-                        'Compreendendo a ansiedade e seus sintomas no dia a dia.',
-                      date: 'Em breve',
-                      category: 'Saúde Mental',
-                    },
-                  ].map((article, idx) => (
+                  {postsQuery.isLoading && (
+                    Array.from({ length: 3 }).map((_, idx) => (
+                      <Card
+                        key={`loading-${idx}`}
+                        className="p-6 border-border/50 animate-pulse"
+                      >
+                        <div className="space-y-4">
+                          <div className="space-y-2">
+                            <div className="h-3 w-24 rounded-full bg-muted" />
+                            <div className="h-4 w-40 rounded-full bg-muted" />
+                          </div>
+                          <div className="h-3 w-full rounded-full bg-muted" />
+                          <div className="h-3 w-5/6 rounded-full bg-muted" />
+                          <div className="h-3 w-20 rounded-full bg-muted" />
+                        </div>
+                      </Card>
+                    ))
+                  )}
+
+                  {!postsQuery.isLoading && posts.length === 0 && (
+                    <div className="col-span-full text-center text-sm text-muted-foreground">
+                      Os artigos serão publicados em breve.
+                    </div>
+                  )}
+
+                  {posts.map((post) => (
                     <Card
-                      key={idx}
+                      key={post.id}
                       className="p-6 border-border/50 hover:border-accent hover:shadow-lg transition-all duration-300 cursor-pointer group"
                     >
-                      <div className="space-y-4">
+                      <Link href={`/blog/${post.slug}`} className="block space-y-4 h-full">
                         <div className="space-y-2">
                           <span className="text-xs font-semibold text-accent uppercase tracking-wide">
-                            {article.category}
+                            {post.category?.name || 'Artigo'}
                           </span>
                           <h3 className="font-bold text-lg text-foreground group-hover:text-accent transition-colors">
-                            {article.title}
+                            {post.title}
                           </h3>
                         </div>
                         <p className="text-sm text-muted-foreground leading-relaxed">
-                          {article.excerpt}
+                          {getExcerpt(post)}
                         </p>
                         <div className="flex items-center justify-between pt-2 border-t border-border/30">
                           <p className="text-xs text-muted-foreground/60">
-                            {article.date}
+                            {formatDate(post.publishedAt)}
                           </p>
                           <ArrowRight className="w-4 h-4 text-accent opacity-0 group-hover:opacity-100 transition-opacity" />
                         </div>
-                      </div>
+                      </Link>
                     </Card>
                   ))}
                 </div>
 
-                <div className="text-center pt-8">
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    className="border-border hover:bg-muted hover:border-accent transition-all duration-200"
-                  >
-                    Ver Todos os Artigos
-                    <BookOpen className="ml-2 w-5 h-5" />
-                  </Button>
-                </div>
+                {posts.length > 0 && (
+                  <div className="text-center pt-8">
+                    <Link href="/blog" className="inline-flex">
+                      <Button
+                        variant="outline"
+                        size="lg"
+                        className="border-border hover:bg-muted hover:border-accent transition-all duration-200"
+                      >
+                        Ver todos os artigos
+                        <BookOpen className="ml-2 w-5 h-5" />
+                      </Button>
+                    </Link>
+                  </div>
+                )}
               </div>
             </FadeIn>
           </div>
