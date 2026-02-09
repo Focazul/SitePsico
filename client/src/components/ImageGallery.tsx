@@ -29,7 +29,7 @@ export default function ImageGallery({
       {images.map((image, index) => (
         <div
           key={index}
-          className="group relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300"
+          className="group relative overflow-hidden rounded-2xl border border-border/60 bg-muted/40 shadow-md hover:shadow-xl transition-all duration-300"
         >
           <div className="aspect-[4/3] relative">
             <img
@@ -37,7 +37,7 @@ export default function ImageGallery({
               alt={image.alt}
               width="800"
               height="600"
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               loading="lazy"
             />
             {/* Overlay on hover */}

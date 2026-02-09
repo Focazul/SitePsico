@@ -75,8 +75,9 @@ export default function Home() {
         <section className="py-16 md:py-24 lg:py-32">
           <div className="container">
             <FadeIn>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-                <div className="space-y-6">
+              <div className="hero-shell p-6 md:p-10 lg:p-12">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                  <div className="space-y-6">
                   <div className="space-y-2">
                     <p className="text-accent font-semibold text-sm md:text-base uppercase tracking-wide">
                       Bem-vindo(a)
@@ -91,7 +92,7 @@ export default function Home() {
                   <div className="flex flex-col sm:flex-row gap-4 pt-4">
                     <Button
                       onClick={() => openModal()}
-                      className="bg-accent hover:bg-accent/90 text-accent-foreground transition-all duration-200 hover:scale-105 shadow-md hover:shadow-lg"
+                      className="btn-gradient transition-all duration-200"
                       size="lg"
                     >
                       Agendar Consulta
@@ -108,33 +109,37 @@ export default function Home() {
                   </div>
 
                   {/* Trust Indicators */}
-                  <div className="flex flex-wrap gap-4 pt-6 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap gap-3 pt-6 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-2 rounded-full border border-border/70 bg-background/70 px-3 py-2">
                       <CheckCircle className="w-5 h-5 text-accent" />
                       <span>{config.psychologistCrp || 'CRP-SP'} Ativo</span>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 rounded-full border border-border/70 bg-background/70 px-3 py-2">
                       <CheckCircle className="w-5 h-5 text-accent" />
                       <span>Sigilo Garantido</span>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 rounded-full border border-border/70 bg-background/70 px-3 py-2">
                       <CheckCircle className="w-5 h-5 text-accent" />
                       <span>Online e Presencial</span>
                     </div>
                   </div>
-                </div>
+                  </div>
 
-                {/* Imagem Hero */}
-                <div className="hidden md:block relative">
-                  <div className="absolute inset-0 bg-accent/10 rounded-lg blur-3xl -z-10"></div>
-                  <img
-                    src="/images/hero-psychologist.jpg"
-                    alt="Ambiente acolhedor de terapia"
-                    width="1200"
-                    height="800"
-                    fetchPriority="high"
-                    className="w-full h-auto rounded-2xl border border-border/60 shadow-2xl object-cover hover:scale-103 transition-transform duration-500"
-                  />
+                  {/* Imagem Hero */}
+                  <div className="hidden md:block">
+                    <div className="hero-media-frame">
+                      <div className="hero-orb hero-orb--primary" aria-hidden />
+                      <div className="hero-orb hero-orb--accent" aria-hidden />
+                      <img
+                        src="/images/hero-psychologist.jpg"
+                        alt="Ambiente acolhedor de terapia"
+                        width="1200"
+                        height="800"
+                        fetchPriority="high"
+                        className="hero-media-image w-full h-auto object-cover"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             </FadeIn>
@@ -146,7 +151,7 @@ export default function Home() {
         {/* SOBRE MIM SECTION */}
         <section
           id="sobre"
-          className="py-16 md:py-24 bg-secondary/10"
+          className="py-16 md:py-24 section-contrast"
         >
           <div className="container">
             <FadeIn>

@@ -75,7 +75,7 @@ export default function Header() {
       role="banner"
       className={cn(
         'sticky top-0 z-50 transition-[background,box-shadow,border] duration-300 backdrop-blur-md border-b',
-        isScrolled ? 'bg-background/90 border-border/70 shadow-sm' : 'bg-transparent border-transparent'
+        isScrolled ? 'bg-background/90 border-border/70 shadow-md' : 'bg-background/80 border-border/40'
       )}
     >
       <nav 
@@ -100,18 +100,19 @@ export default function Header() {
         </Link>
 
         {/* Navegação Desktop */}
-        <div className="hidden md:flex items-center gap-6">
-          <NavigationMenu viewport={false} className="flex-1 justify-end">
-            <NavigationMenuList className="gap-2">
+        <div className="hidden md:flex items-center gap-4">
+          <div className="nav-shell">
+            <NavigationMenu viewport={false} className="flex-1 justify-end">
+              <NavigationMenuList className="gap-1">
               {navItems.map((item) => (
                 <NavigationMenuItem key={item.label}>
                   {item.dropdown ? (
-                    <NavigationMenuTrigger className={cn(isActive(item.href) && 'bg-accent/30 text-accent-foreground')}>{item.label}</NavigationMenuTrigger>
+                    <NavigationMenuTrigger className={cn(isActive(item.href) && 'bg-primary/15 text-foreground border border-primary/20')}>{item.label}</NavigationMenuTrigger>
                   ) : (
                     <NavigationMenuLink
                       href={item.href}
                       data-active={isActive(item.href)}
-                      className={cn('px-3 py-2 font-medium', isActive(item.href) && 'bg-accent/30 text-accent-foreground')}
+                      className={cn('px-3 py-2 font-medium rounded-full', isActive(item.href) && 'bg-primary/15 text-foreground border border-primary/20')}
                       onClick={(e) => {
                         e.preventDefault();
                         navigate(item.href);
@@ -144,10 +145,11 @@ export default function Header() {
                   <NavigationMenuIndicator />
                 </NavigationMenuItem>
               ))}
-            </NavigationMenuList>
-          </NavigationMenu>
+              </NavigationMenuList>
+            </NavigationMenu>
+          </div>
           <Button
-            className="bg-accent hover:bg-accent/90 text-accent-foreground transition-all duration-200 shadow-md shadow-accent/30"
+            className="btn-gradient transition-all duration-200"
             onClick={() => openModal()}
           >
             Agendar Consulta

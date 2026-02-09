@@ -68,11 +68,15 @@
   --chart-3: #2E5EA8; /* Azul Secundário */
   --chart-4: #87A8D1; /* Azul Claro */
   --chart-5: #5A6B7F; /* Cinza Azulado */
+
+  --shadow-sm: 0 10px 24px -18px rgba(15, 23, 42, 0.35);
+  --shadow-md: 0 18px 42px -26px rgba(15, 23, 42, 0.45);
+  --shadow-lg: 0 28px 60px -40px rgba(15, 23, 42, 0.65);
   
   --radius: 1.125rem;
 
   /* Fundos e Superfícies */
-  --background: #FFFFFF; /* Branco Puro */
+  --background: #E8F0FF; /* Azul Claro (base do fundo) */
   --foreground: #0F1F3D; /* Azul Escuro (Surface Color) para texto principal */
 
   --card: #FFFFFF;
@@ -84,7 +88,7 @@
   --secondary: #2E5EA8; /* Azul Secundário */
   --secondary-foreground: #FFFFFF;
 
-  --muted: #E8F0FF; /* Azul Claro (Light Background) */
+  --muted: #DCE8F7; /* Azul Claro Suave */
   --muted-foreground: #5A6B7F; /* Cinza Azulado (Text Light) */
 
   --destructive: oklch(0.577 0.245 27.325);
@@ -153,15 +157,19 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground font-serif;
-    font-family: 'Lora', serif;
+    @apply bg-background text-foreground;
+    font-family: 'Manrope', sans-serif;
     line-height: 1.6;
-    background-image: radial-gradient(circle at top left, color-mix(in oklch, var(--muted) 70%, var(--accent) 30%), var(--background) 60%);
+    background-color: var(--background);
+    background-image:
+      radial-gradient(circle at 12% 8%, color-mix(in oklch, var(--accent) 22%, var(--background)), transparent 56%),
+      radial-gradient(circle at 88% 12%, color-mix(in oklch, var(--secondary) 30%, var(--background)), transparent 60%),
+      linear-gradient(180deg, color-mix(in oklch, var(--background) 78%, #ffffff 22%), var(--background) 65%);
   }
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Cormorant Garamond', serif;
     font-weight: 700;
-    letter-spacing: -0.5px;
+    letter-spacing: -0.3px;
   }
   h1 {
     @apply text-5xl md:text-6xl;
@@ -181,7 +189,7 @@
   }
   p {
     @apply text-base md:text-lg;
-    font-family: 'Lora', serif;
+    font-family: 'Manrope', sans-serif;
   }
   small {
     font-family: 'Poppins', sans-serif;
@@ -314,6 +322,78 @@
   .section-primary-bg {
     background: linear-gradient(135deg, #FFFFFF 0%, #E8F0FF 100%);
     position: relative;
+  }
+
+  .section-contrast {
+    background: linear-gradient(135deg, color-mix(in oklch, var(--background) 70%, #ffffff 30%), color-mix(in oklch, var(--muted) 75%, #ffffff 25%));
+    border-top: 1px solid color-mix(in oklch, var(--accent) 20%, var(--border));
+    border-bottom: 1px solid color-mix(in oklch, var(--accent) 20%, var(--border));
+  }
+
+  .nav-shell {
+    background: color-mix(in oklch, var(--background) 85%, #ffffff 15%);
+    border: 1px solid color-mix(in oklch, var(--accent) 25%, var(--border));
+    border-radius: 999px;
+    padding: 0.25rem 0.4rem;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .hero-shell {
+    border-radius: calc(var(--radius) + 10px);
+    background: color-mix(in oklch, var(--background) 80%, #ffffff 20%);
+    border: 1px solid color-mix(in oklch, var(--accent) 18%, var(--border));
+    box-shadow: var(--shadow-lg);
+  }
+
+  .hero-media-frame {
+    position: relative;
+    border-radius: calc(var(--radius) + 12px);
+    padding: 18px;
+    background: linear-gradient(140deg, color-mix(in oklch, var(--primary) 82%, #ffffff 18%), var(--secondary));
+    border: 1px solid color-mix(in oklch, var(--accent) 30%, transparent);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+  }
+
+  .hero-media-image {
+    border-radius: var(--radius);
+    border: 1px solid color-mix(in oklch, var(--accent) 18%, var(--border));
+    background: color-mix(in oklch, var(--background) 88%, #ffffff 12%);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .hero-orb {
+    position: absolute;
+    border-radius: 999px;
+    filter: blur(0px);
+    opacity: 0.9;
+  }
+
+  .hero-orb--primary {
+    width: 140px;
+    height: 140px;
+    right: 24px;
+    top: 18px;
+    background: rgba(255, 255, 255, 0.35);
+  }
+
+  .hero-orb--accent {
+    width: 160px;
+    height: 160px;
+    right: 64px;
+    top: 64px;
+    background: rgba(201, 169, 97, 0.35);
+  }
+
+  .btn-gradient {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: #ffffff;
+    border: 1px solid color-mix(in oklch, var(--accent) 30%, transparent);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .btn-gradient:hover {
+    box-shadow: var(--shadow-md);
   }
 
   /* Scroll Reveal Animations */

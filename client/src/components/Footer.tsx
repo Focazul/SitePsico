@@ -10,7 +10,7 @@ export default function Footer() {
   return (
     <footer 
       role="contentinfo"
-      className="bg-secondary/30 border-t border-border/80 pt-12 md:pt-16 pb-10"
+      className="bg-background/90 border-t border-border/80 pt-12 md:pt-16 pb-10"
     >
       <div className="container space-y-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">

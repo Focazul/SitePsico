@@ -128,14 +128,6 @@ export default function Services() {
                     Ver Disponibilidade
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </Button>
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    className="border-border hover:border-accent hover:bg-muted"
-                    onClick={() => (window.location.href = '/#contato')}
-                  >
-                    Falar agora
-                  </Button>
                 </div>
               </div>
 

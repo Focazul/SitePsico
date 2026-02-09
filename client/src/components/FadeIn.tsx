@@ -13,7 +13,7 @@ interface FadeInProps {
 export default function FadeIn({
   children,
   delay = 0,
-  duration = 0.5,
+  duration = 0.65,
   className = "",
   direction = "up",
   fullWidth = false,
@@ -23,10 +23,10 @@ export default function FadeIn({
 
   const getInitialPosition = () => {
     switch (direction) {
-      case "up": return { y: 20, x: 0 };
-      case "down": return { y: -20, x: 0 };
-      case "left": return { x: 20, y: 0 };
-      case "right": return { x: -20, y: 0 };
+      case "up": return { y: 16, x: 0 };
+      case "down": return { y: -16, x: 0 };
+      case "left": return { x: 16, y: 0 };
+      case "right": return { x: -16, y: 0 };
       case "none": return { x: 0, y: 0 };
       default: return { y: 20, x: 0 };
     }
