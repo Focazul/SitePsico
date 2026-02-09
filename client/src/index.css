@@ -69,7 +69,7 @@
   --chart-4: #87A8D1; /* Azul Claro */
   --chart-5: #5A6B7F; /* Cinza Azulado */
   
-  --radius: 0.75rem;
+  --radius: 1.125rem;
 
   /* Fundos e Superfícies */
   --background: #FFFFFF; /* Branco Puro */
@@ -156,6 +156,7 @@
     @apply bg-background text-foreground font-serif;
     font-family: 'Lora', serif;
     line-height: 1.6;
+    background-image: radial-gradient(circle at top left, color-mix(in oklch, var(--muted) 70%, var(--accent) 30%), var(--background) 60%);
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Poppins', sans-serif;
