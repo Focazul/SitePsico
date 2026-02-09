@@ -104,6 +104,7 @@ temp/
 
 # Arquivos antigos/documentação local
 _ARQUIVOS_ANTIGOS/
+docs/UI_VISUAL_INVENTORY.md
 *.bat
 *.ps1
 test-*.mjs

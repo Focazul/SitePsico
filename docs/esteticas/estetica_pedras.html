@@ -1,0 +1,5015 @@
+<!doctype html>
+<html lang="pt-BR" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3 Paletas de Cores Premium</title>
+  <style>
+    body {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 20px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f5f5;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+      color: #1B3A7A;
+      margin-bottom: 30px;
+      font-size: 2.5rem;
+    }
+
+    .color-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .color-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .color-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .color-swatch {
+      height: 150px;
+      width: 100%;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .color-info {
+      padding: 20px;
+    }
+
+    .color-name {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #1B3A7A;
+      margin-bottom: 8px;
+    }
+
+    .color-code {
+      font-family: 'Courier New', monospace;
+      font-size: 1rem;
+      color: #666;
+      margin-bottom: 12px;
+      padding: 8px 12px;
+      background: #f8f8f8;
+      border-radius: 6px;
+      display: inline-block;
+      cursor: pointer;
+    }
+
+    .color-description {
+      font-size: 0.9rem;
+      color: #777;
+      line-height: 1.5;
+    }
+
+    .usage-section {
+      margin-top: 40px;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .usage-section h2 {
+      color: #1B3A7A;
+      margin-bottom: 20px;
+      font-size: 1.8rem;
+    }
+
+    .palette-variants {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .variant-card {
+      border-left: 4px solid #D4AF37;
+      padding: 20px;
+      background: #f9f9f9;
+      border-radius: 8px;
+    }
+
+    .variant-card h3 {
+      color: #1B3A7A;
+      margin-top: 0;
+      margin-bottom: 15px;
+    }
+
+    .color-row {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 12px;
+    }
+
+    .color-dot {
+      width: 40px;
+      height: 40px;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+
+    .color-label {
+      flex: 1;
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    .button-demo {
+      margin-top: 30px;
+    }
+
+    .button-demo h3 {
+      color: #1B3A7A;
+      margin-bottom: 20px;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #1B3A7A, #2E5EA8);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(27, 58, 122, 0.3);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: #1B3A7A;
+      border: 2px solid #1B3A7A;
+    }
+
+    .btn-secondary:hover {
+      background: #1B3A7A;
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .btn-accent {
+      background: #D4AF37;
+      color: #0F1F3D;
+      border: none;
+    }
+
+    .btn-accent:hover {
+      background: #C49827;
+      transform: translateY(-2px);
+    }
+
+    .gradient-demo {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .gradient-box {
+      height: 120px;
+      border-radius: 10px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 15px;
+      color: white;
+      font-weight: bold;
+      font-size: 0.9rem;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .text-samples {
+      margin-top: 30px;
+    }
+
+    .text-samples h3 {
+      color: #1B3A7A;
+      margin-bottom: 20px;
+    }
+
+    .text-sample {
+      margin-bottom: 20px;
+      padding: 20px;
+      background: white;
+      border-radius: 8px;
+      border-left: 4px solid #D4AF37;
+    }
+
+    .text-primary {
+      color: #1B3A7A;
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .text-secondary {
+      color: #2E5EA8;
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+    }
+
+    .text-accent {
+      color: #D4AF37;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .text-body {
+      color: #5A6B7F;
+      line-height: 1.6;
+      font-size: 1rem;
+    }
+
+    .copy-toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #1B3A7A;
+      color: white;
+      padding: 15px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+      font-weight: 600;
+    }
+
+    .copy-toast.show {
+      opacity: 1;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 40px;
+      border-bottom: 2px solid #e0e0e0;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      padding: 15px 25px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #999;
+      transition: all 0.3s ease;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+    }
+
+    .tab-btn.active {
+      color: #1B3A7A;
+      border-bottom-color: #D4AF37;
+    }
+
+    .tab-btn:hover {
+      color: #2E5EA8;
+    }
+
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .palette-title {
+      text-align: center;
+      color: #1B3A7A;
+      margin-bottom: 10px;
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+
+    .palette-subtitle {
+      text-align: center;
+      color: #999;
+      margin-bottom: 30px;
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 1.8rem;
+      }
+
+      .color-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .button-group {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .tabs {
+        gap: 5px;
+      }
+
+      .tab-btn {
+        padding: 12px 15px;
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="/_sdk/element_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body>
+  <div class="container">
+   <h1>✨ 3 Paletas de Cores Premium</h1><!-- Navigation Tabs -->
+   <div class="tabs"><button class="tab-btn active" onclick="switchTab('lapislazuli')"> 🔵 Lápis-Lázuli </button> <button class="tab-btn" onclick="switchTab('ambar')"> 🟠 Âmbar Antigo </button> <button class="tab-btn" onclick="switchTab('esmeralda')"> 🟢 Esmeralda Real </button> <button class="tab-btn" onclick="switchTab('opala')"> 🌌 Opala Azul Universo </button> <button class="tab-btn" onclick="switchTab('diamante')"> 💎 Diamante Azul </button> <button class="tab-btn" onclick="switchTab('moissanita')"> ✨ Moissanita Azul </button> <button class="tab-btn" onclick="switchTab('safira')"> 👑 Safira Real </button> <button class="tab-btn" onclick="switchTab('aguamarina')"> �� Água-marinha </button> <button class="tab-btn" onclick="switchTab('topazio')"> 💎 Topázio Azul </button> <button class="tab-btn" onclick="switchTab('turquesa')"> 🦋 Turquesa </button> <button class="tab-btn" onclick="switchTab('tanzanita')"> 💜 Tanzanita </button> <button class="tab-btn" onclick="switchTab('larimar')"> 🌅 Larimar </button> <button class="tab-btn" onclick="switchTab('cianita')"> ✨ Cianita </button> <button class="tab-btn" onclick="switchTab('zircao')"> 💎 Zircão Azul </button> <button class="tab-btn" onclick="switchTab('azurita')"> 🔷 Azurita </button> <button class="tab-btn" onclick="switchTab('sodalita')"> 🔵 Sodalita </button> <button class="tab-btn" onclick="switchTab('benitoita')"> ⭐ Benitoita </button> <button class="tab-btn" onclick="switchTab('calcedonia')"> 🌸 Calcedônia </button> <button class="tab-btn" onclick="switchTab('spinelia')"> 🌟 Espinélio </button> <button class="tab-btn" onclick="switchTab('olhotiagre')"> 👁️ Olho de Tigre </button> <button class="tab-btn" onclick="switchTab('ametista')"> 💜 Ametista </button> <button class="tab-btn" onclick="switchTab('angelite')"> 💙 Angelita </button>
+   </div><!-- TAB 1: Lápis-Lázuli -->
+   <div id="lapislazuli" class="tab-content active">
+    <div class="palette-title">
+     🔵 Paleta Lápis-Lázuli
+    </div>
+    <div class="palette-subtitle">
+     Azul profundo, místico e elegante com toques de ouro
+    </div><!-- Paleta Principal -->
+    <div class="color-grid">
+     <div class="color-card">
+      <div class="color-swatch" style="background: #1B3A7A;" onclick="copyColor('#1B3A7A')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Azul Profundo
+       </div>
+       <div class="color-code">
+        #1B3A7A
+       </div>
+       <div class="color-description">
+        Cor primária - azul profundo e místico, inspirado no lápis-lázuli puro.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #2E5EA8;" onclick="copyColor('#2E5EA8')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Azul Secundário
+       </div>
+       <div class="color-code">
+        #2E5EA8
+       </div>
+       <div class="color-description">
+        Cor secundária - azul mais luminoso para elementos destacados.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #c9a961;" onclick="copyColor('#c9a961')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Ouro Sofisticado
+       </div>
+       <div class="color-code">
+        #c9a961
+       </div>
+       <div class="color-description">
+        Accent color - ouro sofisticado que contrasta com o azul.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #E8F0FF;" onclick="copyColor('#E8F0FF')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Azul Claro
+       </div>
+       <div class="color-code">
+        #E8F0FF
+       </div>
+       <div class="color-description">
+        Light background - azul muito claro para fundos e surfaces.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #0F1F3D;" onclick="copyColor('#0F1F3D')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Azul Escuro
+       </div>
+       <div class="color-code">
+        #0F1F3D
+       </div>
+       <div class="color-description">
+        Surface color - azul muito escuro para superfícies principais.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #5A6B7F;" onclick="copyColor('#5A6B7F')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Cinza Azulado
+       </div>
+       <div class="color-code">
+        #5A6B7F
+       </div>
+       <div class="color-description">
+        Text light color - para textos secundários com elegância.
+       </div>
+      </div>
+     </div>
+    </div><!-- Variações Lápis-Lázuli -->
+    <div class="usage-section">
+     <h2>📊 Variações - Lápis-Lázuli</h2>
+     <div class="palette-variants">
+      <div class="variant-card">
+       <h3>Variação Luz</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #4A6FA5;"></div>
+        <div class="color-label">
+         Azul Médio - #4A6FA5
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #87A8D1;"></div>
+        <div class="color-label">
+         Azul Claro - #87A8D1
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #C5DBEF;"></div>
+        <div class="color-label">
+         Azul Muito Claro - #C5DBEF
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Sombra</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #152856;"></div>
+        <div class="color-label">
+         Azul Escuro - #152856
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #0D1A35;"></div>
+        <div class="color-label">
+         Azul Muito Escuro - #0D1A35
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #050F1A;"></div>
+        <div class="color-label">
+         Azul Quase Preto - #050F1A
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Ouro</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #E8C547;"></div>
+        <div class="color-label">
+         Ouro Claro - #E8C547
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #C49827;"></div>
+        <div class="color-label">
+         Ouro Escuro - #C49827
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #8B6914;"></div>
+        <div class="color-label">
+         Ouro Profundo - #8B6914
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="usage-section button-demo">
+     <h3>🎨 Demonstração de Botões - Lápis-Lázuli</h3>
+    <div class="button-group"><button class="btn" style="background: linear-gradient(135deg, #1B3A7A, #2E5EA8); color: white;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(27, 58, 122, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.15)'">Botão Primário</button> <button class="btn" style="background: white; color: #1B3A7A; border: 2px solid #1B3A7A;" onmouseover="this.style.background='#1B3A7A'; this.style.color='white'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='white'; this.style.color='#1B3A7A'; this.style.transform='translateY(0)'">Botão Secundário</button> <button class="btn" style="background: #c9a961; color: #0F1F3D; border: none;" onmouseover="this.style.background='#b89452'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='#c9a961'; this.style.transform='translateY(0)'">Botão Accent</button>
+     </div>
+    </div>
+    <div class="usage-section">
+     <h3>✨ Gradientes Harmoniosos - Lápis-Lázuli</h3>
+     <div class="gradient-demo">
+      <div class="gradient-box" style="background: linear-gradient(135deg, #1B3A7A, #2E5EA8);">
+       Primário para Secundário
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #2E5EA8, #c9a961);">
+       Secundário para Ouro
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #0F1F3D, #1B3A7A);">
+       Escuro para Profundo
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #E8F0FF, #c9a961);">
+       Claro para Ouro
+      </div>
+     </div>
+    </div>
+    <div class="usage-section text-samples">
+     <h3>📝 Hierarquia de Texto - Lápis-Lázuli</h3>
+     <div class="text-sample">
+      <div style="color: #1B3A7A; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       Título Principal
+      </div>
+      <div style="color: #2E5EA8; font-size: 1.1rem; margin-bottom: 8px;">
+       Subtítulo ou Heading 2
+      </div>
+      <div style="color: #5A6B7F; line-height: 1.6; font-size: 1rem;">
+       Este é um texto de corpo em cor secundária. Ele mantém a elegância e readabilidade enquanto complementa a paleta visual. Perfeito para conteúdo principal e descrições.
+      </div>
+     </div>
+     <div class="text-sample">
+      <div style="color: #1B3A7A; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       Seção com Destaque
+      </div>
+      <div style="color: #c9a961; font-size: 1rem; font-weight: 600;">
+       ⭐ Ênfase em Ouro
+      </div>
+      <div style="color: #5A6B7F; line-height: 1.6; font-size: 1rem; margin-top: 10px;">
+       Quando você precisa chamar atenção para algo importante, use o ouro. A combinação do azul com ouro cria um efeito luxuoso e sofisticado.
+      </div>
+     </div>
+    </div>
+   </div><!-- TAB 2: Âmbar Antigo -->
+   <div id="ambar" class="tab-content">
+    <div class="palette-title">
+     🟠 Paleta Âmbar Antigo
+    </div>
+    <div class="palette-subtitle">
+     Tons quentes e ricos inspirados em âmbar fossilizado
+    </div>
+    <div class="color-grid">
+     <div class="color-card">
+      <div class="color-swatch" style="background: #8B5A2B;" onclick="copyColor('#8B5A2B')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Âmbar Profundo
+       </div>
+       <div class="color-code">
+        #8B5A2B
+       </div>
+       <div class="color-description">
+        Cor primária - âmbar escuro e rico, profundidade máxima.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #CD853F;" onclick="copyColor('#CD853F')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Âmbar Médio
+       </div>
+       <div class="color-code">
+        #CD853F
+       </div>
+       <div class="color-description">
+        Cor secundária - âmbar luminoso para destaques.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #2C1B0F;" onclick="copyColor('#2C1B0F')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Marrom Escuro
+       </div>
+       <div class="color-code">
+        #2C1B0F
+       </div>
+       <div class="color-description">
+        Surface color - marrom profundo para fundos principais.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #FDE68A;" onclick="copyColor('#FDE68A')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Ouro Claro
+       </div>
+       <div class="color-code">
+        #FDE68A
+       </div>
+       <div class="color-description">
+        Accent color - ouro brilhante e luxuoso.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #FFF8DC;" onclick="copyColor('#FFF8DC')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Creme
+       </div>
+       <div class="color-code">
+        #FFF8DC
+       </div>
+       <div class="color-description">
+        Light background - creme suave para backgrounds.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #7A6B5D;" onclick="copyColor('#7A6B5D')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Bege Cinzento
+       </div>
+       <div class="color-code">
+        #7A6B5D
+       </div>
+       <div class="color-description">
+        Text light color - para textos secundários.
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="usage-section">
+     <h2>📊 Variações - Âmbar Antigo</h2>
+     <div class="palette-variants">
+      <div class="variant-card">
+       <h3>Variação Luz</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #A0713F;"></div>
+        <div class="color-label">
+         Âmbar Claro - #A0713F
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #D4A574;"></div>
+        <div class="color-label">
+         Âmbar Suave - #D4A574
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #E8D5C4;"></div>
+        <div class="color-label">
+         Âmbar Muito Claro - #E8D5C4
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Sombra</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #6B4423;"></div>
+        <div class="color-label">
+         Âmbar Escuro - #6B4423
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #4A3019;"></div>
+        <div class="color-label">
+         Âmbar Muito Escuro - #4A3019
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #1F1410;"></div>
+        <div class="color-label">
+         Âmbar Quase Preto - #1F1410
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Ouro</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #FFE5B4;"></div>
+        <div class="color-label">
+         Ouro Suave - #FFE5B4
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #DAA520;"></div>
+        <div class="color-label">
+         Ouro Escuro - #DAA520
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #B8860B;"></div>
+        <div class="color-label">
+         Ouro Profundo - #B8860B
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="usage-section button-demo">
+     <h3>🎨 Demonstração de Botões - Âmbar</h3>
+     <div class="button-group"><button class="btn" style="background: linear-gradient(135deg, #8B5A2B, #CD853F); color: white;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(139, 90, 43, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.15)'">Botão Primário</button> <button class="btn" style="background: white; color: #8B5A2B; border: 2px solid #8B5A2B;" onmouseover="this.style.background='#8B5A2B'; this.style.color='white'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='white'; this.style.color='#8B5A2B'; this.style.transform='translateY(0)'">Botão Secundário</button> <button class="btn" style="background: #FDE68A; color: #2C1B0F; border: none;" onmouseover="this.style.background='#DAA520'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='#FDE68A'; this.style.transform='translateY(0)'">Botão Accent</button>
+     </div>
+    </div>
+    <div class="usage-section">
+     <h3>✨ Gradientes Harmoniosos - Âmbar</h3>
+     <div class="gradient-demo">
+      <div class="gradient-box" style="background: linear-gradient(135deg, #8B5A2B, #CD853F);">
+       Profundo para Médio
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #CD853F, #FDE68A);">
+       Médio para Ouro
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #2C1B0F, #8B5A2B);">
+       Escuro para Profundo
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #FFF8DC, #CD853F);">
+       Creme para Médio
+      </div>
+     </div>
+    </div>
+    <div class="usage-section text-samples">
+     <h3>📝 Hierarquia de Texto - Âmbar</h3>
+     <div class="text-sample">
+      <div style="color: #8B5A2B; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       Título Principal
+      </div>
+      <div style="color: #CD853F; font-size: 1.1rem; margin-bottom: 8px;">
+       Subtítulo ou Heading 2
+      </div>
+      <div style="color: #7A6B5D; line-height: 1.6; font-size: 1rem;">
+       Este é um texto de corpo em cor secundária. Ele mantém a elegância e readabilidade enquanto complementa a paleta visual. Perfeito para conteúdo principal e descrições.
+      </div>
+     </div>
+     <div class="text-sample">
+      <div style="color: #8B5A2B; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       Seção com Destaque
+      </div>
+      <div style="color: #FDE68A; font-size: 1rem; font-weight: 600;">
+       ⭐ Ênfase em Ouro
+      </div>
+      <div style="color: #7A6B5D; line-height: 1.6; font-size: 1rem; margin-top: 10px;">
+       Quando você precisa chamar atenção para algo importante, use o ouro. A combinação quente do âmbar com ouro cria um efeito luxuoso e sofisticado.
+      </div>
+     </div>
+    </div>
+   </div><!-- TAB 3: Esmeralda Real -->
+   <div id="esmeralda" class="tab-content">
+    <div class="palette-title">
+     🟢 Paleta Esmeralda Real
+    </div>
+    <div class="palette-subtitle">
+     Verdes ricos e naturais com elegância gemológica
+    </div>
+    <div class="color-grid">
+     <div class="color-card">
+      <div class="color-swatch" style="background: #1B4D3E;" onclick="copyColor('#1B4D3E')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Esmeralda Profunda
+       </div>
+       <div class="color-code">
+        #1B4D3E
+       </div>
+       <div class="color-description">
+        Cor primária - verde esmeralda escuro e nobre.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #2D8659;" onclick="copyColor('#2D8659')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Esmeralda Médio
+       </div>
+       <div class="color-code">
+        #2D8659
+       </div>
+       <div class="color-description">
+        Cor secundária - esmeralda luminoso e vibrante.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #0D2818;" onclick="copyColor('#0D2818')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Verde Escuro
+       </div>
+       <div class="color-code">
+        #0D2818
+       </div>
+       <div class="color-description">
+        Surface color - verde profundo para fundos.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #C5A572;" onclick="copyColor('#C5A572')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Ouro Antigo
+       </div>
+       <div class="color-code">
+        #C5A572
+       </div>
+       <div class="color-description">
+        Accent color - ouro suave que contrasta com verde.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #E8F3F0;" onclick="copyColor('#E8F3F0')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Menta Suave
+       </div>
+       <div class="color-code">
+        #E8F3F0
+       </div>
+       <div class="color-description">
+        Light background - verde claro e refrescante.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #5A7A6F;" onclick="copyColor('#5A7A6F')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Verde Cinzento
+       </div>
+       <div class="color-code">
+        #5A7A6F
+       </div>
+       <div class="color-description">
+        Text light color - para textos secundários.
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="usage-section">
+     <h2>📊 Variações - Esmeralda Real</h2>
+     <div class="palette-variants">
+      <div class="variant-card">
+       <h3>Variação Luz</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #3A6B54;"></div>
+        <div class="color-label">
+         Esmeralda Claro - #3A6B54
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #6FA878;"></div>
+        <div class="color-label">
+         Esmeralda Suave - #6FA878
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #ACCCBE;"></div>
+        <div class="color-label">
+         Esmeralda Muito Claro - #ACCCBE
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Sombra</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #163A2E;"></div>
+        <div class="color-label">
+         Esmeralda Escuro - #163A2E
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #0E2A1E;"></div>
+        <div class="color-label">
+         Esmeralda Muito Escuro - #0E2A1E
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #061612;"></div>
+        <div class="color-label">
+         Esmeralda Quase Preto - #061612
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Ouro</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #E5D4B8;"></div>
+        <div class="color-label">
+         Ouro Suave - #E5D4B8
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #A68F5E;"></div>
+        <div class="color-label">
+         Ouro Escuro - #A68F5E
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #7A6B45;"></div>
+        <div class="color-label">
+         Ouro Profundo - #7A6B45
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="usage-section button-demo">
+     <h3>🎨 Demonstração de Botões - Esmeralda</h3>
+     <div class="button-group"><button class="btn" style="background: linear-gradient(135deg, #1B4D3E, #2D8659); color: white;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(27, 77, 62, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.15)'">Botão Primário</button> <button class="btn" style="background: white; color: #1B4D3E; border: 2px solid #1B4D3E;" onmouseover="this.style.background='#1B4D3E'; this.style.color='white'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='white'; this.style.color='#1B4D3E'; this.style.transform='translateY(0)'">Botão Secundário</button> <button class="btn" style="background: #C5A572; color: #0D2818; border: none;" onmouseover="this.style.background='#A68F5E'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='#C5A572'; this.style.transform='translateY(0)'">Botão Accent</button>
+     </div>
+    </div>
+    <div class="usage-section">
+     <h3>✨ Gradientes Harmoniosos - Esmeralda</h3>
+     <div class="gradient-demo">
+      <div class="gradient-box" style="background: linear-gradient(135deg, #1B4D3E, #2D8659);">
+       Profundo para Médio
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #2D8659, #C5A572);">
+       Médio para Ouro
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #0D2818, #1B4D3E);">
+       Escuro para Profundo
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #E8F3F0, #2D8659);">
+       Menta para Médio
+      </div>
+     </div>
+    </div>
+    <div class="usage-section text-samples">
+     <h3>📝 Hierarquia de Texto - Esmeralda</h3>
+     <div class="text-sample">
+      <div style="color: #1B4D3E; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       Título Principal
+      </div>
+      <div style="color: #2D8659; font-size: 1.1rem; margin-bottom: 8px;">
+       Subtítulo ou Heading 2
+      </div>
+      <div style="color: #5A7A6F; line-height: 1.6; font-size: 1rem;">
+       Este é um texto de corpo em cor secundária. Ele mantém a elegância e readabilidade enquanto complementa a paleta visual. Perfeito para conteúdo principal e descrições.
+      </div>
+     </div>
+     <div class="text-sample">
+      <div style="color: #1B4D3E; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       Seção com Destaque
+      </div>
+      <div style="color: #C5A572; font-size: 1rem; font-weight: 600;">
+       ⭐ Ênfase em Ouro
+      </div>
+      <div style="color: #5A7A6F; line-height: 1.6; font-size: 1rem; margin-top: 10px;">
+       Quando você precisa chamar atenção para algo importante, use o ouro. A natureza luxuosa do verde com ouro cria um efeito verdadeiramente sofisticado.
+      </div>
+     </div>
+    </div>
+   </div><!-- TAB 4: Opala Azul Universo -->
+   <div id="opala" class="tab-content">
+    <div class="palette-title">
+     🌌 Paleta Opala Azul Universo
+    </div>
+    <div class="palette-subtitle">
+     Azuis místicos e iridescentes com brilho cósmico
+    </div>
+    <div class="color-grid">
+     <div class="color-card">
+      <div class="color-swatch" style="background: #001a4d;" onclick="copyColor('#001a4d')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Azul Universo
+       </div>
+       <div class="color-code">
+        #001a4d
+       </div>
+       <div class="color-description">
+        Cor primária - azul profundo do espaço infinito.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #0a3d62;" onclick="copyColor('#0a3d62')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Azul Opal Escuro
+       </div>
+       <div class="color-code">
+        #0a3d62
+       </div>
+       <div class="color-description">
+        Cor secundária - azul iridescente e profundo.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #1b5e9a;" onclick="copyColor('#1b5e9a')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Azul Opal Médio
+       </div>
+       <div class="color-code">
+        #1b5e9a
+       </div>
+       <div class="color-description">
+        Cor terciária - azul luminoso e vibrante.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #00d9ff;" onclick="copyColor('#00d9ff')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Ciano Cósmico
+       </div>
+       <div class="color-code">
+        #00d9ff
+       </div>
+       <div class="color-description">
+        Accent color - cyan brilhante como estrelas.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #e0f4ff;" onclick="copyColor('#e0f4ff')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Branco Gelo
+       </div>
+       <div class="color-code">
+        #e0f4ff
+       </div>
+       <div class="color-description">
+        Light background - azul muito claro e cristalino.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #6b8fb8;" onclick="copyColor('#6b8fb8')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Azul Nebulosa
+       </div>
+       <div class="color-code">
+        #6b8fb8
+       </div>
+       <div class="color-description">
+        Text light color - para textos secundários.
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="usage-section">
+     <h2>📊 Variações - Opala Azul Universo</h2>
+     <div class="palette-variants">
+      <div class="variant-card">
+       <h3>Variação Luz</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #2e7fa2;"></div>
+        <div class="color-label">
+         Azul Opal Claro - #2e7fa2
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #5da3c4;"></div>
+        <div class="color-label">
+         Azul Opal Suave - #5da3c4
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #9ec9db;"></div>
+        <div class="color-label">
+         Azul Opal Muito Claro - #9ec9db
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Sombra</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #082d47;"></div>
+        <div class="color-label">
+         Azul Universo Escuro - #082d47
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #051d2f;"></div>
+        <div class="color-label">
+         Azul Universo Muito Escuro - #051d2f
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #020a14;"></div>
+        <div class="color-label">
+         Azul Quase Preto - #020a14
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Ciano</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #4df5ff;"></div>
+        <div class="color-label">
+         Ciano Claro - #4df5ff
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #00b8cc;"></div>
+        <div class="color-label">
+         Ciano Escuro - #00b8cc
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #008899;"></div>
+        <div class="color-label">
+         Ciano Profundo - #008899
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="usage-section button-demo">
+     <h3>🎨 Demonstração de Botões - Opala</h3>
+     <div class="button-group"><button class="btn" style="background: linear-gradient(135deg, #001a4d, #1b5e9a); color: white;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(0, 26, 77, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.15)'">Botão Primário</button> <button class="btn" style="background: white; color: #001a4d; border: 2px solid #001a4d;" onmouseover="this.style.background='#001a4d'; this.style.color='white'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='white'; this.style.color='#001a4d'; this.style.transform='translateY(0)'">Botão Secundário</button> <button class="btn" style="background: #00d9ff; color: #001a4d; border: none; font-weight: 700;" onmouseover="this.style.background='#00b8cc'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='#00d9ff'; this.style.transform='translateY(0)'">Botão Accent</button>
+     </div>
+    </div>
+    <div class="usage-section">
+     <h3>✨ Gradientes Harmoniosos - Opala Azul Universo</h3>
+     <div class="gradient-demo">
+      <div class="gradient-box" style="background: linear-gradient(135deg, #001a4d, #1b5e9a);">
+       Universo para Opal Médio
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #1b5e9a, #00d9ff);">
+       Opal Médio para Ciano
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #001a4d, #0a3d62);">
+       Universo para Opal Escuro
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #e0f4ff, #00d9ff);">
+       Gelo para Ciano Cósmico
+      </div>
+     </div>
+    </div>
+    <div class="usage-section text-samples">
+     <h3>📝 Hierarquia de Texto - Opala Azul Universo</h3>
+     <div class="text-sample">
+      <div style="color: #001a4d; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       T��tulo Principal
+      </div>
+      <div style="color: #1b5e9a; font-size: 1.1rem; margin-bottom: 8px;">
+       Subtítulo ou Heading 2
+      </div>
+      <div style="color: #6b8fb8; line-height: 1.6; font-size: 1rem;">
+       Este é um texto de corpo em cor secundária. Ele mantém a elegância e readabilidade enquanto complementa a paleta visual. Perfeito para conteúdo principal e descrições.
+      </div>
+     </div>
+     <div class="text-sample">
+      <div style="color: #001a4d; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       Seção com Destaque
+      </div>
+      <div style="color: #00d9ff; font-size: 1rem; font-weight: 600;">
+       ✨ Ênfase em Ciano Cósmico
+      </div>
+      <div style="color: #6b8fb8; line-height: 1.6; font-size: 1rem; margin-top: 10px;">
+       Quando você precisa chamar atenção para algo importante, use o ciano brilhante. A combinação do azul opal com ciano cria um efeito místico e futurista.
+      </div>
+     </div>
+    </div>
+   </div><!-- TAB 5: Diamante Azul -->
+   <div id="diamante" class="tab-content">
+    <div class="palette-title">
+     💎 Paleta Diamante Azul
+    </div>
+    <div class="palette-subtitle">
+     Azuis cristalinos e facetados com brilho diamantino
+    </div>
+    <div class="color-grid">
+     <div class="color-card">
+      <div class="color-swatch" style="background: #0d47a1;" onclick="copyColor('#0d47a1')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Azul Diamante Profundo
+       </div>
+       <div class="color-code">
+        #0d47a1
+       </div>
+       <div class="color-description">
+        Cor primária - azul profundo e cristalino.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #1565c0;" onclick="copyColor('#1565c0')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Azul Diamante Médio
+       </div>
+       <div class="color-code">
+        #1565c0
+       </div>
+       <div class="color-description">
+        Cor secundária - azul brilhante e facetado.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #42a5f5;" onclick="copyColor('#42a5f5')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Azul Diamante Claro
+       </div>
+       <div class="color-code">
+        #42a5f5
+       </div>
+       <div class="color-description">
+        Cor terciária - azul luminoso como vidro facetado.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #e3f2fd;" onclick="copyColor('#e3f2fd')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Branco Cristal
+       </div>
+       <div class="color-code">
+        #e3f2fd
+       </div>
+       <div class="color-description">
+        Light background - branco com toque azulado.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #c5cae9;" onclick="copyColor('#c5cae9')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Prata Azul
+       </div>
+       <div class="color-code">
+        #c5cae9
+       </div>
+       <div class="color-description">
+        Accent color - prata com reflexo azul.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #5e7a99;" onclick="copyColor('#5e7a99')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Azul Cinza
+       </div>
+       <div class="color-code">
+        #5e7a99
+       </div>
+       <div class="color-description">
+        Text light color - para textos secundários.
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="usage-section">
+     <h2>📊 Variações - Diamante Azul</h2>
+     <div class="palette-variants">
+      <div class="variant-card">
+       <h3>Variação Luz</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #1e88e5;"></div>
+        <div class="color-label">
+         Azul Diamante Claro - #1e88e5
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #64b5f6;"></div>
+        <div class="color-label">
+         Azul Diamante Suave - #64b5f6
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #90caf9;"></div>
+        <div class="color-label">
+         Azul Diamante Muito Claro - #90caf9
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Sombra</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #0a3d82;"></div>
+        <div class="color-label">
+         Azul Diamante Escuro - #0a3d82
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #062d60;"></div>
+        <div class="color-label">
+         Azul Diamante Muito Escuro - #062d60
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #031a3f;"></div>
+        <div class="color-label">
+         Azul Quase Preto - #031a3f
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Prata</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #e0e6f0;"></div>
+        <div class="color-label">
+         Prata Muito Claro - #e0e6f0
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #9fa8da;"></div>
+        <div class="color-label">
+         Prata Escuro - #9fa8da
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #6c7aa8;"></div>
+        <div class="color-label">
+         Prata Profundo - #6c7aa8
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="usage-section button-demo">
+     <h3>🎨 Demonstração de Botões - Diamante Azul</h3>
+     <div class="button-group"><button class="btn" style="background: linear-gradient(135deg, #0d47a1, #1565c0); color: white;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(13, 71, 161, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.15)'">Botão Primário</button> <button class="btn" style="background: white; color: #0d47a1; border: 2px solid #0d47a1;" onmouseover="this.style.background='#0d47a1'; this.style.color='white'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='white'; this.style.color='#0d47a1'; this.style.transform='translateY(0)'">Botão Secundário</button> <button class="btn" style="background: #c5cae9; color: #0d47a1; border: none; font-weight: 700;" onmouseover="this.style.background='#9fa8da'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='#c5cae9'; this.style.transform='translateY(0)'">Botão Accent</button>
+     </div>
+    </div>
+    <div class="usage-section">
+     <h3>✨ Gradientes Harmoniosos - Diamante Azul</h3>
+     <div class="gradient-demo">
+      <div class="gradient-box" style="background: linear-gradient(135deg, #0d47a1, #1565c0);">
+       Profundo para Médio
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #1565c0, #42a5f5);">
+       Médio para Claro
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #0d47a1, #c5cae9);">
+       Profundo para Prata
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #e3f2fd, #42a5f5);">
+       Cristal para Brilho
+      </div>
+     </div>
+    </div>
+    <div class="usage-section text-samples">
+     <h3>📝 Hierarquia de Texto - Diamante Azul</h3>
+     <div class="text-sample">
+      <div style="color: #0d47a1; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       Título Principal
+      </div>
+      <div style="color: #1565c0; font-size: 1.1rem; margin-bottom: 8px;">
+       Subtítulo ou Heading 2
+      </div>
+      <div style="color: #5e7a99; line-height: 1.6; font-size: 1rem;">
+       Este é um texto de corpo em cor secundária. Ele mantém a elegância e readabilidade enquanto complementa a paleta visual. Perfeito para conteúdo principal e descrições.
+      </div>
+     </div>
+     <div class="text-sample">
+      <div style="color: #0d47a1; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       Seção com Destaque
+      </div>
+      <div style="color: #c5cae9; font-size: 1rem; font-weight: 600;">
+       💎 Ênfase em Prata
+      </div>
+      <div style="color: #5e7a99; line-height: 1.6; font-size: 1rem; margin-top: 10px;">
+       Quando você precisa chamar atenção para algo importante, use a prata azulada. A combinação do azul profundo com prata cria um efeito elegante e sofisticado, como facetas de diamante.
+      </div>
+     </div>
+    </div>
+   </div><!-- TAB 6: Moissanita Azul -->
+   <div id="moissanita" class="tab-content">
+    <div class="palette-title">
+     ✨ Paleta Moissanita Azul
+    </div>
+    <div class="palette-subtitle">
+     Azuis hipnotizantes com fogo refratário e brilho arco-íris
+    </div>
+    <div class="color-grid">
+     <div class="color-card">
+      <div class="color-swatch" style="background: #003d82;" onclick="copyColor('#003d82')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Azul Moissanita Profundo
+       </div>
+       <div class="color-code">
+        #003d82
+       </div>
+       <div class="color-description">
+        Cor primária - azul escuro e hipnotizante como moissanita pura.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #0052cc;" onclick="copyColor('#0052cc')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Azul Moissanita Médio
+       </div>
+       <div class="color-code">
+        #0052cc
+       </div>
+       <div class="color-description">
+        Cor secundária - azul vibrante e intenso com fogo.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #2979f0;" onclick="copyColor('#2979f0')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Azul Refratário
+       </div>
+       <div class="color-code">
+        #2979f0
+       </div>
+       <div class="color-description">
+        Cor terciária - azul brilhante com efeito refratário.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #f0f3ff;" onclick="copyColor('#f0f3ff')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Branco Arco-Íris
+       </div>
+       <div class="color-code">
+        #f0f3ff
+       </div>
+       <div class="color-description">
+        Light background - branco com dispersão de luz.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #e8ecff;" onclick="copyColor('#e8ecff')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Prata Dispersa
+       </div>
+       <div class="color-code">
+        #e8ecff
+       </div>
+       <div class="color-description">
+        Accent color - prata com efeito de dispersão.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #6b7db8;" onclick="copyColor('#6b7db8')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Azul Nébula
+       </div>
+       <div class="color-code">
+        #6b7db8
+       </div>
+       <div class="color-description">
+        Text light color - para textos secundários com brilho.
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="usage-section">
+     <h2>📊 Variações - Moissanita Azul</h2>
+     <div class="palette-variants">
+      <div class="variant-card">
+       <h3>Variação Luz</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #1a66d1;"></div>
+        <div class="color-label">
+         Azul Refratário Claro - #1a66d1
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #5a9dff;"></div>
+        <div class="color-label">
+         Azul Brilhante - #5a9dff
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #90c0ff;"></div>
+        <div class="color-label">
+         Azul Luminoso - #90c0ff
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Sombra</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #002560;"></div>
+        <div class="color-label">
+         Azul Moissanita Escuro - #002560
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #001840;"></div>
+        <div class="color-label">
+         Azul Moissanita Muito Escuro - #001840
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #000d20;"></div>
+        <div class="color-label">
+         Azul Quase Preto - #000d20
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Dispersão</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #f5f7ff;"></div>
+        <div class="color-label">
+         Dispersão Muito Clara - #f5f7ff
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #d4daf0;"></div>
+        <div class="color-label">
+         Dispersão Média - #d4daf0
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #8896c7;"></div>
+        <div class="color-label">
+         Dispersão Escura - #8896c7
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="usage-section button-demo">
+     <h3>🎨 Demonstração de Botões - Moissanita Azul</h3>
+     <div class="button-group"><button class="btn" style="background: linear-gradient(135deg, #003d82, #0052cc); color: white;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(0, 61, 130, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.15)'">Botão Primário</button> <button class="btn" style="background: white; color: #003d82; border: 2px solid #003d82;" onmouseover="this.style.background='#003d82'; this.style.color='white'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='white'; this.style.color='#003d82'; this.style.transform='translateY(0)'">Botão Secundário</button> <button class="btn" style="background: linear-gradient(135deg, #e8ecff, #2979f0); color: #003d82; border: none; font-weight: 700;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(41, 121, 240, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.15)'">Botão Accent Arco-Íris</button>
+     </div>
+    </div>
+    <div class="usage-section">
+     <h3>✨ Gradientes Harmoniosos - Moissanita Azul</h3>
+     <div class="gradient-demo">
+      <div class="gradient-box" style="background: linear-gradient(135deg, #003d82, #0052cc);">
+       Profundo para Médio
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #0052cc, #2979f0);">
+       Médio para Refratário
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #003d82, #e8ecff);">
+       Profundo para Dispersão
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #f0f3ff, #2979f0); text-shadow: 0 2px 8px rgba(0, 61, 130, 0.3);">
+       Arco-Íris para Brilho
+      </div>
+     </div>
+    </div>
+    <div class="usage-section text-samples">
+     <h3>📝 Hierarquia de Texto - Moissanita Azul</h3>
+     <div class="text-sample">
+      <div style="color: #003d82; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       Título Principal
+      </div>
+      <div style="color: #0052cc; font-size: 1.1rem; margin-bottom: 8px;">
+       Subtítulo ou Heading 2
+      </div>
+      <div style="color: #6b7db8; line-height: 1.6; font-size: 1rem;">
+       Este é um texto de corpo em cor secundária. Ele mantém a elegância e readabilidade enquanto complementa a paleta visual. Perfeito para conteúdo principal e descrições.
+      </div>
+     </div>
+     <div class="text-sample">
+      <div style="color: #003d82; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       Seção com Destaque
+      </div>
+      <div style="color: #2979f0; font-size: 1rem; font-weight: 600;">
+       ✨ Ênfase em Fogo Refratário
+      </div>
+      <div style="color: #6b7db8; line-height: 1.6; font-size: 1rem; margin-top: 10px;">
+       Quando você precisa chamar atenção para algo importante, use o azul refratário brilhante. A combinação do azul profundo com o fogo criado pela dispersão de luz cria um efeito hipnotizante e luxuoso, como a moissanita que dispersa luz em arco-íris.
+      </div>
+     </div>
+    </div>
+   </div><!-- TAB 7: Safira Real -->
+   <div id="safira" class="tab-content">
+    <div class="palette-title">
+     👑 Paleta Safira Real
+    </div>
+    <div class="palette-subtitle">
+     Azuis satinados e profundos, gema real de valor inestimável
+    </div>
+    <div class="color-grid">
+     <div class="color-card">
+      <div class="color-swatch" style="background: #0a1a3f;" onclick="copyColor('#0a1a3f')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Azul Safira Profundo
+       </div>
+       <div class="color-code">
+        #0a1a3f
+       </div>
+       <div class="color-description">
+        Cor primária - azul satinado como safira pura de valor máximo.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #0f3a7d;" onclick="copyColor('#0f3a7d')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Azul Safira Real
+       </div>
+       <div class="color-code">
+        #0f3a7d
+       </div>
+       <div class="color-description">
+        Cor secundária - azul profundo e nobre da safira premium.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #1a5db8;" onclick="copyColor('#1a5db8')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Azul Safira Luminoso
+       </div>
+       <div class="color-code">
+        #1a5db8
+       </div>
+       <div class="color-description">
+        Cor terciária - azul vibrante com lustre safira.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #e8f0ff;" onclick="copyColor('#e8f0ff')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Branco Polido
+       </div>
+       <div class="color-code">
+        #e8f0ff
+       </div>
+       <div class="color-description">
+        Light background - branco com reflexo de lapidação.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #c9b8d4;" onclick="copyColor('#c9b8d4')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Prata Lapidada
+       </div>
+       <div class="color-code">
+        #c9b8d4
+       </div>
+       <div class="color-description">
+        Accent color - prata com brilho lapidado.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #5a7b9e;" onclick="copyColor('#5a7b9e')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Azul Sombra
+       </div>
+       <div class="color-code">
+        #5a7b9e
+       </div>
+       <div class="color-description">
+        Text light color - para textos com profundidade.
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="usage-section">
+     <h2>📊 Variações - Safira Real</h2>
+     <div class="palette-variants">
+      <div class="variant-card">
+       <h3>Variação Luz</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #2461a0;"></div>
+        <div class="color-label">
+         Azul Safira Claro - #2461a0
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #5a8ec7;"></div>
+        <div class="color-label">
+         Azul Safira Suave - #5a8ec7
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #8daedc;"></div>
+        <div class="color-label">
+         Azul Safira Muito Claro - #8daedc
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Sombra</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #081330;"></div>
+        <div class="color-label">
+         Azul Safira Escuro - #081330
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #050d20;"></div>
+        <div class="color-label">
+         Azul Safira Muito Escuro - #050d20
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #020610;"></div>
+        <div class="color-label">
+         Azul Quase Preto - #020610
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Prata Lapidada</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #e6ddf1;"></div>
+        <div class="color-label">
+         Prata Muito Clara - #e6ddf1
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #a896c1;"></div>
+        <div class="color-label">
+         Prata Média - #a896c1
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #7a6e92;"></div>
+        <div class="color-label">
+         Prata Profunda - #7a6e92
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="usage-section button-demo">
+     <h3>🎨 Demonstração de Botões - Safira Real</h3>
+     <div class="button-group"><button class="btn" style="background: linear-gradient(135deg, #0a1a3f, #0f3a7d); color: white;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(10, 26, 63, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.15)'">Botão Primário</button> <button class="btn" style="background: white; color: #0a1a3f; border: 2px solid #0a1a3f;" onmouseover="this.style.background='#0a1a3f'; this.style.color='white'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='white'; this.style.color='#0a1a3f'; this.style.transform='translateY(0)'">Botão Secundário</button> <button class="btn" style="background: linear-gradient(135deg, #c9b8d4, #1a5db8); color: white; border: none; font-weight: 700;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(201, 184, 212, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.15)'">Botão Accent Polido</button>
+     </div>
+    </div>
+    <div class="usage-section">
+     <h3>✨ Gradientes Harmoniosos - Safira Real</h3>
+     <div class="gradient-demo">
+      <div class="gradient-box" style="background: linear-gradient(135deg, #0a1a3f, #0f3a7d);">
+       Profundo para Real
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #0f3a7d, #1a5db8);">
+       Real para Luminoso
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #0a1a3f, #c9b8d4);">
+       Profundo para Prata Lapidada
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #e8f0ff, #1a5db8);">
+       Polido para Luminoso
+      </div>
+     </div>
+    </div>
+    <div class="usage-section text-samples">
+     <h3>📝 Hierarquia de Texto - Safira Real</h3>
+     <div class="text-sample">
+      <div style="color: #0a1a3f; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       Título Principal
+      </div>
+      <div style="color: #0f3a7d; font-size: 1.1rem; margin-bottom: 8px;">
+       Subtítulo ou Heading 2
+      </div>
+      <div style="color: #5a7b9e; line-height: 1.6; font-size: 1rem;">
+       Este é um texto de corpo em cor secundária. Ele mantém a elegância e readabilidade enquanto complementa a paleta visual. Perfeito para conteúdo principal e descrições.
+      </div>
+     </div>
+     <div class="text-sample">
+      <div style="color: #0a1a3f; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       Seção com Destaque
+      </div>
+      <div style="color: #1a5db8; font-size: 1rem; font-weight: 600;">
+       👑 Ênfase em Safira Luminosa
+      </div>
+      <div style="color: #5a7b9e; line-height: 1.6; font-size: 1rem; margin-top: 10px;">
+       Quando você precisa chamar atenção para algo importante, use o azul luminoso. A combinação do azul profundo com o lustre da safira cria um efeito nobre e intemporal, refletindo a qualidade premium de uma gema de valor inestimável.
+      </div>
+     </div>
+    </div>
+   </div><!-- TAB 8: Água-marinha -->
+   <div id="aguamarina" class="tab-content">
+    <div class="palette-title">
+     🌊 Paleta Água-marinha
+    </div>
+    <div class="palette-subtitle">
+     Azuis aquáticos, frescos e translúcidos como água do mar
+    </div>
+    <div class="color-grid">
+     <div class="color-card">
+      <div class="color-swatch" style="background: #0e7c86;" onclick="copyColor('#0e7c86')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Água-marinha Profunda
+       </div>
+       <div class="color-code">
+        #0e7c86
+       </div>
+       <div class="color-description">
+        Cor primária - azul aquático profundo e fresco.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #26a69a;" onclick="copyColor('#26a69a')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Água-marinha Médio
+       </div>
+       <div class="color-code">
+        #26a69a
+       </div>
+       <div class="color-description">
+        Cor secundária - azul-verde luminoso.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #4db8a8;" onclick="copyColor('#4db8a8')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Água-marinha Claro
+       </div>
+       <div class="color-code">
+        #4db8a8
+       </div>
+       <div class="color-description">
+        Cor terciária - turquesa translúcido.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #e0f2f1;" onclick="copyColor('#e0f2f1')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Água Translúcida
+       </div>
+       <div class="color-code">
+        #e0f2f1
+       </div>
+       <div class="color-description">
+        Light background - branco com toque aquático.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #b2dfdb;" onclick="copyColor('#b2dfdb')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Espuma do Mar
+       </div>
+       <div class="color-code">
+        #b2dfdb
+       </div>
+       <div class="color-description">
+        Accent color - verde-água suave.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #4a7c7e;" onclick="copyColor('#4a7c7e')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Azul Profundo
+       </div>
+       <div class="color-code">
+        #4a7c7e
+       </div>
+       <div class="color-description">
+        Text light color - para textos secundários.
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="usage-section">
+     <h2>📊 Variações - Água-marinha</h2>
+     <div class="palette-variants">
+      <div class="variant-card">
+       <h3>Variação Luz</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #1a95a0;"></div>
+        <div class="color-label">
+         Água-marinha Claro - #1a95a0
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #4db6a6;"></div>
+        <div class="color-label">
+         Água-marinha Suave - #4db6a6
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #80cbc4;"></div>
+        <div class="color-label">
+         Água-marinha Muito Claro - #80cbc4
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Sombra</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #0d6f77;"></div>
+        <div class="color-label">
+         Água-marinha Escuro - #0d6f77
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #08525a;"></div>
+        <div class="color-label">
+         Água-marinha Muito Escuro - #08525a
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #04323c;"></div>
+        <div class="color-label">
+         Azul Quase Preto - #04323c
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Espuma</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #d4ece8;"></div>
+        <div class="color-label">
+         Espuma Muito Clara - #d4ece8
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #80cbc4;"></div>
+        <div class="color-label">
+         Espuma Média - #80cbc4
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #4a8b86;"></div>
+        <div class="color-label">
+         Espuma Profunda - #4a8b86
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="usage-section button-demo">
+     <h3>🎨 Demonstração de Botões - Água-marinha</h3>
+     <div class="button-group"><button class="btn" style="background: linear-gradient(135deg, #0e7c86, #26a69a); color: white;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(14, 124, 134, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.15)'">Botão Primário</button> <button class="btn" style="background: white; color: #0e7c86; border: 2px solid #0e7c86;" onmouseover="this.style.background='#0e7c86'; this.style.color='white'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='white'; this.style.color='#0e7c86'; this.style.transform='translateY(0)'">Botão Secundário</button> <button class="btn" style="background: #b2dfdb; color: #0e7c86; border: none;" onmouseover="this.style.background='#80cbc4'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='#b2dfdb'; this.style.transform='translateY(0)'">Botão Accent</button>
+     </div>
+    </div>
+    <div class="usage-section">
+     <h3>✨ Gradientes Harmoniosos - Água-marinha</h3>
+     <div class="gradient-demo">
+      <div class="gradient-box" style="background: linear-gradient(135deg, #0e7c86, #26a69a);">
+       Profundo para Médio
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #26a69a, #4db8a8);">
+       Médio para Claro
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #0e7c86, #b2dfdb);">
+       Profundo para Espuma
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #e0f2f1, #26a69a);">
+       Translúcido para Médio
+      </div>
+     </div>
+    </div>
+    <div class="usage-section text-samples">
+     <h3>📝 Hierarquia de Texto - Água-marinha</h3>
+     <div class="text-sample">
+      <div style="color: #0e7c86; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       Título Principal
+      </div>
+      <div style="color: #26a69a; font-size: 1.1rem; margin-bottom: 8px;">
+       Subtítulo ou Heading 2
+      </div>
+      <div style="color: #4a7c7e; line-height: 1.6; font-size: 1rem;">
+       Este é um texto de corpo em cor secundária. Ele mantém a elegância e readabilidade enquanto complementa a paleta visual. Perfeito para conteúdo principal e descrições.
+      </div>
+     </div>
+     <div class="text-sample">
+      <div style="color: #0e7c86; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       Seção com Destaque
+      </div>
+      <div style="color: #4db8a8; font-size: 1rem; font-weight: 600;">
+       🌊 Ênfase em Água-marinha
+      </div>
+      <div style="color: #4a7c7e; line-height: 1.6; font-size: 1rem; margin-top: 10px;">
+       Quando você precisa chamar atenção para algo importante, use a água-marinha luminosa. A combinação do azul profundo com o turquesa cria um efeito fresco, translúcido e revigorante.
+      </div>
+     </div>
+    </div>
+   </div><!-- TAB 9: Topázio Azul -->
+   <div id="topazio" class="tab-content">
+    <div class="palette-title">
+     💎 Paleta Topázio Azul
+    </div>
+    <div class="palette-subtitle">
+     Azuis brilhantes e cristalinos com transparência gemológica
+    </div>
+    <div class="color-grid">
+     <div class="color-card">
+      <div class="color-swatch" style="background: #0277bd;" onclick="copyColor('#0277bd')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Topázio Profundo
+       </div>
+       <div class="color-code">
+        #0277bd
+       </div>
+       <div class="color-description">
+        Cor primária - azul brilhante como topázio puro.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #0288d1;" onclick="copyColor('#0288d1')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Topázio Médio
+       </div>
+       <div class="color-code">
+        #0288d1
+       </div>
+       <div class="color-description">
+        Cor secundária - azul luminoso e cristalino.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #03a9f4;" onclick="copyColor('#03a9f4')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Topázio Claro
+       </div>
+       <div class="color-code">
+        #03a9f4
+       </div>
+       <div class="color-description">
+        Cor terciária - azul brilhante e transparente.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #e1f5fe;" onclick="copyColor('#e1f5fe')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Cristal Puro
+       </div>
+       <div class="color-code">
+        #e1f5fe
+       </div>
+       <div class="color-description">
+        Light background - branco com transparência.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #b3e5fc;" onclick="copyColor('#b3e5fc')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Brilho Leve
+       </div>
+       <div class="color-code">
+        #b3e5fc
+       </div>
+       <div class="color-description">
+        Accent color - azul suave e brilhante.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #01579b;" onclick="copyColor('#01579b')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Azul Profundo
+       </div>
+       <div class="color-code">
+        #01579b
+       </div>
+       <div class="color-description">
+        Text light color - para textos secundários.
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="usage-section">
+     <h2>📊 Variações - Topázio Azul</h2>
+     <div class="palette-variants">
+      <div class="variant-card">
+       <h3>Variação Luz</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #0297d0;"></div>
+        <div class="color-label">
+         Topázio Claro - #0297d0
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #29b6f6;"></div>
+        <div class="color-label">
+         Topázio Suave - #29b6f6
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #81d4fa;"></div>
+        <div class="color-label">
+         Topázio Muito Claro - #81d4fa
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Sombra</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #01579b;"></div>
+        <div class="color-label">
+         Topázio Escuro - #01579b
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #004c7a;"></div>
+        <div class="color-label">
+         Topázio Muito Escuro - #004c7a
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #00264d;"></div>
+        <div class="color-label">
+         Azul Quase Preto - #00264d
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Brilho</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #e0f7fa;"></div>
+        <div class="color-label">
+         Brilho Muito Clara - #e0f7fa
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #80deea;"></div>
+        <div class="color-label">
+         Brilho Média - #80deea
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #4dd0e1;"></div>
+        <div class="color-label">
+         Brilho Profunda - #4dd0e1
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="usage-section button-demo">
+     <h3>🎨 Demonstração de Botões - Topázio Azul</h3>
+     <div class="button-group"><button class="btn" style="background: linear-gradient(135deg, #0277bd, #0288d1); color: white;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(2, 119, 189, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.15)'">Botão Primário</button> <button class="btn" style="background: white; color: #0277bd; border: 2px solid #0277bd;" onmouseover="this.style.background='#0277bd'; this.style.color='white'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='white'; this.style.color='#0277bd'; this.style.transform='translateY(0)'">Botão Secundário</button> <button class="btn" style="background: #b3e5fc; color: #0277bd; border: none;" onmouseover="this.style.background='#81d4fa'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='#b3e5fc'; this.style.transform='translateY(0)'">Botão Accent</button>
+     </div>
+    </div>
+    <div class="usage-section">
+     <h3>✨ Gradientes Harmoniosos - Topázio Azul</h3>
+     <div class="gradient-demo">
+      <div class="gradient-box" style="background: linear-gradient(135deg, #0277bd, #0288d1);">
+       Profundo para Médio
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #0288d1, #03a9f4);">
+       Médio para Claro
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #0277bd, #b3e5fc);">
+       Profundo para Brilho
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #e1f5fe, #03a9f4);">
+       Cristal para Claro
+      </div>
+     </div>
+    </div>
+    <div class="usage-section text-samples">
+     <h3>📝 Hierarquia de Texto - Topázio Azul</h3>
+     <div class="text-sample">
+      <div style="color: #0277bd; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       Título Principal
+      </div>
+      <div style="color: #0288d1; font-size: 1.1rem; margin-bottom: 8px;">
+       Subtítulo ou Heading 2
+      </div>
+      <div style="color: #01579b; line-height: 1.6; font-size: 1rem;">
+       Este é um texto de corpo em cor secundária. Ele mantém a elegância e readabilidade enquanto complementa a paleta visual. Perfeito para conteúdo principal e descrições.
+      </div>
+     </div>
+     <div class="text-sample">
+      <div style="color: #0277bd; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       Seção com Destaque
+      </div>
+      <div style="color: #03a9f4; font-size: 1rem; font-weight: 600;">
+       💎 Ênfase em Topázio
+      </div>
+      <div style="color: #01579b; line-height: 1.6; font-size: 1rem; margin-top: 10px;">
+       Quando você precisa chamar atenção para algo importante, use o topázio claro. A combinação do azul profundo com o brilho cristalino cria um efeito limpido e joioso.
+      </div>
+     </div>
+    </div>
+   </div><!-- TAB 10: Turquesa -->
+   <div id="turquesa" class="tab-content">
+    <div class="palette-title">
+     🦋 Paleta Turquesa
+    </div>
+    <div class="palette-subtitle">
+     Verde-azul vibrante, tropical e energético
+    </div>
+    <div class="color-grid">
+     <div class="color-card">
+      <div class="color-swatch" style="background: #008b8b;" onclick="copyColor('#008b8b')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Turquesa Profundo
+       </div>
+       <div class="color-code">
+        #008b8b
+       </div>
+       <div class="color-description">
+        Cor primária - turquesa escuro e natural.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #20b2aa;" onclick="copyColor('#20b2aa')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Turquesa Médio
+       </div>
+       <div class="color-code">
+        #20b2aa
+       </div>
+       <div class="color-description">
+        Cor secundária - turquesa luminoso e vibrante.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #48d1cc;" onclick="copyColor('#48d1cc')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Turquesa Claro
+       </div>
+       <div class="color-code">
+        #48d1cc
+       </div>
+       <div class="color-description">
+        Cor terciária - turquesa transparente.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #e0ffff;" onclick="copyColor('#e0ffff')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Água de Cristal
+       </div>
+       <div class="color-code">
+        #e0ffff
+       </div>
+       <div class="color-description">
+        Light background - branco com verde-azul.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #afeeee;" onclick="copyColor('#afeeee')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Pálido e Leve
+       </div>
+       <div class="color-code">
+        #afeeee
+       </div>
+       <div class="color-description">
+        Accent color - turquesa muito suave.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #2c7a7b;" onclick="copyColor('#2c7a7b')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Azul Profundo
+       </div>
+       <div class="color-code">
+        #2c7a7b
+       </div>
+       <div class="color-description">
+        Text light color - para textos secundários.
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="usage-section">
+     <h2>📊 Variações - Turquesa</h2>
+     <div class="palette-variants">
+      <div class="variant-card">
+       <h3>Variação Luz</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #319795;"></div>
+        <div class="color-label">
+         Turquesa Claro - #319795
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #81e6d9;"></div>
+        <div class="color-label">
+         Turquesa Suave - #81e6d9
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #b5f1e8;"></div>
+        <div class="color-label">
+         Turquesa Muito Claro - #b5f1e8
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Sombra</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #0d7a77;"></div>
+        <div class="color-label">
+         Turquesa Escuro - #0d7a77
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #06504b;"></div>
+        <div class="color-label">
+         Turquesa Muito Escuro - #06504b
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #03292d;"></div>
+        <div class="color-label">
+         Azul Quase Preto - #03292d
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Pálido</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #d8f3f8;"></div>
+        <div class="color-label">
+         Pálido Muito Clara - #d8f3f8
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #7fcdce;"></div>
+        <div class="color-label">
+         Pálido Média - #7fcdce
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #4ab9a7;"></div>
+        <div class="color-label">
+         Pálido Profunda - #4ab9a7
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="usage-section button-demo">
+     <h3>🎨 Demonstração de Botões - Turquesa</h3>
+     <div class="button-group"><button class="btn" style="background: linear-gradient(135deg, #008b8b, #20b2aa); color: white;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(0, 139, 139, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.15)'">Botão Primário</button> <button class="btn" style="background: white; color: #008b8b; border: 2px solid #008b8b;" onmouseover="this.style.background='#008b8b'; this.style.color='white'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='white'; this.style.color='#008b8b'; this.style.transform='translateY(0)'">Botão Secundário</button> <button class="btn" style="background: #afeeee; color: #008b8b; border: none;" onmouseover="this.style.background='#81e6d9'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='#afeeee'; this.style.transform='translateY(0)'">Botão Accent</button>
+     </div>
+    </div>
+    <div class="usage-section">
+     <h3>✨ Gradientes Harmoniosos - Turquesa</h3>
+     <div class="gradient-demo">
+      <div class="gradient-box" style="background: linear-gradient(135deg, #008b8b, #20b2aa);">
+       Profundo para Médio
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #20b2aa, #48d1cc);">
+       Médio para Claro
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #008b8b, #afeeee);">
+       Profundo para Pálido
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #e0ffff, #20b2aa);">
+       Cristal para Médio
+      </div>
+     </div>
+    </div>
+    <div class="usage-section text-samples">
+     <h3>📝 Hierarquia de Texto - Turquesa</h3>
+     <div class="text-sample">
+      <div style="color: #008b8b; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       Título Principal
+      </div>
+      <div style="color: #20b2aa; font-size: 1.1rem; margin-bottom: 8px;">
+       Subtítulo ou Heading 2
+      </div>
+      <div style="color: #2c7a7b; line-height: 1.6; font-size: 1rem;">
+       Este é um texto de corpo em cor secundária. Ele mantém a elegância e readabilidade enquanto complementa a paleta visual. Perfeito para conteúdo principal e descrições.
+      </div>
+     </div>
+     <div class="text-sample">
+      <div style="color: #008b8b; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       Seção com Destaque
+      </div>
+      <div style="color: #48d1cc; font-size: 1rem; font-weight: 600;">
+       🦋 Ênfase em Turquesa
+      </div>
+      <div style="color: #2c7a7b; line-height: 1.6; font-size: 1rem; margin-top: 10px;">
+       Quando você precisa chamar atenção para algo importante, use o turquesa claro. A combinação vibrante e tropical cria um efeito energético e revigorante.
+      </div>
+     </div>
+    </div>
+   </div><!-- TAB 11: Tanzanita -->
+   <div id="tanzanita" class="tab-content">
+    <div class="palette-title">
+     💜 Paleta Tanzanita
+    </div>
+    <div class="palette-subtitle">
+     Azul-roxo místico e precioso, gema rara da natureza
+    </div>
+    <div class="color-grid">
+     <div class="color-card">
+      <div class="color-swatch" style="background: #3d2d5f;" onclick="copyColor('#3d2d5f')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Tanzanita Profunda
+       </div>
+       <div class="color-code">
+        #3d2d5f
+       </div>
+       <div class="color-description">
+        Cor primária - azul-roxo profundo e místico.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #5e35b1;" onclick="copyColor('#5e35b1')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Tanzanita Médio
+       </div>
+       <div class="color-code">
+        #5e35b1
+       </div>
+       <div class="color-description">
+        Cor secundária - roxo-azul luminoso.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #7e57c2;" onclick="copyColor('#7e57c2')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Tanzanita Claro
+       </div>
+       <div class="color-code">
+        #7e57c2
+       </div>
+       <div class="color-description">
+        Cor terciária - roxo luminoso e elegante.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #f3e5f5;" onclick="copyColor('#f3e5f5')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Lavanda Suave
+       </div>
+       <div class="color-code">
+        #f3e5f5
+       </div>
+       <div class="color-description">
+        Light background - branco com tom roxo.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #e1bee7;" onclick="copyColor('#e1bee7')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Flores Pálidas
+       </div>
+       <div class="color-code">
+        #e1bee7
+       </div>
+       <div class="color-description">
+        Accent color - roxo muito suave.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #6a4a7d;" onclick="copyColor('#6a4a7d')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Roxo Sombra
+       </div>
+       <div class="color-code">
+        #6a4a7d
+       </div>
+       <div class="color-description">
+        Text light color - para textos secundários.
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="usage-section">
+     <h2>📊 Variações - Tanzanita</h2>
+     <div class="palette-variants">
+      <div class="variant-card">
+       <h3>Variação Luz</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #6a3fa0;"></div>
+        <div class="color-label">
+         Tanzanita Claro - #6a3fa0
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #ab47bc;"></div>
+        <div class="color-label">
+         Tanzanita Suave - #ab47bc
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #ce93d8;"></div>
+        <div class="color-label">
+         Tanzanita Muito Claro - #ce93d8
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Sombra</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #2e1a47;"></div>
+        <div class="color-label">
+         Tanzanita Escuro - #2e1a47
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #1a0f2e;"></div>
+        <div class="color-label">
+         Tanzanita Muito Escuro - #1a0f2e
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #0d0717;"></div>
+        <div class="color-label">
+         Roxo Quase Preto - #0d0717
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Flores</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #f9f0ff;"></div>
+        <div class="color-label">
+         Flores Muito Clara - #f9f0ff
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #f0d9ff;"></div>
+        <div class="color-label">
+         Flores Média - #f0d9ff
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #d9bfe6;"></div>
+        <div class="color-label">
+         Flores Profunda - #d9bfe6
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="usage-section button-demo">
+     <h3>🎨 Demonstração de Botões - Tanzanita</h3>
+     <div class="button-group"><button class="btn" style="background: linear-gradient(135deg, #3d2d5f, #5e35b1); color: white;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(61, 45, 95, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.15)'">Botão Primário</button> <button class="btn" style="background: white; color: #3d2d5f; border: 2px solid #3d2d5f;" onmouseover="this.style.background='#3d2d5f'; this.style.color='white'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='white'; this.style.color='#3d2d5f'; this.style.transform='translateY(0)'">Botão Secundário</button> <button class="btn" style="background: #e1bee7; color: #3d2d5f; border: none;" onmouseover="this.style.background='#ce93d8'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='#e1bee7'; this.style.transform='translateY(0)'">Botão Accent</button>
+     </div>
+    </div>
+    <div class="usage-section">
+     <h3>✨ Gradientes Harmoniosos - Tanzanita</h3>
+     <div class="gradient-demo">
+      <div class="gradient-box" style="background: linear-gradient(135deg, #3d2d5f, #5e35b1);">
+       Profundo para Médio
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #5e35b1, #7e57c2);">
+       Médio para Claro
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #3d2d5f, #e1bee7);">
+       Profundo para Flores
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #f3e5f5, #7e57c2);">
+       Lavanda para Claro
+      </div>
+     </div>
+    </div>
+    <div class="usage-section text-samples">
+     <h3>📝 Hierarquia de Texto - Tanzanita</h3>
+     <div class="text-sample">
+      <div style="color: #3d2d5f; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       Título Principal
+      </div>
+      <div style="color: #5e35b1; font-size: 1.1rem; margin-bottom: 8px;">
+       Subtítulo ou Heading 2
+      </div>
+      <div style="color: #6a4a7d; line-height: 1.6; font-size: 1rem;">
+       Este é um texto de corpo em cor secundária. Ele mantém a elegância e readabilidade enquanto complementa a paleta visual. Perfeito para conteúdo principal e descrições.
+      </div>
+     </div>
+     <div class="text-sample">
+      <div style="color: #3d2d5f; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       Seção com Destaque
+      </div>
+      <div style="color: #7e57c2; font-size: 1rem; font-weight: 600;">
+       💜 Ênfase em Tanzanita
+      </div>
+      <div style="color: #6a4a7d; line-height: 1.6; font-size: 1rem; margin-top: 10px;">
+       Quando você precisa chamar atenção para algo importante, use o roxo luminoso. A combinação mística do azul-roxo profundo cria um efeito luxuoso e raramente visto.
+      </div>
+     </div>
+    </div>
+   </div><!-- TAB 12: Larimar -->
+   <div id="larimar" class="tab-content">
+    <div class="palette-title">
+     ��� Paleta Larimar
+    </div>
+    <div class="palette-subtitle">
+     Azul-branco caribeño, fresco como pôr do sol no mar
+    </div>
+    <div class="color-grid">
+     <div class="color-card">
+      <div class="color-swatch" style="background: #4a9cc5;" onclick="copyColor('#4a9cc5')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Larimar Profundo
+       </div>
+       <div class="color-code">
+        #4a9cc5
+       </div>
+       <div class="color-description">
+        Cor primária - azul caribeño luminoso.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #5ab3d8;" onclick="copyColor('#5ab3d8')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Larimar Médio
+       </div>
+       <div class="color-code">
+        #5ab3d8
+       </div>
+       <div class="color-description">
+        Cor secundária - azul morno e tropical.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #8fd3f4;" onclick="copyColor('#8fd3f4')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Larimar Claro
+       </div>
+       <div class="color-code">
+        #8fd3f4
+       </div>
+       <div class="color-description">
+        Cor terciária - azul suave e brincalhão.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #f0f8ff;" onclick="copyColor('#f0f8ff')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Branco Alice
+       </div>
+       <div class="color-code">
+        #f0f8ff
+       </div>
+       <div class="color-description">
+        Light background - branco com tom azulado.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #c2e8f5;" onclick="copyColor('#c2e8f5')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Bruma Leve
+       </div>
+       <div class="color-code">
+        #c2e8f5
+       </div>
+       <div class="color-description">
+        Accent color - azul muito suave.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #3d7a96;" onclick="copyColor('#3d7a96')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Azul Profundo
+       </div>
+       <div class="color-code">
+        #3d7a96
+       </div>
+       <div class="color-description">
+        Text light color - para textos secundários.
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="usage-section">
+     <h2>📊 Variações - Larimar</h2>
+     <div class="palette-variants">
+      <div class="variant-card">
+       <h3>Variação Luz</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #5ca6cf;"></div>
+        <div class="color-label">
+         Larimar Claro - #5ca6cf
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #a8d5f0;"></div>
+        <div class="color-label">
+         Larimar Suave - #a8d5f0
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #d1e8f8;"></div>
+        <div class="color-label">
+         Larimar Muito Claro - #d1e8f8
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Sombra</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #3885b3;"></div>
+        <div class="color-label">
+         Larimar Escuro - #3885b3
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #275f7c;"></div>
+        <div class="color-label">
+         Larimar Muito Escuro - #275f7c
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #17394d;"></div>
+        <div class="color-label">
+         Azul Quase Preto - #17394d
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Bruma</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #dceef9;"></div>
+        <div class="color-label">
+         Bruma Muito Clara - #dceef9
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #a6d9f0;"></div>
+        <div class="color-label">
+         Bruma Média - #a6d9f0
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #6ebbde;"></div>
+        <div class="color-label">
+         Bruma Profunda - #6ebbde
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="usage-section button-demo">
+     <h3>🎨 Demonstração de Botões - Larimar</h3>
+     <div class="button-group"><button class="btn" style="background: linear-gradient(135deg, #4a9cc5, #5ab3d8); color: white;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(74, 156, 197, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.15)'">Botão Primário</button> <button class="btn" style="background: white; color: #4a9cc5; border: 2px solid #4a9cc5;" onmouseover="this.style.background='#4a9cc5'; this.style.color='white'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='white'; this.style.color='#4a9cc5'; this.style.transform='translateY(0)'">Botão Secundário</button> <button class="btn" style="background: #c2e8f5; color: #4a9cc5; border: none;" onmouseover="this.style.background='#a8d5f0'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='#c2e8f5'; this.style.transform='translateY(0)'">Botão Accent</button>
+     </div>
+    </div>
+    <div class="usage-section">
+     <h3>✨ Gradientes Harmoniosos - Larimar</h3>
+     <div class="gradient-demo">
+      <div class="gradient-box" style="background: linear-gradient(135deg, #4a9cc5, #5ab3d8);">
+       Profundo para Médio
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #5ab3d8, #8fd3f4);">
+       Médio para Claro
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #4a9cc5, #c2e8f5);">
+       Profundo para Bruma
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #f0f8ff, #5ab3d8);">
+       Branco para Médio
+      </div>
+     </div>
+    </div>
+    <div class="usage-section text-samples">
+     <h3>📝 Hierarquia de Texto - Larimar</h3>
+     <div class="text-sample">
+      <div style="color: #4a9cc5; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       Título Principal
+      </div>
+      <div style="color: #5ab3d8; font-size: 1.1rem; margin-bottom: 8px;">
+       Subtítulo ou Heading 2
+      </div>
+      <div style="color: #3d7a96; line-height: 1.6; font-size: 1rem;">
+       Este é um texto de corpo em cor secundária. Ele mantém a elegância e readabilidade enquanto complementa a paleta visual. Perfeito para conteúdo principal e descrições.
+      </div>
+     </div>
+     <div class="text-sample">
+      <div style="color: #4a9cc5; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       Seção com Destaque
+      </div>
+      <div style="color: #8fd3f4; font-size: 1rem; font-weight: 600;">
+       🌅 Ênfase em Larimar
+      </div>
+      <div style="color: #3d7a96; line-height: 1.6; font-size: 1rem; margin-top: 10px;">
+       Quando você precisa chamar atenção para algo importante, use o larimar claro. A combinação tropical e caribeña cria um efeito refrescante e paradisíaco.
+      </div>
+     </div>
+    </div>
+   </div><!-- TAB 13: Cianita -->
+   <div id="cianita" class="tab-content">
+    <div class="palette-title">
+     ✨ Paleta Cianita
+    </div>
+    <div class="palette-subtitle">
+     Azul estriado e profundo com brilho fibroso
+    </div>
+    <div class="color-grid">
+     <div class="color-card">
+      <div class="color-swatch" style="background: #003d99;" onclick="copyColor('#003d99')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Cianita Profunda
+       </div>
+       <div class="color-code">
+        #003d99
+       </div>
+       <div class="color-description">
+        Cor primária - azul profundo como cianita pura.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #0052cc;" onclick="copyColor('#0052cc')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Cianita Médio
+       </div>
+       <div class="color-code">
+        #0052cc
+       </div>
+       <div class="color-description">
+        Cor secundária - azul vibrante e profundo.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #2979f0;" onclick="copyColor('#2979f0')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Cianita Claro
+       </div>
+       <div class="color-code">
+        #2979f0
+       </div>
+       <div class="color-description">
+        Cor terciária - azul luminoso e fibroso.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #e3f2fd;" onclick="copyColor('#e3f2fd')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Azul Cristal
+       </div>
+       <div class="color-code">
+        #e3f2fd
+       </div>
+       <div class="color-description">
+        Light background - azul muito claro.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #c5cae9;" onclick="copyColor('#c5cae9')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Prata Estriada
+       </div>
+       <div class="color-code">
+        #c5cae9
+       </div>
+       <div class="color-description">
+        Accent color - prata com reflexo azul.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #0a2463;" onclick="copyColor('#0a2463')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Azul Escuro
+       </div>
+       <div class="color-code">
+        #0a2463
+       </div>
+       <div class="color-description">
+        Text light color - para textos secundários.
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="usage-section">
+     <h2>📊 Variações - Cianita</h2>
+     <div class="palette-variants">
+      <div class="variant-card">
+       <h3>Variação Luz</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #1a4db8;"></div>
+        <div class="color-label">
+         Cianita Claro - #1a4db8
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #5a8df0;"></div>
+        <div class="color-label">
+         Cianita Suave - #5a8df0
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #90c1f5;"></div>
+        <div class="color-label">
+         Cianita Muito Claro - #90c1f5
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Sombra</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #002d7a;"></div>
+        <div class="color-label">
+         Cianita Escuro - #002d7a
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #001d52;"></div>
+        <div class="color-label">
+         Cianita Muito Escuro - #001d52
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #000d2a;"></div>
+        <div class="color-label">
+         Azul Quase Preto - #000d2a
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Prata</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #e0e6f0;"></div>
+        <div class="color-label">
+         Prata Muito Clara - #e0e6f0
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #9fa8da;"></div>
+        <div class="color-label">
+         Prata Média - #9fa8da
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #6c7aa8;"></div>
+        <div class="color-label">
+         Prata Profunda - #6c7aa8
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="usage-section button-demo">
+     <h3>🎨 Demonstração de Botões - Cianita</h3>
+     <div class="button-group"><button class="btn" style="background: linear-gradient(135deg, #003d99, #0052cc); color: white;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(0, 61, 153, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.15)'">Botão Primário</button> <button class="btn" style="background: white; color: #003d99; border: 2px solid #003d99;" onmouseover="this.style.background='#003d99'; this.style.color='white'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='white'; this.style.color='#003d99'; this.style.transform='translateY(0)'">Botão Secundário</button> <button class="btn" style="background: #c5cae9; color: #003d99; border: none;" onmouseover="this.style.background='#9fa8da'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='#c5cae9'; this.style.transform='translateY(0)'">Botão Accent</button>
+     </div>
+    </div>
+    <div class="usage-section">
+     <h3>✨ Gradientes Harmoniosos - Cianita</h3>
+     <div class="gradient-demo">
+      <div class="gradient-box" style="background: linear-gradient(135deg, #003d99, #0052cc);">
+       Profundo para Médio
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #0052cc, #2979f0);">
+       Médio para Claro
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #003d99, #c5cae9);">
+       Profundo para Prata
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #e3f2fd, #2979f0);">
+       Cristal para Luminoso
+      </div>
+     </div>
+    </div>
+    <div class="usage-section text-samples">
+     <h3>📝 Hierarquia de Texto - Cianita</h3>
+     <div class="text-sample">
+      <div style="color: #003d99; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       Título Principal
+      </div>
+      <div style="color: #0052cc; font-size: 1.1rem; margin-bottom: 8px;">
+       Subtítulo ou Heading 2
+      </div>
+      <div style="color: #0a2463; line-height: 1.6; font-size: 1rem;">
+       Este é um texto de corpo em cor secundária. Ele mantém a elegância e readabilidade enquanto complementa a paleta visual. Perfeito para conteúdo principal e descrições.
+      </div>
+     </div>
+     <div class="text-sample">
+      <div style="color: #003d99; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       Seção com Destaque
+      </div>
+      <div style="color: #2979f0; font-size: 1rem; font-weight: 600;">
+       ✨ Ênfase em Cianita
+      </div>
+      <div style="color: #0a2463; line-height: 1.6; font-size: 1rem; margin-top: 10px;">
+       Quando você precisa chamar atenção para algo importante, use o azul claro. A combinação da cianita profunda com seu brilho fibroso cria um efeito elegante e refinado.
+      </div>
+     </div>
+    </div>
+   </div><!-- TAB 14: Zircão Azul -->
+   <div id="zircao" class="tab-content">
+    <div class="palette-title">
+     💎 Paleta Zircão Azul
+    </div>
+    <div class="palette-subtitle">
+     Azul radiante com fogo e brilho geminado
+    </div>
+    <div class="color-grid">
+     <div class="color-card">
+      <div class="color-swatch" style="background: #003a70;" onclick="copyColor('#003a70')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Zircão Profundo
+       </div>
+       <div class="color-code">
+        #003a70
+       </div>
+       <div class="color-description">
+        Cor primária - azul escuro com fogo radiante.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #0050b3;" onclick="copyColor('#0050b3')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Zircão Médio
+       </div>
+       <div class="color-code">
+        #0050b3
+       </div>
+       <div class="color-description">
+        Cor secundária - azul radiante e geminado.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #1976d2;" onclick="copyColor('#1976d2')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Zircão Claro
+       </div>
+       <div class="color-code">
+        #1976d2
+       </div>
+       <div class="color-description">
+        Cor terciária - azul brilhante com fogo.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #e3f2fd;" onclick="copyColor('#e3f2fd')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Luz Radiante
+       </div>
+       <div class="color-code">
+        #e3f2fd
+       </div>
+       <div class="color-description">
+        Light background - branco com tom azul.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #bbdefb;" onclick="copyColor('#bbdefb')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Brilho Suave
+       </div>
+       <div class="color-code">
+        #bbdefb
+       </div>
+       <div class="color-description">
+        Accent color - azul muito suave.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #01579b;" onclick="copyColor('#01579b')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Azul Sombra
+       </div>
+       <div class="color-code">
+        #01579b
+       </div>
+       <div class="color-description">
+        Text light color - para textos secundários.
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="usage-section">
+     <h2>📊 Variações - Zircão Azul</h2>
+     <div class="palette-variants">
+      <div class="variant-card">
+       <h3>Variação Luz</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #1565c0;"></div>
+        <div class="color-label">
+         Zircão Claro - #1565c0
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #42a5f5;"></div>
+        <div class="color-label">
+         Zircão Suave - #42a5f5
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #90caf9;"></div>
+        <div class="color-label">
+         Zircão Muito Claro - #90caf9
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Sombra</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #002d5c;"></div>
+        <div class="color-label">
+         Zircão Escuro - #002d5c
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #001a39;"></div>
+        <div class="color-label">
+         Zircão Muito Escuro - #001a39
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #000d1d;"></div>
+        <div class="color-label">
+         Azul Quase Preto - #000d1d
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Brilho</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #e1f5fe;"></div>
+        <div class="color-label">
+         Brilho Muito Clara - #e1f5fe
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #81d4fa;"></div>
+        <div class="color-label">
+         Brilho Média - #81d4fa
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #4dd0e1;"></div>
+        <div class="color-label">
+         Brilho Profunda - #4dd0e1
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="usage-section button-demo">
+     <h3>🎨 Demonstração de Botões - Zircão Azul</h3>
+     <div class="button-group"><button class="btn" style="background: linear-gradient(135deg, #003a70, #0050b3); color: white;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(0, 58, 112, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.15)'">Botão Primário</button> <button class="btn" style="background: white; color: #003a70; border: 2px solid #003a70;" onmouseover="this.style.background='#003a70'; this.style.color='white'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='white'; this.style.color='#003a70'; this.style.transform='translateY(0)'">Botão Secundário</button> <button class="btn" style="background: #bbdefb; color: #003a70; border: none;" onmouseover="this.style.background='#90caf9'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='#bbdefb'; this.style.transform='translateY(0)'">Botão Accent</button>
+     </div>
+    </div>
+    <div class="usage-section">
+     <h3>✨ Gradientes Harmoniosos - Zircão Azul</h3>
+     <div class="gradient-demo">
+      <div class="gradient-box" style="background: linear-gradient(135deg, #003a70, #0050b3);">
+       Profundo para Médio
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #0050b3, #1976d2);">
+       Médio para Claro
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #003a70, #bbdefb);">
+       Profundo para Brilho
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #e3f2fd, #1976d2);">
+       Luz para Claro
+      </div>
+     </div>
+    </div>
+    <div class="usage-section text-samples">
+     <h3>📝 Hierarquia de Texto - Zircão Azul</h3>
+     <div class="text-sample">
+      <div style="color: #003a70; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       Título Principal
+      </div>
+      <div style="color: #0050b3; font-size: 1.1rem; margin-bottom: 8px;">
+       Subtítulo ou Heading 2
+      </div>
+      <div style="color: #01579b; line-height: 1.6; font-size: 1rem;">
+       Este é um texto de corpo em cor secundária. Ele mantém a elegância e readabilidade enquanto complementa a paleta visual. Perfeito para conteúdo principal e descrições.
+      </div>
+     </div>
+     <div class="text-sample">
+      <div style="color: #003a70; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       Seção com Destaque
+      </div>
+      <div style="color: #1976d2; font-size: 1rem; font-weight: 600;">
+       💎 Ênfase em Zircão
+      </div>
+      <div style="color: #01579b; line-height: 1.6; font-size: 1rem; margin-top: 10px;">
+       Quando você precisa chamar atenção para algo importante, use o azul brilhante. A combinação radiante do zircão cria um efeito luxuoso e cintilante.
+      </div>
+     </div>
+    </div>
+   </div><!-- TAB 15: Azurita -->
+   <div id="azurita" class="tab-content">
+    <div class="palette-title">
+     🔷 Paleta Azurita
+    </div>
+    <div class="palette-subtitle">
+     Azul profundo com veios verdes e tom mineral
+    </div>
+    <div class="color-grid">
+     <div class="color-card">
+      <div class="color-swatch" style="background: #0b3d91;" onclick="copyColor('#0b3d91')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Azurita Profunda
+       </div>
+       <div class="color-code">
+        #0b3d91
+       </div>
+       <div class="color-description">
+        Cor primária - azul profundo mineral.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #1e5a9e;" onclick="copyColor('#1e5a9e')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Azurita Médio
+       </div>
+       <div class="color-code">
+        #1e5a9e
+       </div>
+       <div class="color-description">
+        Cor secundária - azul com veios minerais.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #3a7cbc;" onclick="copyColor('#3a7cbc')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Azurita Claro
+       </div>
+       <div class="color-code">
+        #3a7cbc
+       </div>
+       <div class="color-description">
+        Cor terciária - azul luminoso.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #e8f0f8;" onclick="copyColor('#e8f0f8')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Mineral Pálido
+       </div>
+       <div class="color-code">
+        #e8f0f8
+       </div>
+       <div class="color-description">
+        Light background - branco com tom mineral.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #2d9b68;" onclick="copyColor('#2d9b68')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Verde Veio
+       </div>
+       <div class="color-code">
+        #2d9b68
+       </div>
+       <div class="color-description">
+        Accent color - verde dos veios.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #0a2d5a;" onclick="copyColor('#0a2d5a')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Azul Escuro
+       </div>
+       <div class="color-code">
+        #0a2d5a
+       </div>
+       <div class="color-description">
+        Text light color - para textos secundários.
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="usage-section">
+     <h2>📊 Variações - Azurita</h2>
+     <div class="palette-variants">
+      <div class="variant-card">
+       <h3>Variação Luz</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #2866b0;"></div>
+        <div class="color-label">
+         Azurita Claro - #2866b0
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #6b9fd4;"></div>
+        <div class="color-label">
+         Azurita Suave - #6b9fd4
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #a3c5e1;"></div>
+        <div class="color-label">
+         Azurita Muito Claro - #a3c5e1
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Sombra</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #082b7d;"></div>
+        <div class="color-label">
+         Azurita Escuro - #082b7d
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #051a4d;"></div>
+        <div class="color-label">
+         Azurita Muito Escuro - #051a4d
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #020d27;"></div>
+        <div class="color-label">
+         Azul Quase Preto - #020d27
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Verde Veio</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #52c89a;"></div>
+        <div class="color-label">
+         Verde Claro - #52c89a
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #3fa87c;"></div>
+        <div class="color-label">
+         Verde Médio - #3fa87c
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #1a7550;"></div>
+        <div class="color-label">
+         Verde Profundo - #1a7550
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="usage-section button-demo">
+     <h3>🎨 Demonstração de Botões - Azurita</h3>
+     <div class="button-group"><button class="btn" style="background: linear-gradient(135deg, #0b3d91, #1e5a9e); color: white;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(11, 61, 145, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.15)'">Botão Primário</button> <button class="btn" style="background: white; color: #0b3d91; border: 2px solid #0b3d91;" onmouseover="this.style.background='#0b3d91'; this.style.color='white'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='white'; this.style.color='#0b3d91'; this.style.transform='translateY(0)'">Botão Secundário</button> <button class="btn" style="background: #2d9b68; color: white; border: none;" onmouseover="this.style.background='#1a7550'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='#2d9b68'; this.style.transform='translateY(0)'">Botão Verde</button>
+     </div>
+    </div>
+    <div class="usage-section">
+     <h3>✨ Gradientes Harmoniosos - Azurita</h3>
+     <div class="gradient-demo">
+      <div class="gradient-box" style="background: linear-gradient(135deg, #0b3d91, #1e5a9e);">
+       Profundo para Médio
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #1e5a9e, #3a7cbc);">
+       Médio para Claro
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #0b3d91, #2d9b68);">
+       Azul para Verde Veio
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #e8f0f8, #3a7cbc);">
+       Mineral para Claro
+      </div>
+     </div>
+    </div>
+    <div class="usage-section text-samples">
+     <h3>📝 Hierarquia de Texto - Azurita</h3>
+     <div class="text-sample">
+      <div style="color: #0b3d91; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       Título Principal
+      </div>
+      <div style="color: #1e5a9e; font-size: 1.1rem; margin-bottom: 8px;">
+       Subtítulo ou Heading 2
+      </div>
+      <div style="color: #0a2d5a; line-height: 1.6; font-size: 1rem;">
+       Este é um texto de corpo em cor secundária. Ele mantém a elegância e readabilidade enquanto complementa a paleta visual. Perfeito para conteúdo principal e descrições.
+      </div>
+     </div>
+     <div class="text-sample">
+      <div style="color: #0b3d91; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       Seção com Destaque
+      </div>
+      <div style="color: #2d9b68; font-size: 1rem; font-weight: 600;">
+       🔷 Ênfase em Veio Verde
+      </div>
+      <div style="color: #0a2d5a; line-height: 1.6; font-size: 1rem; margin-top: 10px;">
+       Quando você precisa chamar atenção para algo importante, use o verde natural. A combinação única do azul profundo com veios verdes cria um efeito mineral e natural.
+      </div>
+     </div>
+    </div>
+   </div><!-- TAB 16: Sodalita -->
+   <div id="sodalita" class="tab-content">
+    <div class="palette-title">
+     🔵 Paleta Sodalita
+    </div>
+    <div class="palette-subtitle">
+     Azul feldspático com brilho sedoso
+    </div>
+    <div class="color-grid">
+     <div class="color-card">
+      <div class="color-swatch" style="background: #061e7a;" onclick="copyColor('#061e7a')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Sodalita Profunda
+       </div>
+       <div class="color-code">
+        #061e7a
+       </div>
+       <div class="color-description">
+        Cor primária - azul feldspático profundo.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #0a2d99;" onclick="copyColor('#0a2d99')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Sodalita Médio
+       </div>
+       <div class="color-code">
+        #0a2d99
+       </div>
+       <div class="color-description">
+        Cor secundária - azul sedoso luminoso.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #1540b8;" onclick="copyColor('#1540b8')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Sodalita Claro
+       </div>
+       <div class="color-code">
+        #1540b8
+       </div>
+       <div class="color-description">
+        Cor terciária - azul com brilho sedoso.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #e6ebf5;" onclick="copyColor('#e6ebf5')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Seda Suave
+       </div>
+       <div class="color-code">
+        #e6ebf5
+       </div>
+       <div class="color-description">
+        Light background - branco com brilho.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #8fa3d9;" onclick="copyColor('#8fa3d9')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Prata Sedosa
+       </div>
+       <div class="color-code">
+        #8fa3d9
+       </div>
+       <div class="color-description">
+        Accent color - prata com brilho sedoso.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #051759;" onclick="copyColor('#051759')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Azul Escuro
+       </div>
+       <div class="color-code">
+        #051759
+       </div>
+       <div class="color-description">
+        Text light color - para textos secundários.
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="usage-section">
+     <h2>📊 Variações - Sodalita</h2>
+     <div class="palette-variants">
+      <div class="variant-card">
+       <h3>Variação Luz</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #0f3ab8;"></div>
+        <div class="color-label">
+         Sodalita Claro - #0f3ab8
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #5970d1;"></div>
+        <div class="color-label">
+         Sodalita Suave - #5970d1
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #8fa3d9;"></div>
+        <div class="color-label">
+         Sodalita Muito Claro - #8fa3d9
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Sombra</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #051759;"></div>
+        <div class="color-label">
+         Sodalita Escuro - #051759
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #03103f;"></div>
+        <div class="color-label">
+         Sodalita Muito Escuro - #03103f
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #010820;"></div>
+        <div class="color-label">
+         Azul Quase Preto - #010820
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Seda</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #f0f3fa;"></div>
+        <div class="color-label">
+         Seda Muito Clara - #f0f3fa
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #b5c6e0;"></div>
+        <div class="color-label">
+         Seda Média - #b5c6e0
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #7f99c7;"></div>
+        <div class="color-label">
+         Seda Profunda - #7f99c7
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="usage-section button-demo">
+     <h3>🎨 Demonstração de Botões - Sodalita</h3>
+     <div class="button-group"><button class="btn" style="background: linear-gradient(135deg, #061e7a, #0a2d99); color: white;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(6, 30, 122, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.15)'">Botão Primário</button> <button class="btn" style="background: white; color: #061e7a; border: 2px solid #061e7a;" onmouseover="this.style.background='#061e7a'; this.style.color='white'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='white'; this.style.color='#061e7a'; this.style.transform='translateY(0)'">Botão Secundário</button> <button class="btn" style="background: #8fa3d9; color: #061e7a; border: none;" onmouseover="this.style.background='#7f99c7'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='#8fa3d9'; this.style.transform='translateY(0)'">Botão Accent</button>
+     </div>
+    </div>
+    <div class="usage-section">
+     <h3>✨ Gradientes Harmoniosos - Sodalita</h3>
+     <div class="gradient-demo">
+      <div class="gradient-box" style="background: linear-gradient(135deg, #061e7a, #0a2d99);">
+       Profundo para Médio
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #0a2d99, #1540b8);">
+       Médio para Claro
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #061e7a, #8fa3d9);">
+       Profundo para Seda
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #e6ebf5, #1540b8);">
+       Seda para Claro
+      </div>
+     </div>
+    </div>
+    <div class="usage-section text-samples">
+     <h3>📝 Hierarquia de Texto - Sodalita</h3>
+     <div class="text-sample">
+      <div style="color: #061e7a; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       Título Principal
+      </div>
+      <div style="color: #0a2d99; font-size: 1.1rem; margin-bottom: 8px;">
+       Subtítulo ou Heading 2
+      </div>
+      <div style="color: #051759; line-height: 1.6; font-size: 1rem;">
+       Este é um texto de corpo em cor secundária. Ele mantém a elegância e readabilidade enquanto complementa a paleta visual. Perfeito para conteúdo principal e descrições.
+      </div>
+     </div>
+     <div class="text-sample">
+      <div style="color: #061e7a; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       Seção com Destaque
+      </div>
+      <div style="color: #1540b8; font-size: 1rem; font-weight: 600;">
+       🔵 Ênfase em Sodalita
+      </div>
+      <div style="color: #051759; line-height: 1.6; font-size: 1rem; margin-top: 10px;">
+       Quando você precisa chamar atenção para algo importante, use o azul claro. O brilho sedoso da sodalita cria um efeito suave e elegantemente luminoso.
+      </div>
+     </div>
+    </div>
+   </div><!-- TAB 17: Benitoita -->
+   <div id="benitoita" class="tab-content">
+    <div class="palette-title">
+     ⭐ Paleta Benitoita
+    </div>
+    <div class="palette-subtitle">
+     Azul fluorescente raro com brilho UV intenso
+    </div>
+    <div class="color-grid">
+     <div class="color-card">
+      <div class="color-swatch" style="background: #001a4d;" onclick="copyColor('#001a4d')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Benitoita Profunda
+       </div>
+       <div class="color-code">
+        #001a4d
+       </div>
+       <div class="color-description">
+        Cor primária - azul raro e fluorescente.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #0033cc;" onclick="copyColor('#0033cc')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Benitoita Médio
+       </div>
+       <div class="color-code">
+        #0033cc
+       </div>
+       <div class="color-description">
+        Cor secundária - azul fluorescente intenso.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #0066ff;" onclick="copyColor('#0066ff')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Benitoita UV
+       </div>
+       <div class="color-code">
+        #0066ff
+       </div>
+       <div class="color-description">
+        Cor terciária - azul UV brilhante.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #e6f0ff;" onclick="copyColor('#e6f0ff')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Luz UV
+       </div>
+       <div class="color-code">
+        #e6f0ff
+       </div>
+       <div class="color-description">
+        Light background - branco com fluorescência.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #b3d9ff;" onclick="copyColor('#b3d9ff')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Brilho Suave
+       </div>
+       <div class="color-code">
+        #b3d9ff
+       </div>
+       <div class="color-description">
+        Accent color - azul suave fluorescente.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #001133;" onclick="copyColor('#001133')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Azul Escuro
+       </div>
+       <div class="color-code">
+        #001133
+       </div>
+       <div class="color-description">
+        Text light color - para textos secundários.
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="usage-section">
+     <h2>📊 Variações - Benitoita</h2>
+     <div class="palette-variants">
+      <div class="variant-card">
+       <h3>Variação Luz</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #0052ff;"></div>
+        <div class="color-label">
+         Benitoita Claro - #0052ff
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #3d84ff;"></div>
+        <div class="color-label">
+         Benitoita Suave - #3d84ff
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #7fb3ff;"></div>
+        <div class="color-label">
+         Benitoita Muito Claro - #7fb3ff
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Sombra</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #00119a;"></div>
+        <div class="color-label">
+         Benitoita Escuro - #00119a
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #000a66;"></div>
+        <div class="color-label">
+         Benitoita Muito Escuro - #000a66
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #000533;"></div>
+        <div class="color-label">
+         Azul Quase Preto - #000533
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Fluorescência</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #f0f5ff;"></div>
+        <div class="color-label">
+         Fluorescência Muito Clara - #f0f5ff
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #80bfff;"></div>
+        <div class="color-label">
+         Fluorescência Média - #80bfff
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #0099ff;"></div>
+        <div class="color-label">
+         Fluorescência Profunda - #0099ff
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="usage-section button-demo">
+     <h3>🎨 Demonstração de Botões - Benitoita</h3>
+     <div class="button-group"><button class="btn" style="background: linear-gradient(135deg, #001a4d, #0033cc); color: white; box-shadow: 0 4px 12px rgba(0, 51, 204, 0.3);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(0, 51, 204, 0.5)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0, 51, 204, 0.3)'">Botão Primário</button> <button class="btn" style="background: white; color: #0033cc; border: 2px solid #0033cc;" onmouseover="this.style.background='#0033cc'; this.style.color='white'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='white'; this.style.color='#0033cc'; this.style.transform='translateY(0)'">Botão Secundário</button> <button class="btn" style="background: linear-gradient(135deg, #0066ff, #b3d9ff); color: white; border: none; font-weight: 700; box-shadow: 0 4px 12px rgba(0, 102, 255, 0.4);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(0, 102, 255, 0.6)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0, 102, 255, 0.4)'">Botão UV Fluorescente</button>
+     </div>
+    </div>
+    <div class="usage-section">
+     <h3>✨ Gradientes Harmoniosos - Benitoita</h3>
+     <div class="gradient-demo">
+      <div class="gradient-box" style="background: linear-gradient(135deg, #001a4d, #0033cc);">
+       Profundo para Médio
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #0033cc, #0066ff);">
+       Médio para UV
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #001a4d, #b3d9ff);">
+       Profundo para Brilho
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #e6f0ff, #0066ff); text-shadow: 0 2px 4px rgba(0, 102, 255, 0.3);">
+       Luz para UV Intenso
+      </div>
+     </div>
+    </div>
+    <div class="usage-section text-samples">
+     <h3>📝 Hierarquia de Texto - Benitoita</h3>
+     <div class="text-sample">
+      <div style="color: #001a4d; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       Título Principal
+      </div>
+      <div style="color: #0033cc; font-size: 1.1rem; margin-bottom: 8px;">
+       Subtítulo ou Heading 2
+      </div>
+      <div style="color: #001133; line-height: 1.6; font-size: 1rem;">
+       Este é um texto de corpo em cor secundária. Ele mantém a elegância e readabilidade enquanto complementa a paleta visual. Perfeito para conteúdo principal e descrições.
+      </div>
+     </div>
+     <div class="text-sample">
+      <div style="color: #001a4d; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       Seção com Destaque
+      </div>
+      <div style="color: #0066ff; font-size: 1rem; font-weight: 600; text-shadow: 0 0 8px rgba(0, 102, 255, 0.5);">
+       ⭐ Ênfase em Benitoita UV
+      </div>
+      <div style="color: #001133; line-height: 1.6; font-size: 1rem; margin-top: 10px;">
+       Quando você precisa chamar atenção para algo importante, use o azul UV. A rara fluorescência da benitoita cria um efeito único e verdadeiramente luminoso.
+      </div>
+     </div>
+    </div>
+   </div><!-- TAB 18: Calcedônia -->
+   <div id="calcedonia" class="tab-content">
+    <div class="palette-title">
+     🌸 Paleta Calcedônia
+    </div>
+    <div class="palette-subtitle">
+     Azul-roxo suave com tons pastel translúcidos
+    </div>
+    <div class="color-grid">
+     <div class="color-card">
+      <div class="color-swatch" style="background: #4a6fa5;" onclick="copyColor('#4a6fa5')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Calcedônia Profunda
+       </div>
+       <div class="color-code">
+        #4a6fa5
+       </div>
+       <div class="color-description">
+        Cor primária - azul-roxo translúcido.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #7b9fc4;" onclick="copyColor('#7b9fc4')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Calcedônia Médio
+       </div>
+       <div class="color-code">
+        #7b9fc4
+       </div>
+       <div class="color-description">
+        Cor secundária - azul pastel suave.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #a8c5d8;" onclick="copyColor('#a8c5d8')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Calcedônia Claro
+       </div>
+       <div class="color-code">
+        #a8c5d8
+       </div>
+       <div class="color-description">
+        Cor terciária - pastel translúcido.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #f5f7fa;" onclick="copyColor('#f5f7fa')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Névoa Leve
+       </div>
+       <div class="color-code">
+        #f5f7fa
+       </div>
+       <div class="color-description">
+        Light background - branco com tom pastel.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #d4d8e8;" onclick="copyColor('#d4d8e8')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Névoa Média
+       </div>
+       <div class="color-code">
+        #d4d8e8
+       </div>
+       <div class="color-description">
+        Accent color - pastel muito suave.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #36465b;" onclick="copyColor('#36465b')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Azul Escuro
+       </div>
+       <div class="color-code">
+        #36465b
+       </div>
+       <div class="color-description">
+        Text light color - para textos secundários.
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="usage-section">
+     <h2>📊 Variações - Calcedônia</h2>
+     <div class="palette-variants">
+      <div class="variant-card">
+       <h3>Variação Luz</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #6d88b8;"></div>
+        <div class="color-label">
+         Calcedônia Claro - #6d88b8
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #9ab0cb;"></div>
+        <div class="color-label">
+         Calcedônia Suave - #9ab0cb
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #c5d5e1;"></div>
+        <div class="color-label">
+         Calcedônia Muito Claro - #c5d5e1
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Sombra</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #3d5a8f;"></div>
+        <div class="color-label">
+         Calcedônia Escuro - #3d5a8f
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #2d4465;"></div>
+        <div class="color-label">
+         Calcedônia Muito Escuro - #2d4465
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #1a2a3d;"></div>
+        <div class="color-label">
+         Azul Quase Preto - #1a2a3d
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Névoa</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #f8fafb;"></div>
+        <div class="color-label">
+         Névoa Muito Clara - #f8fafb
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #e8ecf2;"></div>
+        <div class="color-label">
+         Névoa Média - #e8ecf2
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #c8d0e0;"></div>
+        <div class="color-label">
+         Névoa Profunda - #c8d0e0
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="usage-section button-demo">
+     <h3>🎨 Demonstração de Botões - Calcedônia</h3>
+     <div class="button-group"><button class="btn" style="background: linear-gradient(135deg, #4a6fa5, #7b9fc4); color: white;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(74, 111, 165, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.15)'">Botão Primário</button> <button class="btn" style="background: white; color: #4a6fa5; border: 2px solid #4a6fa5;" onmouseover="this.style.background='#4a6fa5'; this.style.color='white'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='white'; this.style.color='#4a6fa5'; this.style.transform='translateY(0)'">Botão Secundário</button> <button class="btn" style="background: #d4d8e8; color: #4a6fa5; border: none;" onmouseover="this.style.background='#c8d0e0'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='#d4d8e8'; this.style.transform='translateY(0)'">Botão Accent</button>
+     </div>
+    </div>
+    <div class="usage-section">
+     <h3>✨ Gradientes Harmoniosos - Calcedônia</h3>
+     <div class="gradient-demo">
+      <div class="gradient-box" style="background: linear-gradient(135deg, #4a6fa5, #7b9fc4);">
+       Profundo para Médio
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #7b9fc4, #a8c5d8);">
+       Médio para Claro
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #4a6fa5, #d4d8e8);">
+       Profundo para Névoa
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #f5f7fa, #7b9fc4);">
+       Névoa para Médio
+      </div>
+     </div>
+    </div>
+    <div class="usage-section text-samples">
+     <h3>📝 Hierarquia de Texto - Calcedônia</h3>
+     <div class="text-sample">
+      <div style="color: #4a6fa5; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       T��tulo Principal
+      </div>
+      <div style="color: #7b9fc4; font-size: 1.1rem; margin-bottom: 8px;">
+       Subtítulo ou Heading 2
+      </div>
+      <div style="color: #36465b; line-height: 1.6; font-size: 1rem;">
+       Este é um texto de corpo em cor secundária. Ele mantém a elegância e readabilidade enquanto complementa a paleta visual. Perfeito para conteúdo principal e descrições.
+      </div>
+     </div>
+     <div class="text-sample">
+      <div style="color: #4a6fa5; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       Seção com Destaque
+      </div>
+      <div style="color: #a8c5d8; font-size: 1rem; font-weight: 600;">
+       🌸 Ênfase em Calcedônia
+      </div>
+      <div style="color: #36465b; line-height: 1.6; font-size: 1rem; margin-top: 10px;">
+       Quando você precisa chamar atenção para algo importante, use o pastel translúcido. A suavidade da calcedônia cria um efeito delicado, calmo e zen.
+      </div>
+     </div>
+    </div>
+   </div><!-- TAB 19: Espinélio -->
+   <div id="spinelia" class="tab-content">
+    <div class="palette-title">
+     🌟 Paleta Espinélio
+    </div>
+    <div class="palette-subtitle">
+     Azul-violeta com brilho duplo e multirefringência
+    </div>
+    <div class="color-grid">
+     <div class="color-card">
+      <div class="color-swatch" style="background: #2d1b69;" onclick="copyColor('#2d1b69')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Espinélio Profundo
+       </div>
+       <div class="color-code">
+        #2d1b69
+       </div>
+       <div class="color-description">
+        Cor primária - azul-violeta profundo.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #4a2f8f;" onclick="copyColor('#4a2f8f')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Espinélio Médio
+       </div>
+       <div class="color-code">
+        #4a2f8f
+       </div>
+       <div class="color-description">
+        Cor secundária - roxo-azul luminoso.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #7b5fa8;" onclick="copyColor('#7b5fa8')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Espinélio Claro
+       </div>
+       <div class="color-code">
+        #7b5fa8
+       </div>
+       <div class="color-description">
+        Cor terciária - roxo com brilho duplo.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #f0e8f8;" onclick="copyColor('#f0e8f8')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Brilho Duplo
+       </div>
+       <div class="color-code">
+        #f0e8f8
+       </div>
+       <div class="color-description">
+        Light background - branco com tom violeta.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #d9c8e8;" onclick="copyColor('#d9c8e8')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Reflexo Multicolor
+       </div>
+       <div class="color-code">
+        #d9c8e8
+       </div>
+       <div class="color-description">
+        Accent color - roxo com multirefringência.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #1a0f35;" onclick="copyColor('#1a0f35')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Roxo Escuro
+       </div>
+       <div class="color-code">
+        #1a0f35
+       </div>
+       <div class="color-description">
+        Text light color - para textos secundários.
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="usage-section">
+     <h2>📊 Variações - Espinélio</h2>
+     <div class="palette-variants">
+      <div class="variant-card">
+       <h3>Variação Luz</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #5c3f9f;"></div>
+        <div class="color-label">
+         Espinélio Claro - #5c3f9f
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #9d7bc7;"></div>
+        <div class="color-label">
+         Espinélio Suave - #9d7bc7
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #c7a8dd;"></div>
+        <div class="color-label">
+         Espinélio Muito Claro - #c7a8dd
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Sombra</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #221455;"></div>
+        <div class="color-label">
+         Espinélio Escuro - #221455
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #160a32;"></div>
+        <div class="color-label">
+         Espinélio Muito Escuro - #160a32
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #0a0518;"></div>
+        <div class="color-label">
+         Roxo Quase Preto - #0a0518
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Multicolor</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #f8f3fb;"></div>
+        <div class="color-label">
+         Multicolor Muito Clara - #f8f3fb
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #e6d7f0;"></div>
+        <div class="color-label">
+         Multicolor Média - #e6d7f0
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #c8a8d8;"></div>
+        <div class="color-label">
+         Multicolor Profunda - #c8a8d8
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="usage-section button-demo">
+     <h3>🎨 Demonstração de Botões - Espinélio</h3>
+     <div class="button-group"><button class="btn" style="background: linear-gradient(135deg, #2d1b69, #4a2f8f); color: white;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(45, 27, 105, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.15)'">Botão Primário</button> <button class="btn" style="background: white; color: #2d1b69; border: 2px solid #2d1b69;" onmouseover="this.style.background='#2d1b69'; this.style.color='white'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='white'; this.style.color='#2d1b69'; this.style.transform='translateY(0)'">Botão Secundário</button> <button class="btn" style="background: #d9c8e8; color: #2d1b69; border: none;" onmouseover="this.style.background='#c8a8d8'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='#d9c8e8'; this.style.transform='translateY(0)'">Botão Multicolor</button>
+     </div>
+    </div>
+    <div class="usage-section">
+     <h3>✨ Gradientes Harmoniosos - Espinélio</h3>
+     <div class="gradient-demo">
+      <div class="gradient-box" style="background: linear-gradient(135deg, #2d1b69, #4a2f8f);">
+       Profundo para Médio
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #4a2f8f, #7b5fa8);">
+       Médio para Claro
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #2d1b69, #d9c8e8);">
+       Profundo para Multicolor
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #f0e8f8, #7b5fa8);">
+       Brilho para Claro
+      </div>
+     </div>
+    </div>
+    <div class="usage-section text-samples">
+     <h3>📝 Hierarquia de Texto - Espinélio</h3>
+     <div class="text-sample">
+      <div style="color: #2d1b69; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       Título Principal
+      </div>
+      <div style="color: #4a2f8f; font-size: 1.1rem; margin-bottom: 8px;">
+       Subtítulo ou Heading 2
+      </div>
+      <div style="color: #1a0f35; line-height: 1.6; font-size: 1rem;">
+       Este é um texto de corpo em cor secundária. Ele mantém a elegância e readabilidade enquanto complementa a paleta visual. Perfeito para conteúdo principal e descrições.
+      </div>
+     </div>
+     <div class="text-sample">
+      <div style="color: #2d1b69; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       Seção com Destaque
+      </div>
+      <div style="color: #7b5fa8; font-size: 1rem; font-weight: 600;">
+       🌟 Ênfase em Espinélio
+      </div>
+      <div style="color: #1a0f35; line-height: 1.6; font-size: 1rem; margin-top: 10px;">
+       Quando você precisa chamar atenção para algo importante, use o roxo luminoso. O brilho duplo e a multirefringência do espinélio criam um efeito místico e fascinante.
+      </div>
+     </div>
+    </div>
+   </div><!-- TAB 20: Olho de Tigre -->
+   <div id="olhotiagre" class="tab-content">
+    <div class="palette-title">
+     👁️ Paleta Olho de Tigre
+    </div>
+    <div class="palette-subtitle">
+     Marrom-dourado com brilho chatoyante luminoso
+    </div>
+    <div class="color-grid">
+     <div class="color-card">
+      <div class="color-swatch" style="background: #6b4423;" onclick="copyColor('#6b4423')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Tigre Profundo
+       </div>
+       <div class="color-code">
+        #6b4423
+       </div>
+       <div class="color-description">
+        Cor primária - marrom escuro do olho de tigre.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #8b6a47;" onclick="copyColor('#8b6a47')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Tigre Médio
+       </div>
+       <div class="color-code">
+        #8b6a47
+       </div>
+       <div class="color-description">
+        Cor secundária - marrom quente com brilho.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #d4af37;" onclick="copyColor('#d4af37')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Ouro Chatoyante
+       </div>
+       <div class="color-code">
+        #d4af37
+       </div>
+       <div class="color-description">
+        Cor terciária - ouro com efeito de brilho.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #fff8dc;" onclick="copyColor('#fff8dc')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Creme Natural
+       </div>
+       <div class="color-code">
+        #fff8dc
+       </div>
+       <div class="color-description">
+        Light background - creme suave.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #f0e68c;" onclick="copyColor('#f0e68c')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Amarelo Morno
+       </div>
+       <div class="color-code">
+        #f0e68c
+       </div>
+       <div class="color-description">
+        Accent color - amarelo quente.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #3d2817;" onclick="copyColor('#3d2817')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Marrom Escuro
+       </div>
+       <div class="color-code">
+        #3d2817
+       </div>
+       <div class="color-description">
+        Text light color - para textos secundários.
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="usage-section">
+     <h2>📊 Variações - Olho de Tigre</h2>
+     <div class="palette-variants">
+      <div class="variant-card">
+       <h3>Variação Luz</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #a0713f;"></div>
+        <div class="color-label">
+         Tigre Claro - #a0713f
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #c4985a;"></div>
+        <div class="color-label">
+         Tigre Suave - #c4985a
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #e8c8a0;"></div>
+        <div class="color-label">
+         Tigre Muito Claro - #e8c8a0
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Sombra</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #5c3a1f;"></div>
+        <div class="color-label">
+         Tigre Escuro - #5c3a1f
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #3d2817;"></div>
+        <div class="color-label">
+         Tigre Muito Escuro - #3d2817
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #1a0f0a;"></div>
+        <div class="color-label">
+         Marrom Quase Preto - #1a0f0a
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Ouro</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #e8c547;"></div>
+        <div class="color-label">
+         Ouro Claro - #e8c547
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #c49827;"></div>
+        <div class="color-label">
+         Ouro Escuro - #c49827
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #8b6914;"></div>
+        <div class="color-label">
+         Ouro Profundo - #8b6914
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="usage-section button-demo">
+     <h3>🎨 Demonstração de Botões - Olho de Tigre</h3>
+     <div class="button-group"><button class="btn" style="background: linear-gradient(135deg, #6b4423, #8b6a47); color: white;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(107, 68, 35, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.15)'">Botão Primário</button> <button class="btn" style="background: white; color: #6b4423; border: 2px solid #6b4423;" onmouseover="this.style.background='#6b4423'; this.style.color='white'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='white'; this.style.color='#6b4423'; this.style.transform='translateY(0)'">Botão Secundário</button> <button class="btn" style="background: #d4af37; color: #3d2817; border: none;" onmouseover="this.style.background='#c49827'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='#d4af37'; this.style.transform='translateY(0)'">Botão Ouro</button>
+     </div>
+    </div>
+    <div class="usage-section">
+     <h3>✨ Gradientes Harmoniosos - Olho de Tigre</h3>
+     <div class="gradient-demo">
+      <div class="gradient-box" style="background: linear-gradient(135deg, #6b4423, #8b6a47);">
+       Profundo para Médio
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #8b6a47, #d4af37);">
+       Médio para Ouro
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #6b4423, #f0e68c);">
+       Profundo para Amarelo
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #fff8dc, #8b6a47);">
+       Creme para Médio
+      </div>
+     </div>
+    </div>
+    <div class="usage-section text-samples">
+     <h3>📝 Hierarquia de Texto - Olho de Tigre</h3>
+     <div class="text-sample">
+      <div style="color: #6b4423; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       Título Principal
+      </div>
+      <div style="color: #8b6a47; font-size: 1.1rem; margin-bottom: 8px;">
+       Subtítulo ou Heading 2
+      </div>
+      <div style="color: #3d2817; line-height: 1.6; font-size: 1rem;">
+       Este é um texto de corpo em cor secundária. Ele mantém a elegância e readabilidade enquanto complementa a paleta visual. Perfeito para conteúdo principal e descrições.
+      </div>
+     </div>
+     <div class="text-sample">
+      <div style="color: #6b4423; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       Seção com Destaque
+      </div>
+      <div style="color: #d4af37; font-size: 1rem; font-weight: 600;">
+       👁️ Ênfase em Ouro Chatoyante
+      </div>
+      <div style="color: #3d2817; line-height: 1.6; font-size: 1rem; margin-top: 10px;">
+       Quando você precisa chamar atenção para algo importante, use o ouro luminoso. O efeito chatoyante do olho de tigre cria uma luminosidade cativante e hipnotizante.
+      </div>
+     </div>
+    </div>
+   </div><!-- TAB 21: Ametista -->
+   <div id="ametista" class="tab-content">
+    <div class="palette-title">
+     💜 Paleta Ametista
+    </div>
+    <div class="palette-subtitle">
+     Roxo translúcido com tons místicos e serenos
+    </div>
+    <div class="color-grid">
+     <div class="color-card">
+      <div class="color-swatch" style="background: #563d7c;" onclick="copyColor('#563d7c')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Ametista Profunda
+       </div>
+       <div class="color-code">
+        #563d7c
+       </div>
+       <div class="color-description">
+        Cor primária - roxo translúcido profundo.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #7b4eb1;" onclick="copyColor('#7b4eb1')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Ametista Médio
+       </div>
+       <div class="color-code">
+        #7b4eb1
+       </div>
+       <div class="color-description">
+        Cor secundária - roxo luminoso e místico.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #a78bce;" onclick="copyColor('#a78bce')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Ametista Claro
+       </div>
+       <div class="color-code">
+        #a78bce
+       </div>
+       <div class="color-description">
+        Cor terciária - roxo suave e translúcido.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #f3e9ff;" onclick="copyColor('#f3e9ff')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Luz Violeta
+       </div>
+       <div class="color-code">
+        #f3e9ff
+       </div>
+       <div class="color-description">
+        Light background - branco com tom roxo.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #d9bfff;" onclick="copyColor('#d9bfff')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Lavanda Clara
+       </div>
+       <div class="color-code">
+        #d9bfff
+       </div>
+       <div class="color-description">
+        Accent color - roxo muito suave.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #2d1b4d;" onclick="copyColor('#2d1b4d')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Roxo Escuro
+       </div>
+       <div class="color-code">
+        #2d1b4d
+       </div>
+       <div class="color-description">
+        Text light color - para textos secundários.
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="usage-section">
+     <h2>📊 Variações - Ametista</h2>
+     <div class="palette-variants">
+      <div class="variant-card">
+       <h3>Variação Luz</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #6d4f99;"></div>
+        <div class="color-label">
+         Ametista Claro - #6d4f99
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #9b7bc2;"></div>
+        <div class="color-label">
+         Ametista Suave - #9b7bc2
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #c9b3dc;"></div>
+        <div class="color-label">
+         Ametista Muito Claro - #c9b3dc
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Sombra</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #47306d;"></div>
+        <div class="color-label">
+         Ametista Escuro - #47306d
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" styles="background: #2d1b4d;"></div>
+        <div class="color-label">
+         Ametista Muito Escuro - #2d1b4d
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #140a26;"></div>
+        <div class="color-label">
+         Roxo Quase Preto - #140a26
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Lavanda</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #f0e0ff;"></div>
+        <div class="color-label">
+         Lavanda Muito Clara - #f0e0ff
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #e0b3ff;"></div>
+        <div class="color-label">
+         Lavanda Média - #e0b3ff
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #c080ff;"></div>
+        <div class="color-label">
+         Lavanda Profunda - #c080ff
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="usage-section button-demo">
+     <h3>🎨 Demonstração de Botões - Ametista</h3>
+     <div class="button-group"><button class="btn" style="background: linear-gradient(135deg, #563d7c, #7b4eb1); color: white;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(86, 61, 124, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.15)'">Botão Primário</button> <button class="btn" style="background: white; color: #563d7c; border: 2px solid #563d7c;" onmouseover="this.style.background='#563d7c'; this.style.color='white'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='white'; this.style.color='#563d7c'; this.style.transform='translateY(0)'">Botão Secundário</button> <button class="btn" style="background: #d9bfff; color: #563d7c; border: none;" onmouseover="this.style.background='#c080ff'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='#d9bfff'; this.style.transform='translateY(0)'">Botão Accent</button>
+     </div>
+    </div>
+    <div class="usage-section">
+     <h3>✨ Gradientes Harmoniosos - Ametista</h3>
+     <div class="gradient-demo">
+      <div class="gradient-box" style="background: linear-gradient(135deg, #563d7c, #7b4eb1);">
+       Profundo para Médio
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #7b4eb1, #a78bce);">
+       Médio para Claro
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #563d7c, #d9bfff);">
+       Profundo para Lavanda
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #f3e9ff, #7b4eb1);">
+       Luz para Médio
+      </div>
+     </div>
+    </div>
+    <div class="usage-section text-samples">
+     <h3>📝 Hierarquia de Texto - Ametista</h3>
+     <div class="text-sample">
+      <div style="color: #563d7c; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       Título Principal
+      </div>
+      <div style="color: #7b4eb1; font-size: 1.1rem; margin-bottom: 8px;">
+       Subtítulo ou Heading 2
+      </div>
+      <div style="color: #2d1b4d; line-height: 1.6; font-size: 1rem;">
+       Este é um texto de corpo em cor secundária. Ele mantém a elegância e readabilidade enquanto complementa a paleta visual. Perfeito para conteúdo principal e descrições.
+      </div>
+     </div>
+     <div class="text-sample">
+      <div style="color: #563d7c; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       Seção com Destaque
+      </div>
+      <div style="color: #a78bce; font-size: 1rem; font-weight: 600;">
+       💜 Ênfase em Ametista
+      </div>
+      <div style="color: #2d1b4d; line-height: 1.6; font-size: 1rem; margin-top: 10px;">
+       Quando você precisa chamar atenção para algo importante, use o roxo luminoso. A translucidez da ametista cria um efeito místico, sereno e profundamente espiritual.
+      </div>
+     </div>
+    </div>
+   </div><!-- TAB 22: Angelita -->
+   <div id="angelite" class="tab-content">
+    <div class="palette-title">
+     💙 Paleta Angelita
+    </div>
+    <div class="palette-subtitle">
+     Azul-celeste suave com tranquilidade celestial
+    </div>
+    <div class="color-grid">
+     <div class="color-card">
+      <div class="color-swatch" style="background: #5a96bd;" onclick="copyColor('#5a96bd')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Angelita Profunda
+       </div>
+       <div class="color-code">
+        #5a96bd
+       </div>
+       <div class="color-description">
+        Cor primária - azul-celeste profundo.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #7db4d4;" onclick="copyColor('#7db4d4')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Angelita Médio
+       </div>
+       <div class="color-code">
+        #7db4d4
+       </div>
+       <div class="color-description">
+        Cor secundária - azul-celeste suave.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #b0d4e3;" onclick="copyColor('#b0d4e3')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Angelita Claro
+       </div>
+       <div class="color-code">
+        #b0d4e3
+       </div>
+       <div class="color-description">
+        Cor terciária - azul muito claro e celestial.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #e8f4f8;" onclick="copyColor('#e8f4f8')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Céu Claro
+       </div>
+       <div class="color-code">
+        #e8f4f8
+       </div>
+       <div class="color-description">
+        Light background - branco com tom celeste.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #c8e2f0;" onclick="copyColor('#c8e2f0')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Nuvem Suave
+       </div>
+       <div class="color-code">
+        #c8e2f0
+       </div>
+       <div class="color-description">
+        Accent color - azul como nuvens.
+       </div>
+      </div>
+     </div>
+     <div class="color-card">
+      <div class="color-swatch" style="background: #3d5a7a;" onclick="copyColor('#3d5a7a')"></div>
+      <div class="color-info">
+       <div class="color-name">
+        Azul Profundo
+       </div>
+       <div class="color-code">
+        #3d5a7a
+       </div>
+       <div class="color-description">
+        Text light color - para textos secundários.
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="usage-section">
+     <h2>📊 Variações - Angelita</h2>
+     <div class="palette-variants">
+      <div class="variant-card">
+       <h3>Variação Luz</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #6fa5c8;"></div>
+        <div class="color-label">
+         Angelita Claro - #6fa5c8
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #99bdd4;"></div>
+        <div class="color-label">
+         Angelita Suave - #99bdd4
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #cdd9e5;"></div>
+        <div class="color-label">
+         Angelita Muito Claro - #cdd9e5
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Sombra</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #4a7ba3;"></div>
+        <div class="color-label">
+         Angelita Escuro - #4a7ba3
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #34577d;"></div>
+        <div class="color-label">
+         Angelita Muito Escuro - #34577d
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #1d344d;"></div>
+        <div class="color-label">
+         Azul Quase Preto - #1d344d
+        </div>
+       </div>
+      </div>
+      <div class="variant-card">
+       <h3>Variação Nuvem</h3>
+       <div class="color-row">
+        <div class="color-dot" style="background: #dfe9f2;"></div>
+        <div class="color-label">
+         Nuvem Muito Clara - #dfe9f2
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #afd6ea;"></div>
+        <div class="color-label">
+         Nuvem Média - #afd6ea
+        </div>
+       </div>
+       <div class="color-row">
+        <div class="color-dot" style="background: #7fb8d4;"></div>
+        <div class="color-label">
+         Nuvem Profunda - #7fb8d4
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="usage-section button-demo">
+     <h3>🎨 Demonstração de Botões - Angelita</h3>
+     <div class="button-group"><button class="btn" style="background: linear-gradient(135deg, #5a96bd, #7db4d4); color: white;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(90, 150, 189, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.15)'">Botão Primário</button> <button class="btn" style="background: white; color: #5a96bd; border: 2px solid #5a96bd;" onmouseover="this.style.background='#5a96bd'; this.style.color='white'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='white'; this.style.color='#5a96bd'; this.style.transform='translateY(0)'">Botão Secundário</button> <button class="btn" style="background: #c8e2f0; color: #5a96bd; border: none;" onmouseover="this.style.background='#afd6ea'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='#c8e2f0'; this.style.transform='translateY(0)'">Botão Accent</button>
+     </div>
+    </div>
+    <div class="usage-section">
+     <h3>✨ Gradientes Harmoniosos - Angelita</h3>
+     <div class="gradient-demo">
+      <div class="gradient-box" style="background: linear-gradient(135deg, #5a96bd, #7db4d4);">
+       Profundo para Médio
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #7db4d4, #b0d4e3);">
+       Médio para Claro
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #5a96bd, #c8e2f0);">
+       Profundo para Nuvem
+      </div>
+      <div class="gradient-box" style="background: linear-gradient(135deg, #e8f4f8, #7db4d4);">
+       Céu para Médio
+      </div>
+     </div>
+    </div>
+    <div class="usage-section text-samples">
+     <h3>📝 Hierarquia de Texto - Angelita</h3>
+     <div class="text-sample">
+      <div style="color: #5a96bd; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       Título Principal
+      </div>
+      <div style="color: #7db4d4; font-size: 1.1rem; margin-bottom: 8px;">
+       Subtítulo ou Heading 2
+      </div>
+      <div style="color: #3d5a7a; line-height: 1.6; font-size: 1rem;">
+       Este é um texto de corpo em cor secundária. Ele mantém a elegância e readabilidade enquanto complementa a paleta visual. Perfeito para conteúdo principal e descrições.
+      </div>
+     </div>
+     <div class="text-sample">
+      <div style="color: #5a96bd; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px;">
+       Seção com Destaque
+      </div>
+      <div style="color: #b0d4e3; font-size: 1rem; font-weight: 600;">
+       💙 Ênfase em Angelita
+      </div>
+      <div style="color: #3d5a7a; line-height: 1.6; font-size: 1rem; margin-top: 10px;">
+       Quando você precisa chamar atenção para algo importante, use o azul-celeste. A suavidade da angelita cria um efeito pacífico, reconfortante e celestialmente puro.
+      </div>
+     </div>
+    </div>
+   </div>
+  </div><!-- Toast de Cópia -->
+  <div class="copy-toast" id="copyToast">
+   Código de cor copiado! 💫
+  </div>
+  <script>
+    function copyColor(color) {
+      // Copia para clipboard
+      navigator.clipboard.writeText(color).then(() => {
+        // Mostra notificação
+        const toast = document.getElementById('copyToast');
+        toast.classList.add('show');
+        
+        setTimeout(() => {
+          toast.classList.remove('show');
+        }, 2000);
+      });
+    }
+
+    function switchTab(tabName) {
+      // Remove active class de todos os tabs e conte��dos
+      const tabs = document.querySelectorAll('.tab-content');
+      const buttons = document.querySelectorAll('.tab-btn');
+      
+      tabs.forEach(tab => {
+        tab.classList.remove('active');
+      });
+      
+      buttons.forEach(btn => {
+        btn.classList.remove('active');
+      });
+      
+      // Adiciona active ao tab e botão selecionado
+      document.getElementById(tabName).classList.add('active');
+      event.target.classList.add('active');
+    }
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9caeffa982a800ae',t:'MTc3MDU5NDMwNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
