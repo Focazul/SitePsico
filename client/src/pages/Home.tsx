@@ -7,13 +7,12 @@ import FAQSection from '@/components/FAQSection';
 import ValuesSection from '@/components/ValuesSection';
 import ProfilePhoto from '@/components/ProfilePhoto';
 import BackToTop from '@/components/BackToTop';
-import ImageGallery from '@/components/ImageGallery';
 import FadeIn from '@/components/FadeIn';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { Link } from 'wouter';
-import { Heart, Shield, BookOpen, MessageCircle, ArrowRight, CheckCircle, Calendar } from 'lucide-react';
+import { Shield, BookOpen, MessageCircle, ArrowRight, CheckCircle, Calendar } from 'lucide-react';
 import { useSiteConfig } from '@/hooks/useSiteConfig';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { trpc } from '@/lib/trpc';
@@ -223,49 +222,6 @@ export default function Home() {
         {/* VALORES E PRINCÍPIOS SECTION */}
         <ValuesSection />
 
-        <OrganicDivider color="accent" className="mb-0" />
-
-        {/* AMBIENTE E CONSULTÓRIO SECTION */}
-        <section className="py-16 md:py-24 section-light">
-          <div className="container">
-            <FadeIn>
-              <div className="max-w-5xl mx-auto space-y-12">
-                <div className="text-center space-y-4">
-                  <h2 className="text-3xl md:text-4xl font-bold text-foreground title-accent-bg">
-                    Ambiente Acolhedor
-                  </h2>
-                  <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                    Um espaço pensado para o seu conforto e bem-estar
-                  </p>
-                </div>
-
-                <ImageGallery
-                  images={[
-                    {
-                      src: '/images/wellness-blue.jpg',
-                      alt: 'Bem-estar e equilíbrio emocional',
-                      caption: 'Espaço de Acolhimento',
-                    },
-                    {
-                      src: '/images/healing-journey.jpg',
-                      alt: 'Jornada de cura e transformação',
-                      caption: 'Ambiente Tranquilo',
-                    },
-                    {
-                      src: '/images/trust-connection.jpg',
-                      alt: 'Conexão e confiança',
-                      caption: 'Consultório Privativo',
-                    },
-                  ]}
-                  columns={3}
-                />
-              </div>
-            </FadeIn>
-          </div>
-        </section>
-
-        <OrganicDivider color="secondary" className="mb-0" />
-
         {/* SERVIÇOS SECTION */}
         <section
           id="servicos"
@@ -291,7 +247,6 @@ export default function Home() {
                     'Luto e Perdas',
                     'Transições de Vida',
                     'Desenvolvimento Pessoal',
-                    'Questões LGBTQIA+',
                     'Orientação de Carreira',
                     'Conflitos Familiares',
                   ].map((area) => (
@@ -303,32 +258,9 @@ export default function Home() {
 
                 <div className="space-y-6 pt-8 border-t border-border/50">
                   <h3 className="font-bold text-xl text-foreground text-center">
-                    Modalidades de Atendimento
+                    Modalidade de Atendimento
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <Card className="p-6 bg-card/95 border-accent/20 hover:shadow-lg transition-all duration-300">
-                      <div className="space-y-3">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center">
-                            <Heart className="w-5 h-5 text-accent" />
-                          </div>
-                          <p className="font-bold text-lg text-foreground">
-                            Presencial
-                          </p>
-                        </div>
-                        <p className="text-sm text-muted-foreground">
-                          Consultório localizado em{' '}
-                          <strong className="text-foreground">
-                            [Bairro, São Paulo]
-                          </strong>
-                          , com ambiente acolhedor e privativo.
-                        </p>
-                        <p className="text-xs text-muted-foreground/80">
-                          📍 Endereço será fornecido no agendamento
-                        </p>
-                      </div>
-                    </Card>
-
                     <Card className="p-6 bg-card/95 border-accent/20 hover:shadow-lg transition-all duration-300">
                       <div className="space-y-3">
                         <div className="flex items-center gap-3">
@@ -345,7 +277,7 @@ export default function Home() {
                           .
                         </p>
                         <p className="text-xs text-muted-foreground/80">
-                          💻 Mesma qualidade do atendimento presencial
+                          💻 Atendimento seguro e de qualidade
                         </p>
                       </div>
                     </Card>
@@ -509,60 +441,6 @@ export default function Home() {
                     <CheckCircle className="w-5 h-5 text-accent" />
                     <span>Sem compromisso</span>
                   </div>
-                </div>
-              </div>
-            </FadeIn>
-          </div>
-        </section>
-
-        <OrganicDivider color="secondary" className="mb-0" />
-
-        {/* CONTATO SECTION */}
-        <section id="contato" className="py-16 md:py-24 section-light">
-          <div className="container">
-            <FadeIn>
-              <div className="max-w-2xl mx-auto space-y-12">
-                <div className="text-center space-y-4">
-                  <h2 className="text-foreground title-accent-bg">Entre em Contato</h2>
-                  <p className="text-lg text-muted-foreground">
-                    Estou disponível para agendar sua primeira consulta
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <Card className="p-6 text-center border-border/50">
-                    <p className="text-sm text-muted-foreground mb-2">Telefone/WhatsApp</p>
-                    <a
-                      href="tel:[Telefone]"
-                      className="text-accent font-semibold hover:underline"
-                    >
-                      [Telefone]
-                    </a>
-                  </Card>
-
-                  <Card className="p-6 text-center border-border/50">
-                    <p className="text-sm text-muted-foreground mb-2">E-mail</p>
-                    <a
-                      href="mailto:[Email]"
-                      className="text-accent font-semibold hover:underline break-all"
-                    >
-                      [Email]
-                    </a>
-                  </Card>
-
-                  <Card className="p-6 text-center border-border/50">
-                    <p className="text-sm text-muted-foreground mb-2">Horários</p>
-                    <p className="text-accent font-semibold">
-                      [Horários de atendimento]
-                    </p>
-                  </Card>
-                </div>
-
-                <div className="bg-accent/10 border border-accent/20 rounded-lg p-8 text-center space-y-4">
-                  <p className="text-sm text-muted-foreground">
-                    <strong>Primeira Consulta:</strong> Espaço para conhecimento mútuo,
-                    esclarecimento de dúvidas e definição de objetivos terapêuticos.
-                  </p>
                 </div>
               </div>
             </FadeIn>

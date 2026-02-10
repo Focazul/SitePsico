@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import { useSiteConfig } from '@/hooks/useSiteConfig';
-import { ArrowRight, Calendar, MessageCircle, Shield, Stethoscope } from 'lucide-react';
+import { ArrowRight, Calendar, MessageCircle, Shield } from 'lucide-react';
 
 const areas = [
   {
@@ -42,11 +42,6 @@ const areas = [
     detail: 'Definição de metas, construção de disciplina compassiva e acompanhamento de progresso.',
   },
   {
-    title: 'Questões LGBTQIA+',
-    summary: 'Espaço seguro e afirmativo para questões de identidade, expressão e relações.',
-    detail: 'Atenção inclusiva, informada e atualizada sobre vivências LGBTQIA+, acolhendo desafios e celebrações.',
-  },
-  {
     title: 'Orientação de Carreira',
     summary: 'Decisões profissionais com alinhamento a propósito e bem-estar.',
     detail: 'Mapeamento de forças, valores e interesses, com foco em transições e satisfação no trabalho.',
@@ -55,15 +50,9 @@ const areas = [
 
 const modalities = [
   {
-    title: 'Presencial',
-    description: 'Consultório acolhedor em [Bairro, São Paulo], pensado para privacidade e conforto.',
-    notes: 'Endereço informado no agendamento.',
-    icon: <Stethoscope className="w-5 h-5 text-accent" />,
-  },
-  {
     title: 'Online',
     description: 'Atendimento seguro via plataforma confidencial, conforme Resolução CFP nº 11/2018.',
-    notes: 'Mesma qualidade do atendimento presencial.',
+    notes: 'Atendimento de qualidade com privacidade e suporte remoto.',
     icon: <MessageCircle className="w-5 h-5 text-accent" />,
   },
 ];
@@ -111,11 +100,11 @@ export default function Services() {
                   Cuidado psicológico para sua jornada
                 </h1>
                 <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl">
-                  Atendimento presencial e online para apoiar sua saúde mental com ética, sigilo e base científica. Espalhe
-                  uma rede de segurança para lidar com ansiedade, autoestima, relacionamentos e transições de vida.
+                  Atendimento online para apoiar sua saúde mental com ética, sigilo e base científica. Um espaço seguro
+                  para lidar com ansiedade, autoestima, relacionamentos e transições de vida.
                 </p>
                 <div className="flex flex-wrap gap-3">
-                  <Badge variant="outline" className="border-border/60">Atendimento Presencial e Online</Badge>
+                  <Badge variant="outline" className="border-border/60">Atendimento Online</Badge>
                   <Badge variant="outline" className="border-border/60">Sigilo Profissional</Badge>
                   <Badge variant="outline" className="border-border/60">Base em Evidências</Badge>
                 </div>
@@ -220,9 +209,9 @@ export default function Services() {
           <div className="container">
             <div className={`max-w-5xl mx-auto space-y-10 transition-all duration-700 ${modalitiesRef.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
               <div className="text-center space-y-3">
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground title-accent-bg">Modalidades de Atendimento</h2>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground title-accent-bg">Modalidade de Atendimento</h2>
                 <p className="text-muted-foreground max-w-3xl mx-auto">
-                  Escolha entre presencial ou online, mantendo a mesma qualidade de cuidado.
+                  Atendimento online com qualidade, privacidade e acompanhamento cuidadoso.
                 </p>
               </div>
 

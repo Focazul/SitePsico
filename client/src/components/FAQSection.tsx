@@ -106,16 +106,16 @@ export default function FAQSection() {
           {/* CTA */}
           <div className="text-center pt-8">
             <p className="text-muted-foreground mb-4">
-              Ainda tem dúvidas? Entre em contato!
+              Quer seguir com atendimento? Agende sua consulta.
             </p>
             <Button
               className="btn-lapis-lazuli"
               onClick={() => {
-                const section = document.getElementById('contato');
+                const section = document.getElementById('agendamento');
                 section?.scrollIntoView({ behavior: 'smooth', block: 'start' });
               }}
             >
-              Falar Comigo
+              Agendar Consulta
             </Button>
           </div>
         </div>
