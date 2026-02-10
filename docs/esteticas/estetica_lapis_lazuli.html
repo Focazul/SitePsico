@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Estetica Lapis-Lazuli - Home</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Manrope:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #1b3a7a;
+        --secondary: #2e5ea8;
+        --accent: #c9a961;
+        --background: #e8f0ff;
+        --surface: #0f1f3d;
+        --ink: #5a6b7f;
+        --radius: 18px;
+        --shadow-sm: 0 10px 24px -18px rgba(15, 23, 42, 0.35);
+        --shadow-md: 0 18px 42px -26px rgba(15, 23, 42, 0.45);
+        --shadow-lg: 0 28px 60px -40px rgba(15, 23, 42, 0.65);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Manrope", system-ui, sans-serif;
+        color: var(--ink);
+        background: radial-gradient(circle at top left, color-mix(in oklab, var(--background) 75%, var(--accent) 25%), #ffffff 60%);
+      }
+
+      h1, h2, h3, h4 {
+        font-family: "Cormorant Garamond", serif;
+        color: color-mix(in oklab, var(--primary) 70%, #0b1220 30%);
+        margin: 0;
+      }
+
+      p {
+        margin: 0;
+        line-height: 1.7;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .page {
+        min-height: 100vh;
+      }
+
+      .container {
+        width: min(1200px, 92vw);
+        margin: 0 auto;
+      }
+
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 40;
+        background: color-mix(in oklab, var(--background) 90%, #ffffff 10%);
+        border-bottom: 1px solid color-mix(in oklab, var(--accent) 30%, #ffffff 70%);
+      }
+
+      .nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 0;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .brand-mark {
+        width: 46px;
+        height: 46px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        box-shadow: var(--shadow-sm);
+      }
+
+      .brand small {
+        text-transform: uppercase;
+        letter-spacing: 0.28em;
+        font-size: 0.65rem;
+        color: color-mix(in oklab, var(--ink) 60%, #ffffff 40%);
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 20px;
+        font-size: 0.95rem;
+        font-weight: 600;
+      }
+
+      .btn {
+        border: none;
+        border-radius: 999px;
+        padding: 12px 20px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.25s ease;
+      }
+
+      .btn.primary {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: #fff;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .btn.primary:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+      }
+
+      .btn.outline {
+        background: #fff;
+        color: var(--primary);
+        border: 1px solid color-mix(in oklab, var(--primary) 35%, #ffffff 65%);
+      }
+
+      .hero {
+        padding: 80px 0 60px;
+      }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 42px;
+        align-items: center;
+      }
+
+      .hero h1 {
+        font-size: clamp(2.5rem, 4vw, 3.6rem);
+        margin-bottom: 18px;
+      }
+
+      .hero p {
+        font-size: 1.05rem;
+      }
+
+      .hero-card {
+        position: relative;
+        border-radius: var(--radius);
+        background: linear-gradient(140deg, color-mix(in oklab, var(--primary) 80%, #ffffff 20%), var(--secondary));
+        min-height: 280px;
+        overflow: hidden;
+        box-shadow: var(--shadow-lg);
+      }
+
+      .hero-card::after {
+        content: "";
+        position: absolute;
+        inset: 20% 10% auto auto;
+        width: 140px;
+        height: 140px;
+        border-radius: 40px;
+        background: color-mix(in oklab, var(--accent) 70%, #ffffff 30%);
+        opacity: 0.6;
+      }
+
+      .hero-card::before {
+        content: "";
+        position: absolute;
+        inset: auto 10% 14% auto;
+        width: 160px;
+        height: 160px;
+        border-radius: 50%;
+        background: color-mix(in oklab, var(--background) 70%, #ffffff 30%);
+        opacity: 0.4;
+      }
+
+      .section {
+        padding: 70px 0;
+      }
+
+      .section.light {
+        background: color-mix(in oklab, var(--background) 85%, #ffffff 15%);
+      }
+
+      .section.soft {
+        background: color-mix(in oklab, var(--accent) 8%, #ffffff 92%);
+      }
+
+      .section-title {
+        text-align: center;
+        margin-bottom: 36px;
+      }
+
+      .grid-3 {
+        display: grid;
+        gap: 20px;
+        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      }
+
+      .card {
+        background: #fff;
+        border-radius: var(--radius);
+        padding: 22px;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid color-mix(in oklab, var(--accent) 15%, #ffffff 85%);
+      }
+
+      .card.accent {
+        background: color-mix(in oklab, var(--accent) 12%, #ffffff 88%);
+      }
+
+      .tag-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .tag {
+        background: color-mix(in oklab, var(--background) 70%, #ffffff 30%);
+        padding: 8px 14px;
+        border-radius: 999px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--primary);
+      }
+
+      .gallery {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      }
+
+      .gallery-item {
+        border-radius: 18px;
+        background: linear-gradient(140deg, color-mix(in oklab, var(--secondary) 70%, #ffffff 30%), color-mix(in oklab, var(--primary) 70%, #000 30%));
+        min-height: 190px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .gallery-item span {
+        position: absolute;
+        inset: auto 18px 16px 18px;
+        color: #fff;
+        font-weight: 600;
+      }
+
+      details {
+        background: #fff;
+        border-radius: 16px;
+        padding: 16px 20px;
+        border: 1px solid color-mix(in oklab, var(--accent) 18%, #ffffff 82%);
+        box-shadow: var(--shadow-sm);
+      }
+
+      details summary {
+        cursor: pointer;
+        font-weight: 600;
+        color: var(--primary);
+      }
+
+      .form-grid {
+        display: grid;
+        gap: 14px;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      }
+
+      .input, textarea, select {
+        width: 100%;
+        padding: 12px 14px;
+        border-radius: 12px;
+        border: 1px solid color-mix(in oklab, var(--accent) 15%, #ffffff 85%);
+        font: inherit;
+        background: #fff;
+      }
+
+      textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
+
+      .footer {
+        padding: 60px 0 40px;
+        background: color-mix(in oklab, var(--primary) 12%, #ffffff 88%);
+      }
+
+      .footer-grid {
+        display: grid;
+        gap: 20px;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      }
+
+      .reveal {
+        animation: fadeUp 0.7s ease both;
+      }
+
+      .delay-1 { animation-delay: 0.1s; }
+      .delay-2 { animation-delay: 0.2s; }
+      .delay-3 { animation-delay: 0.3s; }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(14px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      #backToTop {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        border: none;
+        background: var(--accent);
+        color: #102030;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: var(--shadow-md);
+        display: none;
+      }
+
+      @media (max-width: 860px) {
+        .nav-links {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <header>
+        <div class="container nav">
+          <div class="brand">
+            <div class="brand-mark"></div>
+            <div>
+              <small>Psicologia</small>
+              <h3>Nome do Psicologo</h3>
+              <p>CRP 06/00000</p>
+            </div>
+          </div>
+          <nav class="nav-links">
+            <a href="#">Home</a>
+            <a href="#sobre">Sobre</a>
+            <a href="#servicos">Servicos</a>
+            <a href="#conteudo">Conteudo</a>
+            <a href="#agendamento">Agendamento</a>
+            <a href="#contato">Contato</a>
+          </nav>
+          <button class="btn primary">Agendar Consulta</button>
+        </div>
+      </header>
+
+      <main>
+        <section class="hero">
+          <div class="container hero-grid">
+            <div class="reveal">
+              <p style="text-transform: uppercase; letter-spacing: 0.3em; font-size: 0.75rem; color: var(--accent); font-weight: 700;">Bem-vindo(a)</p>
+              <h1>Espaco de escuta qualificada e segura</h1>
+              <p>Sou psicologo(a) graduado(a) e ofereco um espaco acolhedor para explorar pensamentos, emocoes e desafios com sigilo profissional.</p>
+              <div style="display: flex; gap: 12px; margin-top: 22px; flex-wrap: wrap;">
+                <button class="btn primary">Agendar Consulta</button>
+                <button class="btn outline">Conhecer Mais</button>
+              </div>
+              <div style="display: flex; gap: 16px; margin-top: 20px; flex-wrap: wrap; font-size: 0.9rem;">
+                <span>CRP ativo</span>
+                <span>Sigilo garantido</span>
+                <span>Online e presencial</span>
+              </div>
+            </div>
+            <div class="hero-card reveal delay-2"></div>
+          </div>
+        </section>
+
+        <section id="sobre" class="section soft">
+          <div class="container">
+            <div class="section-title">
+              <h2>Sobre mim</h2>
+              <p>Formacao, experiencia e compromisso etico</p>
+            </div>
+            <div class="grid-3">
+              <div class="card">
+                <h3>Perfil</h3>
+                <p>Psicologo(a) clinico(a) com atendimento individualizado.</p>
+              </div>
+              <div class="card accent">
+                <h3>Abordagem</h3>
+                <p>Processo terapeutico baseado em escuta e acolhimento.</p>
+              </div>
+              <div class="card">
+                <h3>Experiencia</h3>
+                <p>Atuacao em demandas emocionais e relacionais.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section light">
+          <div class="container">
+            <div class="section-title">
+              <h2>Valores e principios</h2>
+              <p>O que guia minha pratica clinica</p>
+            </div>
+            <div class="grid-3">
+              <div class="card">Acolhimento e seguranca emocional</div>
+              <div class="card">Sigilo profissional absoluto</div>
+              <div class="card">Fundamentacao cientifica</div>
+              <div class="card">Escuta qualificada</div>
+              <div class="card">Respeito a diversidade</div>
+              <div class="card">Autonomia e empoderamento</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="container">
+            <div class="section-title">
+              <h2>Ambiente acolhedor</h2>
+              <p>Um espaco pensado para conforto e bem-estar</p>
+            </div>
+            <div class="gallery">
+              <div class="gallery-item"><span>Espaco de acolhimento</span></div>
+              <div class="gallery-item"><span>Ambiente tranquilo</span></div>
+              <div class="gallery-item"><span>Consultorio privativo</span></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="servicos" class="section soft">
+          <div class="container">
+            <div class="section-title">
+              <h2>Areas de atuacao</h2>
+              <p>Demandas e situacoes atendidas</p>
+            </div>
+            <div class="tag-list" style="justify-content: center;">
+              <span class="tag">Ansiedade e estresse</span>
+              <span class="tag">Autoestima</span>
+              <span class="tag">Relacionamentos</span>
+              <span class="tag">Luto</span>
+              <span class="tag">Transicoes de vida</span>
+              <span class="tag">Desenvolvimento pessoal</span>
+            </div>
+            <div class="grid-3" style="margin-top: 30px;">
+              <div class="card">
+                <h3>Presencial</h3>
+                <p>Consultorio em bairro central com ambiente reservado.</p>
+              </div>
+              <div class="card">
+                <h3>Online</h3>
+                <p>Atendimento seguro e confidencial via plataforma.</p>
+              </div>
+              <div class="card accent">
+                <h3>Agenda</h3>
+                <p>Flexibilidade para horarios semanais.</p>
+              </div>
+            </div>
+            <div style="text-align: center; margin-top: 32px;">
+              <button class="btn primary">Ver disponibilidade</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="section light">
+          <div class="container">
+            <div class="section-title">
+              <h2>Perguntas frequentes</h2>
+              <p>Tire suas duvidas sobre psicoterapia e atendimento</p>
+            </div>
+            <div style="display: grid; gap: 12px;">
+              <details>
+                <summary>Como funciona a primeira consulta?</summary>
+                <p>A primeira consulta e um momento de conhecimento mutuo e alinhamento de objetivos.</p>
+              </details>
+              <details>
+                <summary>Qual a duracao de cada sessao?</summary>
+                <p>As sessoes tem duracao media de 50 minutos.</p>
+              </details>
+              <details>
+                <summary>Atendimento online funciona?</summary>
+                <p>Sim, a terapia online e regulamentada e eficaz.</p>
+              </details>
+            </div>
+          </div>
+        </section>
+
+        <section id="conteudo" class="section">
+          <div class="container">
+            <div class="section-title">
+              <h2>Conteudo educativo</h2>
+              <p>Artigos e reflexoes sobre saude mental</p>
+            </div>
+            <div class="grid-3">
+              <div class="card">
+                <h3>O que e psicoterapia?</h3>
+                <p>Entenda como funciona o processo terapeutico.</p>
+              </div>
+              <div class="card">
+                <h3>Como saber se preciso de terapia?</h3>
+                <p>Sinais de que pode ser o momento de buscar ajuda.</p>
+              </div>
+              <div class="card">
+                <h3>Ansiedade: quando buscar ajuda</h3>
+                <p>Compreendendo sintomas e caminhos de cuidado.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="agendamento" class="section soft">
+          <div class="container">
+            <div class="section-title">
+              <h2>Agendar consulta</h2>
+              <p>Preencha o formulario e entraremos em contato em ate 24h</p>
+            </div>
+            <div class="card">
+              <div class="form-grid">
+                <input class="input" placeholder="Nome completo" />
+                <input class="input" placeholder="Email" />
+                <input class="input" placeholder="Telefone" />
+                <select class="input">
+                  <option>Modalidade</option>
+                  <option>Presencial</option>
+                  <option>Online</option>
+                </select>
+              </div>
+              <div style="margin-top: 14px;">
+                <textarea placeholder="Observacoes"></textarea>
+              </div>
+              <div style="margin-top: 18px;">
+                <button class="btn primary">Enviar solicitacao</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="contato" class="section light">
+          <div class="container">
+            <div class="section-title">
+              <h2>Entre em contato</h2>
+              <p>Disponivel para agendar sua primeira consulta</p>
+            </div>
+            <div class="grid-3">
+              <div class="card">Telefone/WhatsApp</div>
+              <div class="card">Email</div>
+              <div class="card">Horarios</div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <div class="container footer-grid">
+          <div>
+            <h3>Psicologia</h3>
+            <p>Atendimento etico, sigiloso e responsavel.</p>
+          </div>
+          <div>
+            <h4>Links</h4>
+            <p>Home • Sobre • Servicos • Conteudo</p>
+          </div>
+          <div>
+            <h4>Contato</h4>
+            <p>contato@exemplo.com</p>
+          </div>
+          <div>
+            <h4>Newsletter</h4>
+            <p>Receba conteudos e avisos sobre agenda.</p>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <button id="backToTop" aria-label="Voltar ao topo">↑</button>
+
+    <script>
+      const backToTop = document.getElementById("backToTop");
+      window.addEventListener("scroll", () => {
+        backToTop.style.display = window.scrollY > 300 ? "block" : "none";
+      });
+
+      backToTop.addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+    </script>
+  </body>
+</html>

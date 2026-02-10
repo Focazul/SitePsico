@@ -151,9 +151,9 @@ export default function Blog() {
                   <Button
                     variant="outline"
                     className="btn-outline-blue"
-                    onClick={() => (window.location.href = '/#contato')}
+                    onClick={() => (window.location.href = '/#sobre')}
                   >
-                    Enviar uma dúvida
+                    Conhecer a terapia
                   </Button>
                 </div>
               </div>

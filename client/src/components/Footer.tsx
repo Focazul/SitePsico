@@ -37,11 +37,11 @@ export default function Footer() {
             <h4 className="font-semibold text-foreground">Links</h4>
             <div className="grid gap-2 text-sm text-muted-foreground">
               <Link href="/" className="hover:text-accent transition-colors">Home</Link>
-              <Link href="/sobre" className="hover:text-accent transition-colors">Sobre</Link>
-              <Link href="/servicos" className="hover:text-accent transition-colors">Serviços</Link>
-              <Link href="/blog" className="hover:text-accent transition-colors">Conteúdo</Link>
-              <Link href="/agendamento" className="hover:text-accent transition-colors">Agendamento</Link>
-              <Link href="/contato" className="hover:text-accent transition-colors">Contato</Link>
+              <Link href="/#sobre" className="hover:text-accent transition-colors">Sobre mim</Link>
+              <Link href="/#servicos" className="hover:text-accent transition-colors">Áreas de atuação</Link>
+              <Link href="/#valores" className="hover:text-accent transition-colors">Valores</Link>
+              <Link href="/#faq" className="hover:text-accent transition-colors">Perguntas frequentes</Link>
+              <Link href="/blog" className="hover:text-accent transition-colors">Blog</Link>
             </div>
             <div className="grid gap-2 text-sm text-muted-foreground">
               <a href="#" className="hover:text-accent transition-colors">Política de Privacidade</a>

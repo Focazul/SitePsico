@@ -1,12 +1,8 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import About from "@/pages/About";
 import Blog from "@/pages/Blog";
 import BlogPost from "@/pages/BlogPost";
-import Booking from "@/pages/Booking";
-import Contact from "@/pages/Contact";
 import NotFound from "@/pages/NotFound";
-import Services from "@/pages/Services";
 import Home from "./pages/Home";
 import Login from "@/pages/Login";
 import AdminDashboard from "@/pages/admin/Dashboard";
@@ -53,12 +49,8 @@ function Router() {
         <Switch location={location}>
           {/* PUBLIC ROUTES */}
           <Route path={"/"} component={Home} />
-          <Route path={"/sobre"} component={About} />
-          <Route path={"/servicos"} component={Services} />
           <Route path={"/blog"} component={Blog} />
           <Route path={"/blog/:slug"} component={BlogPost} />
-          <Route path={"/contato"} component={Contact} />
-          <Route path={"/agendamento"} component={Booking} />
           <Route path={"/login"} component={Login} />
           <Route path={"/admin/login"}>
             {() => {

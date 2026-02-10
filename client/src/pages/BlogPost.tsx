@@ -169,8 +169,8 @@ export default function BlogPost({ params }: BlogPostParams) {
                 <Button className="btn-lapis-lazuli hover:scale-105" onClick={() => (window.location.href = '/#agendamento')}>
                   Agendar consulta
                 </Button>
-                <Button variant="outline" className="btn-outline-blue" onClick={() => (window.location.href = '/#contato')}>
-                  Enviar dúvida rápida
+                <Button variant="outline" className="btn-outline-blue" onClick={() => (window.location.href = '/#sobre')}>
+                  Conhecer a terapia
                 </Button>
               </div>
             </Card>

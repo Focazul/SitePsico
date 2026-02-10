@@ -11,13 +11,9 @@ import FadeIn from '@/components/FadeIn';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
-import { Link } from 'wouter';
-import { Shield, BookOpen, MessageCircle, ArrowRight, CheckCircle, Calendar } from 'lucide-react';
+import { MessageCircle, ArrowRight, CheckCircle, Calendar } from 'lucide-react';
 import { useSiteConfig } from '@/hooks/useSiteConfig';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
-import { trpc } from '@/lib/trpc';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 
 /**
  * Home Page - Site Psicólogo SP
@@ -34,29 +30,11 @@ export default function Home() {
   const { openModal } = useQuickBooking();
   
   // Get site configuration from database
-  const { config, isLoading } = useSiteConfig();
+  const { config } = useSiteConfig();
   
   // Update document title
   useDocumentTitle();
 
-  const postsQuery = trpc.blog.getPosts.useQuery({ limit: 3, offset: 0 });
-  const posts = postsQuery.data?.posts || [];
-
-  const getExcerpt = (post: { excerpt?: string | null; content: string }) => {
-    if (post.excerpt && post.excerpt.trim().length > 0) return post.excerpt;
-    const plain = post.content
-      .replace(/<[^>]+>/g, ' ')
-      .replace(/[_*`>#-]+/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim();
-    return plain.length > 140 ? `${plain.slice(0, 140).trim()}...` : plain;
-  };
-
-  const formatDate = (date: Date | null | string) => {
-    if (!date) return '';
-    const parsed = typeof date === 'string' ? new Date(date) : date;
-    return format(parsed, 'dd MMM yyyy', { locale: ptBR });
-  };
 
   // Smooth scroll handler
   const scrollToSection = (sectionId: string) => {
@@ -120,7 +98,7 @@ export default function Home() {
                     </div>
                     <div className="flex items-center gap-2 rounded-full border border-border/70 bg-background/70 px-3 py-2">
                       <CheckCircle className="w-5 h-5 text-accent" />
-                      <span>Online e Presencial</span>
+                      <span>Atendimento Online</span>
                     </div>
                   </div>
                   </div>
@@ -151,7 +129,7 @@ export default function Home() {
         {/* SOBRE MIM SECTION */}
         <section
           id="sobre"
-          className="py-16 md:py-24 section-soft"
+          className="py-16 md:py-24 section-soft section-bg-wellness section-bg-image"
         >
           <div className="container">
             <FadeIn>
@@ -225,7 +203,7 @@ export default function Home() {
         {/* SERVIÇOS SECTION */}
         <section
           id="servicos"
-          className="py-16 md:py-24 section-soft"
+          className="py-16 md:py-24 section-soft section-bg-trust section-bg-image"
         >
           <div className="container">
             <FadeIn>
@@ -307,100 +285,8 @@ export default function Home() {
 
         <OrganicDivider color="accent" className="mb-0" />
 
-        {/* CONTEÚDO SECTION */}
-        <section
-          id="conteudo"
-          className="py-16 md:py-24"
-        >
-          <div className="container">
-            <FadeIn>
-              <div className="max-w-5xl mx-auto space-y-12">
-                <div className="text-center space-y-4">
-                  <h2 className="text-3xl md:text-4xl font-bold text-foreground title-accent-bg">
-                    Conteúdo Educativo
-                  </h2>
-                  <p className="text-lg text-muted-foreground">
-                    Artigos e reflexões sobre saúde mental e bem-estar
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {postsQuery.isLoading && (
-                    Array.from({ length: 3 }).map((_, idx) => (
-                      <Card
-                        key={`loading-${idx}`}
-                        className="p-6 border-border/50 animate-pulse"
-                      >
-                        <div className="space-y-4">
-                          <div className="space-y-2">
-                            <div className="h-3 w-24 rounded-full bg-muted" />
-                            <div className="h-4 w-40 rounded-full bg-muted" />
-                          </div>
-                          <div className="h-3 w-full rounded-full bg-muted" />
-                          <div className="h-3 w-5/6 rounded-full bg-muted" />
-                          <div className="h-3 w-20 rounded-full bg-muted" />
-                        </div>
-                      </Card>
-                    ))
-                  )}
-
-                  {!postsQuery.isLoading && posts.length === 0 && (
-                    <div className="col-span-full text-center text-sm text-muted-foreground">
-                      Os artigos serão publicados em breve.
-                    </div>
-                  )}
-
-                  {posts.map((post) => (
-                    <Card
-                      key={post.id}
-                      className="p-6 border-border/50 hover:border-accent hover:shadow-lg transition-all duration-300 cursor-pointer group"
-                    >
-                      <Link href={`/blog/${post.slug}`} className="block space-y-4 h-full">
-                        <div className="space-y-2">
-                          <span className="text-xs font-semibold text-accent uppercase tracking-wide">
-                            {post.category?.name || 'Artigo'}
-                          </span>
-                          <h3 className="font-bold text-lg text-foreground group-hover:text-accent transition-colors">
-                            {post.title}
-                          </h3>
-                        </div>
-                        <p className="text-sm text-muted-foreground leading-relaxed">
-                          {getExcerpt(post)}
-                        </p>
-                        <div className="flex items-center justify-between pt-2 border-t border-border/30">
-                          <p className="text-xs text-muted-foreground/60">
-                            {formatDate(post.publishedAt)}
-                          </p>
-                          <ArrowRight className="w-4 h-4 text-accent opacity-0 group-hover:opacity-100 transition-opacity" />
-                        </div>
-                      </Link>
-                    </Card>
-                  ))}
-                </div>
-
-                {posts.length > 0 && (
-                  <div className="text-center pt-8">
-                    <Link href="/blog" className="inline-flex">
-                      <Button
-                        variant="outline"
-                        size="lg"
-                        className="border-border hover:bg-muted hover:border-accent transition-all duration-200"
-                      >
-                        Ver todos os artigos
-                        <BookOpen className="ml-2 w-5 h-5" />
-                      </Button>
-                    </Link>
-                  </div>
-                )}
-              </div>
-            </FadeIn>
-          </div>
-        </section>
-
-        <OrganicDivider color="accent" className="mb-0" />
-
         {/* AGENDAMENTO SECTION */}
-        <section id="agendamento" className="py-16 md:py-24 section-soft">
+        <section id="agendamento" className="py-16 md:py-24 section-soft section-bg-healing section-bg-image">
           <div className="container">
             <FadeIn>
               <div className="max-w-4xl mx-auto space-y-12">

@@ -32,28 +32,11 @@ export default function Header() {
 
   const navItems = useMemo(() => ([
     { label: 'Home', href: '/' },
-    { label: 'Sobre', href: '/sobre' },
-    {
-      label: 'Serviços',
-      href: '/servicos',
-      dropdown: [
-        { title: 'Visão geral', href: '/servicos' },
-        { title: 'Modalidades', href: '/servicos#modalidades' },
-        { title: 'Áreas de atuação', href: '/servicos#areas' },
-        { title: 'Valores e duração', href: '/servicos#valores' },
-      ],
-    },
-    {
-      label: 'Conteúdo',
-      href: '/blog',
-      dropdown: [
-        { title: 'Blog', href: '/blog' },
-        { title: 'Artigos recentes', href: '/blog#recentes' },
-        { title: 'Categorias', href: '/blog#categorias' },
-      ],
-    },
-    { label: 'Agendamento', href: '/agendamento' },
-    { label: 'Contato', href: '/contato' },
+    { label: 'Sobre mim', href: '/#sobre' },
+    { label: 'Áreas de atuação', href: '/#servicos' },
+    { label: 'Valores', href: '/#valores' },
+    { label: 'Perguntas frequentes', href: '/#faq' },
+    { label: 'Blog', href: '/blog' },
   ]), []);
 
   useEffect(() => {

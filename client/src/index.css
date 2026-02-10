@@ -331,6 +331,38 @@
     background: color-mix(in oklch, var(--background) 85%, #ffffff 15%);
   }
 
+  .section-bg-image {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .section-bg-image::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0.08;
+    z-index: 0;
+  }
+
+  .section-bg-image > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .section-bg-wellness::before {
+    background-image: linear-gradient(135deg, rgba(27, 58, 122, 0.2), rgba(201, 169, 97, 0.08)), url('/images/wellness-blue.jpg');
+  }
+
+  .section-bg-trust::before {
+    background-image: linear-gradient(135deg, rgba(46, 94, 168, 0.2), rgba(201, 169, 97, 0.08)), url('/images/trust-connection.jpg');
+  }
+
+  .section-bg-healing::before {
+    background-image: linear-gradient(135deg, rgba(27, 58, 122, 0.18), rgba(201, 169, 97, 0.08)), url('/images/healing-journey.jpg');
+  }
+
   .section-contrast {
     background: linear-gradient(135deg, color-mix(in oklch, var(--background) 70%, #ffffff 30%), color-mix(in oklch, var(--muted) 75%, #ffffff 25%));
     border-top: 1px solid color-mix(in oklch, var(--accent) 20%, var(--border));
