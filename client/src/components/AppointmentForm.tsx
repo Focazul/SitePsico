@@ -49,14 +49,14 @@ export default function AppointmentForm() {
   const onSubmit = async (data: any) => {
     setIsSubmitting(true);
     try {
-      const [year, month, day] = (data.appointmentDate as string).split('-');
-      const appointmentDate = `${year}-${month}-${day}`;
+      // Enviar data como string YYYY-MM-DD para o backend tratar o fuso
+      const appointmentDateStr = data.appointmentDate;
 
       await createAppointment.mutateAsync({
         clientName: data.clientName,
         clientEmail: data.clientEmail,
         clientPhone: data.clientPhone,
-        appointmentDate,
+        appointmentDate: appointmentDateStr,
         appointmentTime: data.appointmentTime,
         modality: data.modality,
         subject: data.subject,
@@ -65,8 +65,8 @@ export default function AppointmentForm() {
 
       toast.success('Consulta agendada com sucesso! Você receberá uma confirmação por email.');
       reset();
-    } catch (error) {
-      toast.error('Erro ao agendar consulta. Tente novamente.');
+    } catch (error: any) {
+      toast.error(error.message || 'Erro ao agendar consulta. Tente novamente.');
       console.error(error);
     } finally {
       setIsSubmitting(false);

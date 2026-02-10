@@ -54,10 +54,18 @@ export const bookingRouter = router({
       Promise.all([
         import("../_core/googleCalendar"),
         import("../db")
-      ]).then(([calendarModule, dbModule]) => {
-        const { createCalendarEvent } = calendarModule;
+      ]).then(async ([calendarModule, dbModule]) => {
+        const { createCalendarEvent, isCalendarEnabled } = calendarModule;
         const { updateAppointmentCalendarEventId } = dbModule;
         
+        // Verificação explícita se está habilitado
+        const isEnabled = await isCalendarEnabled();
+        if (!isEnabled) {
+          console.log("[Booking] Google Calendar integration is disabled, skipping event creation.");
+          return;
+        }
+
+        console.log("[Booking] Google Calendar is enabled, creating event...");
         const appointmentDateTime = new Date(`${input.appointmentDate}T${input.appointmentTime}:00`);
         
         createCalendarEvent({
@@ -74,10 +82,10 @@ export const bookingRouter = router({
             await updateAppointmentCalendarEventId(created.id, eventId);
           }
         }).catch((error) => {
-          console.warn("[Booking] Failed to create calendar event", error);
+          console.error("[Booking] Error creating calendar event:", error);
         });
       }).catch((error) => {
-        console.warn("[Booking] Failed to import required modules", error);
+        console.error("[Booking] Critical error in calendar sync promise:", error);
       });
 
       return created;
