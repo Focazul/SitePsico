@@ -81,8 +81,6 @@ export default function AppointmentForm() {
     }
   };
 
-  const availableSlots = availableSlotsQuery.data?.slots ?? [];
-
   // Get minimum date (today)
   const today = new Date().toISOString().split('T')[0];
   const maxDate = new Date();
