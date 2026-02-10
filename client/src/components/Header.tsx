@@ -30,7 +30,13 @@ export default function Header() {
   const { openModal } = useQuickBooking();
   const { config } = useSiteConfig();
 
-  const navItems = useMemo(() => ([
+  type NavItem = {
+    label: string;
+    href: string;
+    dropdown?: { title: string; href: string }[];
+  };
+
+  const navItems = useMemo<NavItem[]>(() => ([
     { label: 'Home', href: '/' },
     { label: 'Sobre mim', href: '#sobre' },
     { label: 'Áreas de atuação', href: '#areas' },

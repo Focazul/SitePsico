@@ -589,10 +589,9 @@ export async function getAvailableSlots(dateStr: string): Promise<AvailableSlot[
   if (Number.isNaN(dateValue.getTime())) return fallback;
   
   // Usar Intl.DateTimeFormat para pegar o dia da semana em São Paulo
-  const dayOfWeek = parseInt(new Intl.DateTimeFormat('en-US', {
-    timeZone: 'America/Sao_Paulo',
-    weekday: 'numeric',
-  }).format(dateValue)) % 7;
+  // Nota: weekday: 'numeric' não é suportado corretamente aqui, usamos getUTCDay()
+  // pois dateValue é criado como UTC 00:00 a partir da string YYYY-MM-DD
+  const dayOfWeek = dateValue.getUTCDay();
   
   console.log(`[Slots] Checking availability for ${dateStr} (SP DayOfWeek: ${dayOfWeek})`);
 
