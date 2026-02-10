@@ -40,15 +40,7 @@ export default function OrganicDivider({
         <circle cx="50" cy="15" r="2" fill={colorMap[color]} opacity="0.6" />
         <circle cx="150" cy="25" r="2" fill={colorMap[color]} opacity="0.6" />
         {/* Símbolo da psicologia (Ψ) */}
-        <g transform="translate(100,20)">
-          <path
-            d="M-5 0 L-5 15 M-5 3 Q-1 -2 3 3 Q-1 8 -5 3 M-5 12 Q-1 17 3 12 Q-1 7 -5 12"
-            stroke={colorMap[color]}
-            strokeWidth="1.5"
-            fill="none"
-            opacity="0.7"
-          />
-        </g>
+        <text x="100" y="25" font-size="16" fill={colorMap[color]} opacity="0.7" text-anchor="middle" dominant-baseline="middle">Ψ</text>
       </svg>
     </div>
   );
