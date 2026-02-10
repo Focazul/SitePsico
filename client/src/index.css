@@ -104,7 +104,7 @@
 }
 
 body {
-  background: radial-gradient(circle at top left, color-mix(in oklab, var(--background) 60%, var(--accent) 40%), #ffffff 60%);
+  background: var(--muted);
 }
 
 .dark {
