@@ -701,3 +701,40 @@ body {
     }
   }
 }
+
+/* Admin Styles - Lapis-Lazuli Theme */
+.admin-sidebar {
+  background: linear-gradient(180deg, var(--primary) 0%, var(--secondary) 100%);
+  border-right: 1px solid var(--accent);
+}
+
+.admin-sidebar-header {
+  background: color-mix(in oklch, var(--primary) 95%, #ffffff 5%);
+  border-bottom: 1px solid var(--accent);
+}
+
+.admin-card {
+  background: #ffffff;
+  border: 1px solid color-mix(in oklch, var(--accent) 20%, #ffffff 80%);
+  box-shadow: var(--shadow-sm);
+}
+
+.admin-button-primary {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: #ffffff;
+  border: none;
+  box-shadow: var(--shadow-sm);
+}
+
+.admin-button-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.admin-accent-text {
+  color: var(--accent);
+}
+
+.admin-primary-text {
+  color: var(--primary);
+}
