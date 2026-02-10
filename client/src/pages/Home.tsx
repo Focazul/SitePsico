@@ -50,21 +50,21 @@ export default function Home() {
 
       <main id="main-content" className="flex-1 relative z-10">
         {/* HERO SECTION */}
-        <section className="py-16 md:py-24 lg:py-32">
+        <section className="py-12 md:py-20">
           <div className="container">
             <FadeIn>
-              <div className="hero-shell p-6 md:p-10 lg:p-12">
+              <div className="hero-shell p-8 md:p-12 lg:p-16">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-                  <div className="space-y-6">
+                  <div className="space-y-8 relative z-10">
                   <div className="space-y-2">
                     <p className="text-accent font-semibold text-sm md:text-base uppercase tracking-[0.3em]">
                       Bem-vindo(a)
                     </p>
-                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight">
+                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight" style={{ color: 'white' }}>
                       Espaço de escuta qualificada e segura
                     </h1>
                   </div>
-                  <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-xl">
+                  <p className="text-lg md:text-xl text-white/90 leading-relaxed max-w-xl" style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
                     {config.aboutText || 'Sou psicólogo(a) graduado(a) e ofereço um espaço acolhedor onde você pode explorar seus pensamentos, emoções e desafios com confiança e sigilo profissional.'}
                   </p>
                   <div className="flex flex-col sm:flex-row gap-4 pt-4">
@@ -87,16 +87,16 @@ export default function Home() {
                   </div>
 
                   {/* Trust Indicators */}
-                  <div className="flex flex-wrap gap-3 pt-6 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-2 rounded-full border border-border/70 bg-background/70 px-3 py-2">
+                  <div className="flex flex-wrap gap-3 pt-6 text-sm text-white/80" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+                    <div className="flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-3 py-2 backdrop-blur-sm" style={{ borderColor: 'rgba(255, 255, 255, 0.3)', backgroundColor: 'rgba(255, 255, 255, 0.1)' }}>
                       <CheckCircle className="w-5 h-5 text-accent" />
                       <span>{config.psychologistCrp || 'CRP-SP'} Ativo</span>
                     </div>
-                    <div className="flex items-center gap-2 rounded-full border border-border/70 bg-background/70 px-3 py-2">
+                    <div className="flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-3 py-2 backdrop-blur-sm" style={{ borderColor: 'rgba(255, 255, 255, 0.3)', backgroundColor: 'rgba(255, 255, 255, 0.1)' }}>
                       <CheckCircle className="w-5 h-5 text-accent" />
                       <span>Sigilo Garantido</span>
                     </div>
-                    <div className="flex items-center gap-2 rounded-full border border-border/70 bg-background/70 px-3 py-2">
+                    <div className="flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-3 py-2 backdrop-blur-sm" style={{ borderColor: 'rgba(255, 255, 255, 0.3)', backgroundColor: 'rgba(255, 255, 255, 0.1)' }}>
                       <CheckCircle className="w-5 h-5 text-accent" />
                       <span>Atendimento Online</span>
                     </div>

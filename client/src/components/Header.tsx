@@ -57,9 +57,13 @@ export default function Header() {
     <header
       role="banner"
       className={cn(
-        'sticky top-0 z-50 transition-[background,box-shadow,border] duration-300 backdrop-blur-md border-b',
-        isScrolled ? 'bg-background/90 border-border/70 shadow-md' : 'bg-background/80 border-border/40'
+        'sticky top-0 z-50 transition-[background,box-shadow,border] duration-300 border-b',
+        isScrolled ? 'bg-background/90 border-accent/30 shadow-md' : 'bg-background/80 border-accent/20'
       )}
+      style={{
+        background: 'color-mix(in oklab, var(--background) 90%, #ffffff 10%)',
+        borderBottomColor: 'color-mix(in oklab, var(--accent) 30%, #ffffff 70%)'
+      }}
     >
       <nav 
         role="navigation"
@@ -68,13 +72,15 @@ export default function Header() {
       >
         {/* Logo/Nome */}
         <Link href="/" className="flex items-center gap-3" onClick={() => setIsMenuOpen(false)}>
-          <img
-            src="/images/logo-main.png"
-            alt="Logo"
-            className="w-11 h-11 md:w-12 md:h-12 object-contain"
+          <div 
+            className="w-11 h-11 md:w-12 md:h-12 rounded-[14px] shadow-sm flex-shrink-0"
+            style={{
+              background: 'linear-gradient(135deg, var(--primary), var(--accent))'
+            }}
+            aria-hidden="true"
           />
           <div className="hidden sm:block text-left">
-            <p className="text-[13px] uppercase tracking-[0.2em] text-muted-foreground">Psicologia</p>
+            <p className="text-[13px] uppercase tracking-[0.28em] text-muted-foreground font-semibold">Psicologia</p>
             <h1 className="text-lg md:text-xl font-bold text-foreground leading-tight">
               {config.psychologistName}
             </h1>
@@ -90,12 +96,12 @@ export default function Header() {
               {navItems.map((item) => (
                 <NavigationMenuItem key={item.label}>
                   {item.dropdown ? (
-                    <NavigationMenuTrigger className={cn('nav-link', isActive(item.href) && 'bg-primary/10 text-foreground border border-accent/30')}>{item.label}</NavigationMenuTrigger>
+                    <NavigationMenuTrigger className={cn('nav-link px-3 py-2 rounded-full font-semibold text-sm', isActive(item.href) && 'bg-primary/10 text-foreground')}>{item.label}</NavigationMenuTrigger>
                   ) : (
                     <NavigationMenuLink
                       href={item.href}
                       data-active={isActive(item.href)}
-                      className={cn('nav-link px-3 py-2 rounded-full', isActive(item.href) && 'bg-primary/10 text-foreground border border-accent/30')}
+                      className={cn('nav-link px-3 py-2 rounded-full font-semibold text-sm', isActive(item.href) && 'bg-primary/10 text-foreground')}
                       onClick={(e) => {
                         e.preventDefault();
                         navigate(item.href);
