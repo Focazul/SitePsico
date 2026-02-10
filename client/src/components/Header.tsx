@@ -32,10 +32,10 @@ export default function Header() {
 
   const navItems = useMemo(() => ([
     { label: 'Home', href: '/' },
-    { label: 'Sobre mim', href: '/#sobre' },
-    { label: 'Áreas de atuação', href: '/#servicos' },
-    { label: 'Valores', href: '/#valores' },
-    { label: 'Perguntas frequentes', href: '/#faq' },
+    { label: 'Sobre mim', href: '#sobre' },
+    { label: 'Áreas de atuação', href: '#areas' },
+    { label: 'Valores', href: '#valores' },
+    { label: 'Perguntas frequentes', href: '#faq' },
     { label: 'Blog', href: '/blog' },
   ]), []);
 

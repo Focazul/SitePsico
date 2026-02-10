@@ -129,7 +129,7 @@ export default function Home() {
         {/* SOBRE MIM SECTION */}
         <section
           id="sobre"
-          className="py-16 md:py-24 section-soft section-bg-wellness section-bg-image"
+          className="py-16 md:py-24 section-soft"
         >
           <div className="container">
             <FadeIn>
@@ -202,8 +202,8 @@ export default function Home() {
 
         {/* SERVIÇOS SECTION */}
         <section
-          id="servicos"
-          className="py-16 md:py-24 section-soft section-bg-trust section-bg-image"
+          id="areas"
+          className="py-16 md:py-24 section-soft"
         >
           <div className="container">
             <FadeIn>
@@ -286,7 +286,7 @@ export default function Home() {
         <OrganicDivider color="accent" className="mb-0" />
 
         {/* AGENDAMENTO SECTION */}
-        <section id="agendamento" className="py-16 md:py-24 section-soft section-bg-healing section-bg-image">
+        <section id="agendamento" className="py-16 md:py-24 section-soft">
           <div className="container">
             <FadeIn>
               <div className="max-w-4xl mx-auto space-y-12">

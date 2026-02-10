@@ -106,6 +106,10 @@
   --sidebar-ring: #c9a961;
 }
 
+body {
+  background: radial-gradient(circle at top left, color-mix(in oklab, var(--background) 75%, var(--accent) 25%), #ffffff 60%);
+}
+
 .dark {
   /* Variações Escuras para Dark Mode */
   --primary: #4A6FA5; /* Azul Médio para contraste */
