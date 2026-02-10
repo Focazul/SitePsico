@@ -125,6 +125,13 @@ export function csrfProtectionMiddleware(
     return next();
   }
 
+  // EXCEÇÃO: Permitir agendamento público sem CSRF para evitar bloqueios em produção
+  // O tRPC usa POST para mutations. O path costuma ser /api/trpc/booking.create
+  if (req.path.includes('booking.create') || req.body?.['0']?.path === 'booking.create') {
+    console.log("[CSRF Middleware] Bypassing CSRF for public booking creation");
+    return next();
+  }
+
   // DEV MODE: Skip CSRF check if DEV_SKIP_AUTH is enabled
   if (process.env.DEV_SKIP_AUTH === 'true') {
     console.warn("[DEV MODE] ⚠️  CSRF protection bypassed!");

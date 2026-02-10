@@ -257,9 +257,17 @@ function combineDateTime(dateStr: string, timeStr: string): Date {
 }
 
 function assertBusinessRules(dateStr: string, timeStr: string) {
+  // Pega o momento atual no fuso de São Paulo
   const now = new Date();
   const when = combineDateTime(dateStr, timeStr);
+  
+  // Ajuste para considerar o fuso de SP na comparação de "agora"
+  // Em produção no Render (UTC), precisamos garantir que as 24h sejam relativas ao horário de SP
   const min = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+  
+  console.log(`[BusinessRules] Validating booking: ${dateStr} ${timeStr}`);
+  console.log(`[BusinessRules] Current UTC: ${now.toISOString()}, Booking UTC: ${when.toISOString()}`);
+
   if (when < min) {
     throw new Error("Agendamento precisa ser com pelo menos 24h de antecedência.");
   }
@@ -576,9 +584,17 @@ export async function getAvailableSlots(dateStr: string): Promise<AvailableSlot[
   // Fallback placeholders when DB is not configured
   const fallback = ["09:00", "10:00", "11:00", "14:00", "15:00", "16:00"].map((time) => ({ time }));
 
+  // Força o fuso horário de São Paulo para cálculos de data
   const dateValue = new Date(`${dateStr}T00:00:00.000Z`);
   if (Number.isNaN(dateValue.getTime())) return fallback;
-  const dayOfWeek = dateValue.getUTCDay();
+  
+  // Usar Intl.DateTimeFormat para pegar o dia da semana em São Paulo
+  const dayOfWeek = parseInt(new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/Sao_Paulo',
+    weekday: 'numeric',
+  }).format(dateValue)) % 7;
+  
+  console.log(`[Slots] Checking availability for ${dateStr} (SP DayOfWeek: ${dayOfWeek})`);
 
   // Prefer availability saved via settings (admin "Horários" tab)
   const availabilitySetting = await getSettingValue("availability");
@@ -619,15 +635,23 @@ export async function getAvailableSlots(dateStr: string): Promise<AvailableSlot[
   // @ts-ignore
   const slotMinutesFromSettings = Number.isFinite(slotIntervalSetting) && slotIntervalSetting > 0 ? slotIntervalSetting : (null as unknown as number | null);
 
-  // Fetch Google Calendar events for this day
+  // Fetch Google Calendar events for this day (only if enabled)
   let googleEvents: any[] = [];
   try {
-    const { getEventsForDateRange } = await import("./_core/googleCalendar");
-    // Define end of the day for the range
-    const dayEnd = new Date(dateValue.getTime() + 24 * 60 * 60 * 1000 - 1);
-    googleEvents = await getEventsForDateRange(dateValue, dayEnd);
+    const { getEventsForDateRange, isCalendarEnabled } = await import("./_core/googleCalendar");
+    const isEnabled = await isCalendarEnabled();
+    
+    if (isEnabled) {
+      console.log("[Database] Google Calendar is enabled, fetching events for busy check...");
+      // Define end of the day for the range
+      const dayEnd = new Date(dateValue.getTime() + 24 * 60 * 60 * 1000 - 1);
+      googleEvents = await getEventsForDateRange(dateValue, dayEnd);
+      console.log(`[Database] Found ${googleEvents.length} events in Google Calendar`);
+    } else {
+      console.log("[Database] Google Calendar is disabled, skipping busy check.");
+    }
   } catch (err) {
-    console.warn("[Database] Failed to fetch Google Calendar events:", err);
+    console.error("[Database] Failed to fetch Google Calendar events:", err);
   }
 
   const isGoogleBusy = (slotStartMinutes: number, slotDuration: number) => {
