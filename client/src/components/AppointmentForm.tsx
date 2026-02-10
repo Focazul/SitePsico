@@ -46,6 +46,14 @@ export default function AppointmentForm() {
   const selectedDate = watch('appointmentDate');
   const selectedModality = watch('modality');
 
+  // Get available slots for selected date
+  const availableSlotsQuery = trpc.booking.getAvailableSlots.useQuery(
+    { date: selectedDate },
+    { enabled: !!selectedDate }
+  );
+
+  const availableSlots = availableSlotsQuery.data?.slots ?? [];
+
   const onSubmit = async (data: any) => {
     setIsSubmitting(true);
     try {
@@ -73,11 +81,7 @@ export default function AppointmentForm() {
     }
   };
 
-  // Generate available time slots
-  const timeSlots = Array.from({ length: 9 }, (_, i) => {
-    const hour = 9 + i;
-    return `${String(hour).padStart(2, '0')}:00`;
-  });
+  const availableSlots = availableSlotsQuery.data?.slots ?? [];
 
   // Get minimum date (today)
   const today = new Date().toISOString().split('T')[0];
@@ -181,10 +185,10 @@ export default function AppointmentForm() {
               </Label>
               <Select onValueChange={(value) => setValue('appointmentTime', value)}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Selecione um horário" />
+                  <SelectValue placeholder={selectedDate ? (availableSlotsQuery.isLoading ? "Carregando horários..." : "Selecione um horário") : "Selecione uma data primeiro"} />
                 </SelectTrigger>
                 <SelectContent>
-                  {timeSlots.map((time) => (
+                  {availableSlots.map(({ time }) => (
                     <SelectItem key={time} value={time}>
                       {time}
                     </SelectItem>
