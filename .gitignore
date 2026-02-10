@@ -101,6 +101,7 @@ jspm_packages/
 # Temporary folders
 tmp/
 temp/
+test-results/
 
 # Arquivos antigos/documentação local
 _ARQUIVOS_ANTIGOS/
