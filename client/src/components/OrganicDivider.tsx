@@ -1,7 +1,7 @@
 /**
  * OrganicDivider Component
- * Design: Transições sutis entre seções
- * - Gradiente vertical discreto para marcar passagem
+ * Design: Elementos visuais sutis para transições
+ * - SVG decorativo com formas minimalistas
  */
 
 interface OrganicDividerProps {
@@ -14,14 +14,40 @@ export default function OrganicDivider({
   color = 'accent'
 }: OrganicDividerProps) {
   const colorMap = {
-    accent: 'from-accent/20 via-accent/10 to-transparent',
-    secondary: 'from-secondary/20 via-secondary/10 to-transparent',
-    muted: 'from-muted/30 via-muted/15 to-transparent'
+    accent: '#c9a961',
+    secondary: '#2E5EA8',
+    muted: '#DCE8F7'
   };
 
   return (
-    <div className={`w-full h-16 md:h-20 ${className}`}>
-      <div className={`w-full h-full bg-gradient-to-b ${colorMap[color]} opacity-60`}></div>
+    <div className={`w-full py-8 md:py-12 flex justify-center ${className}`}>
+      <svg
+        width="200"
+        height="40"
+        viewBox="0 0 200 40"
+        className="opacity-40 hover:opacity-60 transition-opacity duration-500"
+      >
+        {/* Linha ondulada sutil */}
+        <path
+          d="M0,20 Q50,10 100,20 T200,20"
+          stroke={colorMap[color]}
+          strokeWidth="1"
+          fill="none"
+          strokeLinecap="round"
+          className="animate-pulse"
+        />
+        {/* Pontos decorativos */}
+        <circle cx="50" cy="15" r="2" fill={colorMap[color]} opacity="0.6" />
+        <circle cx="150" cy="25" r="2" fill={colorMap[color]} opacity="0.6" />
+        {/* Forma geométrica sutil */}
+        <polygon
+          points="100,5 105,15 95,15"
+          fill={colorMap[color]}
+          opacity="0.3"
+          className="animate-bounce"
+          style={{ animationDelay: '1s', animationDuration: '3s' }}
+        />
+      </svg>
     </div>
   );
 }
