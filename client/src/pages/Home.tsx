@@ -4,7 +4,6 @@ import OrganicDivider from '@/components/OrganicDivider';
 import AppointmentForm from '@/components/AppointmentForm';
 import { useQuickBooking } from '@/contexts/QuickBookingContext';
 import FAQSection from '@/components/FAQSection';
-import ValuesSection from '@/components/ValuesSection';
 import ProfilePhoto from '@/components/ProfilePhoto';
 import BackToTop from '@/components/BackToTop';
 import FadeIn from '@/components/FadeIn';
@@ -163,9 +162,6 @@ export default function Home() {
         </section>
 
         <OrganicDivider color="secondary" className="mb-0" />
-
-        {/* VALORES E PRINCÍPIOS SECTION */}
-        <ValuesSection />
 
         {/* SERVIÇOS SECTION */}
         <section

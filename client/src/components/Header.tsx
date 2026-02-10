@@ -34,7 +34,6 @@ export default function Header() {
     { label: 'Home', href: '/' },
     { label: 'Sobre mim', href: '#sobre' },
     { label: 'Áreas de atuação', href: '#areas' },
-    { label: 'Valores', href: '#valores' },
     { label: 'Perguntas frequentes', href: '#faq' },
     { label: 'Blog', href: '/blog' },
   ]), []);
