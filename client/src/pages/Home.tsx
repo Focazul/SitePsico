@@ -50,77 +50,44 @@ export default function Home() {
 
       <main id="main-content" className="flex-1 relative z-10">
         {/* HERO SECTION */}
-        <section className="py-12 md:py-20">
-          <div className="container">
-            <FadeIn>
-              <div className="hero-shell p-8 md:p-12 lg:p-16">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-                  <div className="space-y-8 relative z-10">
-                  <div className="space-y-2">
-                    <p className="text-accent font-semibold text-sm md:text-base uppercase tracking-[0.3em]">
-                      Bem-vindo(a)
-                    </p>
-                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight" style={{ color: 'white' }}>
-                      Espaço de escuta qualificada e segura
-                    </h1>
-                  </div>
-                  <p className="text-lg md:text-xl text-white/90 leading-relaxed max-w-xl" style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
-                    {config.aboutText || 'Sou psicólogo(a) graduado(a) e ofereço um espaço acolhedor onde você pode explorar seus pensamentos, emoções e desafios com confiança e sigilo profissional.'}
-                  </p>
-                  <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                    <Button
-                      onClick={() => openModal()}
-                      className="btn-gradient transition-all duration-200"
-                      size="lg"
-                    >
-                      Agendar Consulta
-                      <ArrowRight className="ml-2 w-5 h-5" />
-                    </Button>
-                    <Button
-                      onClick={() => scrollToSection('sobre')}
-                      variant="outline"
-                      size="lg"
-                      className="btn-outline-blue"
-                    >
-                      Conhecer Mais
-                    </Button>
-                  </div>
-
-                  {/* Trust Indicators */}
-                  <div className="flex flex-wrap gap-3 pt-6 text-sm text-white/80" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
-                    <div className="flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-3 py-2 backdrop-blur-sm" style={{ borderColor: 'rgba(255, 255, 255, 0.3)', backgroundColor: 'rgba(255, 255, 255, 0.1)' }}>
-                      <CheckCircle className="w-5 h-5 text-accent" />
-                      <span>{config.psychologistCrp || 'CRP-SP'} Ativo</span>
-                    </div>
-                    <div className="flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-3 py-2 backdrop-blur-sm" style={{ borderColor: 'rgba(255, 255, 255, 0.3)', backgroundColor: 'rgba(255, 255, 255, 0.1)' }}>
-                      <CheckCircle className="w-5 h-5 text-accent" />
-                      <span>Sigilo Garantido</span>
-                    </div>
-                    <div className="flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-3 py-2 backdrop-blur-sm" style={{ borderColor: 'rgba(255, 255, 255, 0.3)', backgroundColor: 'rgba(255, 255, 255, 0.1)' }}>
-                      <CheckCircle className="w-5 h-5 text-accent" />
-                      <span>Atendimento Online</span>
-                    </div>
-                  </div>
-                  </div>
-
-                  {/* Imagem Hero */}
-                  <div className="hidden md:block">
-                    <div className="hero-media-frame">
-                      <div className="hero-orb hero-orb--primary" aria-hidden />
-                      <div className="hero-orb hero-orb--accent" aria-hidden />
-                      <img
-                        src="/images/hero-psychologist.jpg"
-                        alt="Ambiente acolhedor de terapia"
-                        width="1200"
-                        height="800"
-                        fetchPriority="high"
-                        className="hero-media-image w-full h-auto object-cover"
-                      />
-                    </div>
-                  </div>
-                </div>
+        <section className="hero py-20 md:py-24">
+          <div className="container hero-grid">
+            <div className="reveal space-y-8">
+              <div className="space-y-4">
+                <p className="text-accent font-bold text-xs uppercase tracking-[0.3em]" style={{ color: 'var(--accent)' }}>
+                  Bem-vindo(a)
+                </p>
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight" style={{ color: 'color-mix(in oklab, var(--primary) 70%, #0b1220 30%)' }}>
+                  Espaço de escuta qualificada e segura
+                </h1>
+                <p className="text-lg text-muted-foreground leading-relaxed">
+                  {config.aboutText || 'Sou psicólogo(a) graduado(a) e ofereço um espaço acolhedor para explorar pensamentos, emoções e desafios com sigilo profissional.'}
+                </p>
               </div>
-            </FadeIn>
+
+              <div className="flex flex-wrap gap-4 pt-4">
+                <button
+                  onClick={() => openModal()}
+                  className="btn primary"
+                >
+                  Agendar Consulta
+                </button>
+                <button
+                  onClick={() => scrollToSection('sobre')}
+                  className="btn outline"
+                >
+                  Conhecer Mais
+                </button>
+              </div>
+
+              <div className="flex flex-wrap gap-4 mt-6 text-sm font-medium" style={{ fontSize: '0.9rem' }}>
+                <span>CRP ativo</span>
+                <span>Sigilo garantido</span>
+                <span>Online e presencial</span>
+              </div>
+            </div>
+
+            <div className="hero-card reveal delay-2"></div>
           </div>
         </section>
 

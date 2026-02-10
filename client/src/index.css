@@ -386,6 +386,45 @@ body {
     opacity: 0.4;
   }
 
+  /* Hero Grid & Card (New Layout) */
+  .hero-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 42px;
+    align-items: center;
+  }
+
+  .hero-card {
+    position: relative;
+    border-radius: var(--radius);
+    background: linear-gradient(140deg, color-mix(in oklab, var(--primary) 80%, #ffffff 20%), var(--secondary));
+    min-height: 280px;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .hero-card::after {
+    content: "";
+    position: absolute;
+    inset: 20% 10% auto auto;
+    width: 140px;
+    height: 140px;
+    border-radius: 40px;
+    background: color-mix(in oklab, var(--accent) 70%, #ffffff 30%);
+    opacity: 0.6;
+  }
+
+  .hero-card::before {
+    content: "";
+    position: absolute;
+    inset: auto 10% 14% auto;
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background: color-mix(in oklab, var(--background) 70%, #ffffff 30%);
+    opacity: 0.4;
+  }
+
   /* Hero Media Frame */
   .hero-media-frame {
     position: relative;
