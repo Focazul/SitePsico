@@ -72,7 +72,7 @@ const faqData: FAQItem[] = [
 
 export default function FAQSection() {
   return (
-    <section id="faq" className="py-16 md:py-24 section-soft">
+    <section id="faq" className="py-16 md:py-24 section-light">
       <div className="container">
         <div className="max-w-3xl mx-auto space-y-12">
           {/* Header */}

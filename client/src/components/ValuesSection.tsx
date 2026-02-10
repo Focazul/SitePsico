@@ -54,7 +54,7 @@ const values: Value[] = [
 
 export default function ValuesSection() {
   return (
-    <section id="valores" className="py-16 md:py-24 section-light">
+    <section id="valores" className="py-16 md:py-24 section-soft">
       <div className="container">
         <div className="max-w-5xl mx-auto space-y-12">
           {/* Header */}
