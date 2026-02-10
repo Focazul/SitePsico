@@ -694,6 +694,14 @@ body {
     background-clip: text;
   }
 
+  .title-accent-bg-solid {
+    background: var(--accent);
+    color: var(--primary);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    display: inline-block;
+  }
+
   /* Responsive */
   @media (max-width: 860px) {
     .nav-links {
@@ -737,4 +745,11 @@ body {
 
 .admin-primary-text {
   color: var(--primary);
+}
+
+/* Admin Menu Active */
+.admin-menu-active {
+  background: var(--primary);
+  border: 1px solid var(--accent);
+  color: white;
 }

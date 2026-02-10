@@ -59,7 +59,7 @@ export default function Dashboard() {
 
         {/* Header */}
         <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
+          <h1 className="text-3xl font-bold title-accent-bg-solid">Dashboard</h1>
           <p className="text-sm text-muted-foreground">
             Bem-vindo! Aqui você visualiza o resumo de agendamentos, mensagens e atividades.
           </p>
