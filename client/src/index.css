@@ -104,7 +104,7 @@
 }
 
 body {
-  background: var(--muted);
+  background: color-mix(in oklch, var(--accent) 8%, #ffffff 92%);
 }
 
 .dark {
