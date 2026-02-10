@@ -105,7 +105,7 @@ export default function Contact() {
 
       <main id="main-content" className="flex-1">
         {/* HERO */}
-        <section className="py-16 md:py-24 bg-gradient-to-br from-accent/5 via-primary/5 to-secondary/10">
+        <section className="py-16 md:py-24 section-light">
           <div className="container">
             <div
               ref={heroRef.ref}
@@ -148,7 +148,7 @@ export default function Contact() {
         <OrganicDivider color="accent" className="mb-0" />
 
         {/* INFO CARDS */}
-        <section className="py-12 md:py-16" ref={infoRef.ref}>
+        <section className="py-12 md:py-16 section-soft" ref={infoRef.ref}>
           <div className="container">
             <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 transition-all duration-700 ${
               infoRef.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
@@ -195,7 +195,7 @@ export default function Contact() {
         <OrganicDivider color="secondary" className="mb-0" />
 
         {/* FORM */}
-        <section className="py-16 md:py-24 bg-secondary/10" ref={formRef.ref}>
+        <section className="py-16 md:py-24 section-light" ref={formRef.ref}>
           <div className="container grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-10 items-start">
             <Card
               className={`p-6 md:p-8 shadow-lg border-accent/30 bg-background transition-all duration-700 interactive-card ${
@@ -304,13 +304,13 @@ export default function Contact() {
                     <Button
                       type="submit"
                       disabled={isDisabled}
-                      className="bg-accent text-accent-foreground hover:bg-accent/90"
+                      className="btn-lapis-lazuli"
                       isLoading={status === 'submitting'}
                       loadingText="Enviando..."
                     >
                       <Send className="w-4 h-4 mr-2" /> Enviar mensagem
                     </Button>
-                    <Button type="button" variant="outline" onClick={() => (window.location.href = '/#agendamento')}>
+                    <Button type="button" variant="outline" className="btn-outline-blue" onClick={() => (window.location.href = '/#agendamento')}>
                       Agendar consulta
                     </Button>
                     <p className="text-xs text-muted-foreground">Tempo de resposta: até 24h úteis.</p>
@@ -336,13 +336,13 @@ export default function Contact() {
               <Card className="p-5 border-border/60 space-y-3 interactive-card">
                 <p className="font-semibold text-foreground">Redes e contato rápido</p>
                 <div className="flex flex-wrap gap-2">
-                  <Button variant="outline" onClick={() => (window.location.href = 'https://www.instagram.com')}>
+                  <Button variant="outline" className="btn-outline-blue" onClick={() => (window.location.href = 'https://www.instagram.com')}>
                     Instagram
                   </Button>
-                  <Button variant="outline" onClick={() => (window.location.href = 'https://www.linkedin.com')}>
+                  <Button variant="outline" className="btn-outline-blue" onClick={() => (window.location.href = 'https://www.linkedin.com')}>
                     LinkedIn
                   </Button>
-                  <Button variant="outline" onClick={() => (window.location.href = 'https://wa.me/5511999999999')}>
+                  <Button variant="outline" className="btn-outline-blue" onClick={() => (window.location.href = 'https://wa.me/5511999999999')}>
                     WhatsApp
                   </Button>
                 </div>
@@ -355,7 +355,7 @@ export default function Contact() {
         <OrganicDivider color="accent" className="mb-0" />
 
         {/* MAPA */}
-        <section className="py-16 md:py-24" ref={mapRef.ref}>
+        <section className="py-16 md:py-24 section-soft" ref={mapRef.ref}>
           <div
             className={`container space-y-6 transition-all duration-700 ${
               mapRef.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
@@ -383,7 +383,7 @@ export default function Contact() {
                 />
               </div>
             ) : (
-              <Card className="p-8 text-center space-y-4 bg-accent/5 border-accent/30">
+              <Card className="p-8 text-center space-y-4 bg-card/95 border-accent/20">
                 <MapPin className="w-12 h-12 text-accent mx-auto opacity-50" />
                 <div>
                   <p className="font-semibold text-foreground">Localização</p>
@@ -391,13 +391,13 @@ export default function Contact() {
                     Endereço completo será compartilhado após confirmação do agendamento.
                   </p>
                 </div>
-                <Button variant="outline" onClick={() => window.location.href = 'https://wa.me/5511999999999'}>
+                <Button variant="outline" className="btn-outline-blue" onClick={() => window.location.href = 'https://wa.me/5511999999999'}>
                   Solicitar endereço via WhatsApp
                 </Button>
               </Card>
             )}
 
-            <Card className="p-6 border-border/60 bg-secondary/10 space-y-3">
+            <Card className="p-6 border-accent/20 bg-card/95 space-y-3">
               <div className="flex items-start gap-3">
                 <Info className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
                 <div>

@@ -67,7 +67,7 @@ export default function About() {
 
       <main id="main-content" className="flex-1">
         {/* HERO SOBRE */}
-        <section className="py-16 md:py-24 lg:py-28">
+        <section className="py-16 md:py-24 lg:py-28 section-light">
           <div className="container">
             <div
               ref={heroRef.ref}
@@ -104,7 +104,7 @@ export default function About() {
                   <Button
                     variant="outline"
                     size="lg"
-                    className="border-border hover:border-accent hover:bg-muted"
+                    className="btn-outline-blue"
                     onClick={() => window.location.href = '/'}
                   >
                     Voltar à Home
@@ -134,7 +134,7 @@ export default function About() {
         <OrganicDivider color="accent" className="mb-0" />
 
         {/* FORMAÇÃO E ESPECIALIZAÇÃO */}
-        <section className="py-16 md:py-24 bg-secondary/10">
+        <section className="py-16 md:py-24 section-soft">
           <div className="container">
             <div className="max-w-5xl mx-auto space-y-10">
               <div className="text-center space-y-3">
@@ -164,7 +164,7 @@ export default function About() {
         <OrganicDivider color="secondary" className="mb-0" />
 
         {/* TRAJETÓRIA PROFISSIONAL */}
-        <section className="py-16 md:py-24" ref={timelineRef.ref}>
+        <section className="py-16 md:py-24 section-light" ref={timelineRef.ref}>
           <div className="container">
             <div
               className={`max-w-4xl mx-auto space-y-10 transition-all duration-700 ${
@@ -206,7 +206,7 @@ export default function About() {
         <OrganicDivider color="accent" className="mb-0" />
 
         {/* FILOSOFIA E MISSÃO */}
-        <section className="py-16 md:py-24 bg-secondary/10">
+        <section className="py-16 md:py-24 section-soft">
           <div className="container">
             <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
               <div className="space-y-4">
@@ -257,7 +257,7 @@ export default function About() {
                 </div>
               </div>
 
-              <Card className="p-6 border-accent/30 bg-accent/5">
+              <Card className="p-6 border-accent/20 bg-card/95">
                 <h3 className="text-xl font-bold text-foreground mb-4">Certificações e Associações</h3>
                 <div className="space-y-3">
                   {certifications.map((item, idx) => (
@@ -281,7 +281,7 @@ export default function About() {
         <OrganicDivider color="accent" className="mb-0" />
 
         {/* GALERIA DO CONSULTÓRIO */}
-        <section className="py-16 md:py-24" ref={galleryRef.ref}>
+        <section className="py-16 md:py-24 section-light" ref={galleryRef.ref}>
           <div className="container">
             <div
               className={`max-w-5xl mx-auto space-y-10 transition-all duration-700 ${

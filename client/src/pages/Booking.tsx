@@ -154,7 +154,7 @@ export default function Booking() {
 
       <main id="main-content" className="flex-1">
         {/* HERO */}
-        <section className="py-16 md:py-24 bg-gradient-to-br from-accent/5 via-primary/5 to-secondary/10">
+        <section className="py-16 md:py-24 section-light">
           <div className="container">
             <div
               ref={heroRef.ref}
@@ -197,7 +197,7 @@ export default function Booking() {
         <OrganicDivider color="accent" className="mb-0" />
 
         {/* WIZARD */}
-        <section className="py-16 md:py-24" ref={wizardRef.ref}>
+        <section className="py-16 md:py-24 section-soft" ref={wizardRef.ref}>
           <div
             className={`container max-w-5xl space-y-8 transition-all duration-700 ${
               wizardRef.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
@@ -264,7 +264,7 @@ export default function Booking() {
                           <Button
                             type="button"
                             variant="outline"
-                            className="w-full justify-between"
+                            className="w-full justify-between btn-outline-blue"
                           >
                             {data.date ? format(new Date(`${data.date}T00:00:00`), 'dd/MM/yyyy') : 'Selecione uma data'}
                             <Calendar className="w-4 h-4 opacity-70" />
@@ -380,19 +380,19 @@ export default function Booking() {
 
               <div className="flex flex-wrap items-center gap-3">
                 {step > 1 && step <= steps.length && (
-                  <Button type="button" variant="outline" onClick={back}>
+                  <Button type="button" variant="outline" className="btn-outline-blue" onClick={back}>
                     <ArrowLeft className="w-4 h-4 mr-2" /> Voltar
                   </Button>
                 )}
 
                 {step < steps.length && (
-                  <Button type="button" onClick={next} className="bg-accent text-accent-foreground hover:bg-accent/90">
+                  <Button type="button" onClick={next} className="btn-lapis-lazuli">
                     Próximo passo <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 )}
 
                 {step === steps.length && (
-                  <Button type="submit" disabled={status === 'submitting'} className="bg-accent text-accent-foreground hover:bg-accent/90">
+                  <Button type="submit" disabled={status === 'submitting'} className="btn-lapis-lazuli">
                     {status === 'submitting' ? 'Enviando...' : 'Confirmar agendamento'}
                   </Button>
                 )}

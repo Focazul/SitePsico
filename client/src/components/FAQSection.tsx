@@ -108,8 +108,14 @@ export default function FAQSection() {
             <p className="text-muted-foreground mb-4">
               Ainda tem dúvidas? Entre em contato!
             </p>
-            <Button asChild className="btn-lapis-lazuli">
-              <a href="#contato">Falar Comigo</a>
+            <Button
+              className="btn-lapis-lazuli"
+              onClick={() => {
+                const section = document.getElementById('contato');
+                section?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }}
+            >
+              Falar Comigo
             </Button>
           </div>
         </div>

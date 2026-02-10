@@ -88,7 +88,7 @@ export default function AppointmentForm() {
   return (
     <Card className="w-full max-w-2xl mx-auto p-6 md:p-8 border-border/50">
       <div className="space-y-2 mb-8">
-        <h2 className="text-2xl md:text-3xl font-bold text-foreground">Agendar Consulta</h2>
+        <h2 className="text-2xl md:text-3xl font-bold text-foreground title-accent-bg">Agendar Consulta</h2>
         <p className="text-muted-foreground">
           Preencha o formulário abaixo para solicitar seu agendamento
         </p>
@@ -110,7 +110,6 @@ export default function AppointmentForm() {
               id="clientName"
               placeholder="Seu nome"
               {...register('clientName')}
-              className="border-border/50 focus:border-accent"
             />
             {errors.clientName && (
               <p className="text-sm text-destructive">{errors.clientName.message}</p>
@@ -128,7 +127,6 @@ export default function AppointmentForm() {
                 type="email"
                 placeholder="seu@email.com"
                 {...register('clientEmail')}
-                className="border-border/50 focus:border-accent"
               />
               {errors.clientEmail && (
                 <p className="text-sm text-destructive">{errors.clientEmail.message}</p>
@@ -144,7 +142,6 @@ export default function AppointmentForm() {
                 id="clientPhone"
                 placeholder="(11) 99999-9999"
                 {...register('clientPhone')}
-                className="border-border/50 focus:border-accent"
               />
               {errors.clientPhone && (
                 <p className="text-sm text-destructive">{errors.clientPhone.message}</p>
@@ -171,7 +168,6 @@ export default function AppointmentForm() {
                 min={today}
                 max={maxDateStr}
                 {...register('appointmentDate')}
-                className="border-border/50 focus:border-accent"
               />
               {errors.appointmentDate && (
                 <p className="text-sm text-destructive">{errors.appointmentDate.message}</p>
@@ -184,7 +180,7 @@ export default function AppointmentForm() {
                 Horário *
               </Label>
               <Select onValueChange={(value) => setValue('appointmentTime', value)}>
-                <SelectTrigger className="border-border/50 focus:border-accent">
+                <SelectTrigger>
                   <SelectValue placeholder="Selecione um horário" />
                 </SelectTrigger>
                 <SelectContent>
@@ -206,7 +202,7 @@ export default function AppointmentForm() {
               Modalidade de Atendimento *
             </Label>
             <Select onValueChange={(value) => setValue('modality', value as any)}>
-              <SelectTrigger className="border-border/50 focus:border-accent">
+              <SelectTrigger>
                 <SelectValue placeholder="Selecione a modalidade" />
               </SelectTrigger>
               <SelectContent>
@@ -235,7 +231,6 @@ export default function AppointmentForm() {
               id="subject"
               placeholder="Ex: Ansiedade, Estresse, Relacionamentos..."
               {...register('subject')}
-              className="border-border/50 focus:border-accent"
             />
           </div>
 
@@ -246,7 +241,7 @@ export default function AppointmentForm() {
             <Textarea
               id="notes"
               placeholder="Compartilhe qualquer informação adicional que considere importante..."
-              className="border-border/50 focus:border-accent min-h-24 resize-none"
+              className="min-h-24 resize-none"
               {...register('notes')}
             />
           </div>
@@ -274,7 +269,7 @@ export default function AppointmentForm() {
             type="button"
             variant="outline"
             onClick={() => reset()}
-            className="flex-1"
+            className="flex-1 btn-outline-blue"
             size="lg"
           >
             Limpar

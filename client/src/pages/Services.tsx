@@ -95,7 +95,7 @@ export default function Services() {
 
       <main id="main-content" className="flex-1">
         {/* HERO SERVIÇOS */}
-        <section className="py-16 md:py-24 lg:py-28 bg-gradient-to-br from-accent/5 to-primary/5">
+        <section className="py-16 md:py-24 lg:py-28 section-light">
           <div className="container">
             <div
               ref={heroRef.ref}
@@ -165,7 +165,7 @@ export default function Services() {
         <OrganicDivider color="accent" className="mb-0" />
 
         {/* ÁREAS DE ATUAÇÃO */}
-        <section className="py-16 md:py-24" ref={areasRef.ref}>
+        <section className="py-16 md:py-24 section-soft" ref={areasRef.ref}>
           <div className="container">
             <div className={`max-w-5xl mx-auto space-y-10 transition-all duration-700 ${areasRef.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
               <div className="text-center space-y-3">
@@ -216,7 +216,7 @@ export default function Services() {
         <OrganicDivider color="secondary" className="mb-0" />
 
         {/* MODALIDADES */}
-        <section className="py-16 md:py-24 bg-secondary/10" ref={modalitiesRef.ref}>
+        <section className="py-16 md:py-24 section-light" ref={modalitiesRef.ref}>
           <div className="container">
             <div className={`max-w-5xl mx-auto space-y-10 transition-all duration-700 ${modalitiesRef.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
               <div className="text-center space-y-3">
@@ -230,7 +230,7 @@ export default function Services() {
                 {modalities.map((item) => (
                   <Card
                     key={item.title}
-                    className="p-6 border-accent/30 bg-accent/5 hover:shadow-lg transition-all duration-300"
+                    className="p-6 border-accent/20 bg-card/95 hover:shadow-lg transition-all duration-300"
                   >
                     <div className="flex items-center gap-3 mb-3">
                       <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center">
@@ -245,11 +245,11 @@ export default function Services() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-muted-foreground">
-                 <div className="p-4 rounded-lg bg-background border border-border/60">
+                 <div className="p-4 rounded-lg bg-card/95 border border-accent/20">
                    <p className="font-semibold text-foreground">Duração e Frequência</p>
                    <p>Sessões de {sessionDuration} minutos; frequência semanal ou quinzenal, a combinar.</p>
                  </div>
-                <div className="p-4 rounded-lg bg-background border border-border/60">
+                <div className="p-4 rounded-lg bg-card/95 border border-accent/20">
                   <p className="font-semibold text-foreground">Valores</p>
                   <p>{siteConfig.consultationPrice || 'Informados no primeiro contato'}; condições avaliadas caso a caso.</p>
                 </div>
@@ -261,7 +261,7 @@ export default function Services() {
         <OrganicDivider color="accent" className="mb-0" />
 
         {/* GALERIA */}
-        <section className="py-16 md:py-24" ref={galleryRef.ref}>
+        <section className="py-16 md:py-24 section-soft" ref={galleryRef.ref}>
           <div className="container">
             <div className={`max-w-5xl mx-auto space-y-10 transition-all duration-700 ${galleryRef.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
               <div className="text-center space-y-3">

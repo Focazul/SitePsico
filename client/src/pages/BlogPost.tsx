@@ -80,7 +80,7 @@ export default function BlogPost({ params }: BlogPostParams) {
 
       <main id="main-content" className="flex-1">
         {/* HERO */}
-        <section className="pt-14 pb-10 md:pt-16 md:pb-12 bg-gradient-to-br from-accent/5 via-primary/5 to-secondary/10">
+        <section className="pt-14 pb-10 md:pt-16 md:pb-12 section-light">
           <div className="container max-w-5xl space-y-6">
             <div className="flex items-center gap-3 text-sm text-muted-foreground">
               <Link href="/blog" className="flex items-center gap-2 text-foreground hover:text-accent transition-colors">
@@ -111,6 +111,7 @@ export default function BlogPost({ params }: BlogPostParams) {
               <Button
                 variant="outline"
                 size="sm"
+                className="btn-outline-blue"
                 onClick={() => window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(post.title)}%20${encodeURIComponent(shareUrl)}`, '_blank')}
               >
                 <MessageCircle className="w-4 h-4 mr-1" /> WhatsApp
@@ -118,6 +119,7 @@ export default function BlogPost({ params }: BlogPostParams) {
               <Button
                 variant="outline"
                 size="sm"
+                className="btn-outline-blue"
                 onClick={() => window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`, '_blank')}
               >
                 <Linkedin className="w-4 h-4 mr-1" /> LinkedIn
@@ -125,6 +127,7 @@ export default function BlogPost({ params }: BlogPostParams) {
               <Button
                 variant="outline"
                 size="sm"
+                className="btn-outline-blue"
                 onClick={() => navigator.clipboard.writeText(shareUrl)}
               >
                 <Link2 className="w-4 h-4 mr-1" /> Copiar link
@@ -160,13 +163,13 @@ export default function BlogPost({ params }: BlogPostParams) {
               <div dangerouslySetInnerHTML={{ __html: post.content }} />
             </article>
 
-            <Card className="p-6 bg-accent/10 border-accent/40 space-y-3">
+            <Card className="p-6 bg-card/95 border-accent/20 space-y-3">
               <p className="text-foreground font-semibold">Gostou do tema e quer falar sobre sua situação?</p>
               <div className="flex flex-wrap gap-3">
                 <Button className="btn-lapis-lazuli hover:scale-105" onClick={() => (window.location.href = '/#agendamento')}>
                   Agendar consulta
                 </Button>
-                <Button variant="outline" onClick={() => (window.location.href = '/#contato')}>
+                <Button variant="outline" className="btn-outline-blue" onClick={() => (window.location.href = '/#contato')}>
                   Enviar dúvida rápida
                 </Button>
               </div>
@@ -178,7 +181,7 @@ export default function BlogPost({ params }: BlogPostParams) {
 
         {/* RELATED */}
         {related && related.length > 0 && (
-          <section className="py-12 md:py-16 bg-secondary/10">
+          <section className="py-12 md:py-16 section-soft">
             <div className="container max-w-5xl space-y-4">
               <div className="flex items-center gap-2">
                 <BookOpen className="w-5 h-5 text-accent" />

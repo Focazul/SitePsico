@@ -120,7 +120,7 @@ export default function Blog() {
 
       <main id="main-content" className="flex-1">
         {/* HERO */}
-        <section className="py-16 md:py-24 bg-gradient-to-br from-accent/5 via-primary/5 to-secondary/10">
+        <section className="py-16 md:py-24 section-light">
           <div className="container">
             <div
               ref={heroRef.ref}
@@ -143,13 +143,14 @@ export default function Blog() {
                 </div>
                 <div className="flex flex-col sm:flex-row gap-3 pt-2">
                   <Button
-                    className="bg-accent hover:bg-accent/90 text-accent-foreground"
+                    className="btn-lapis-lazuli"
                     onClick={() => (window.location.href = '/#agendamento')}
                   >
                     Agendar uma conversa
                   </Button>
                   <Button
                     variant="outline"
+                    className="btn-outline-blue"
                     onClick={() => (window.location.href = '/#contato')}
                   >
                     Enviar uma dúvida
@@ -157,7 +158,7 @@ export default function Blog() {
                 </div>
               </div>
 
-              <Card className="p-6 border-accent/30 shadow-lg bg-background/80 backdrop-blur">
+              <Card className="p-6 border-accent/20 shadow-lg bg-card/95 backdrop-blur">
                 <div className="flex items-center gap-3 mb-3">
                   <BookOpen className="w-5 h-5 text-accent" />
                   <p className="font-semibold text-foreground">Curadoria responsável</p>
@@ -182,7 +183,7 @@ export default function Blog() {
         <OrganicDivider color="accent" className="mb-0" />
 
         {/* LISTING + SIDEBAR */}
-        <section className="py-16 md:py-24">
+        <section className="py-16 md:py-24 section-soft">
           <div className="container grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-10">
             <div
               ref={listRef.ref}
@@ -202,7 +203,7 @@ export default function Blog() {
               </div>
 
               <div className="grid grid-cols-1 gap-3 md:grid-cols-[2fr_1fr]">
-                <div className="flex items-center gap-3 bg-muted/50 border border-border/60 rounded-xl px-4 py-3">
+                <div className="flex items-center gap-3 bg-card/95 border border-accent/20 rounded-xl px-4 py-3">
                   <Search className="w-4 h-4 text-muted-foreground" />
                   <Input
                     value={search}
@@ -305,9 +306,9 @@ export default function Blog() {
                         <div className="p-5 space-y-3">
                           <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                             {post.category && (
-                              <span className="px-2 py-1 rounded-full bg-accent/10 text-accent font-semibold text-[11px]">
+                              <Badge className="text-[11px] px-2 py-1">
                                 {post.category.name}
-                              </span>
+                              </Badge>
                             )}
                             {post.publishedAt && (
                               <span className="flex items-center gap-1">
@@ -328,12 +329,9 @@ export default function Blog() {
                           </p>
                           <div className="flex flex-wrap gap-2 pt-2">
                             {post.tags.map((t) => (
-                              <span
-                                key={t.id}
-                                className="text-[11px] px-2 py-1 rounded-full bg-muted text-muted-foreground"
-                              >
+                              <Badge key={t.id} variant="outline" className="text-[11px] px-2 py-1">
                                 #{t.name}
-                              </span>
+                              </Badge>
                             ))}
                           </div>
                         </div>
@@ -424,7 +422,7 @@ export default function Blog() {
                 </div>
               </Card>
 
-              <Card className="p-5 space-y-3 bg-accent/10 border-accent/40">
+              <Card className="p-5 space-y-3 bg-card/95 border-accent/20">
                 <p className="text-sm text-muted-foreground">
                   Gostou de algum tema? Traga para a sessão ou marque um horário para conversar sobre sua necessidade.
                 </p>
