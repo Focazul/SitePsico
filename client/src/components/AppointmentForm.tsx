@@ -54,6 +54,9 @@ export default function AppointmentForm() {
 
   const availableSlots = availableSlotsQuery.data?.slots ?? [];
 
+  // Debug: log available slots
+  console.log('Available slots for', selectedDate, ':', availableSlots);
+
   const onSubmit = async (data: any) => {
     setIsSubmitting(true);
     try {
@@ -183,7 +186,15 @@ export default function AppointmentForm() {
               </Label>
               <Select onValueChange={(value) => setValue('appointmentTime', value)}>
                 <SelectTrigger>
-                  <SelectValue placeholder={selectedDate ? (availableSlotsQuery.isLoading ? "Carregando horários..." : "Selecione um horário") : "Selecione uma data primeiro"} />
+                  <SelectValue placeholder={
+                    !selectedDate 
+                      ? "Selecione uma data primeiro" 
+                      : availableSlotsQuery.isLoading 
+                        ? "Carregando horários..." 
+                        : availableSlots.length === 0 
+                          ? "Nenhum horário disponível" 
+                          : "Selecione um horário"
+                  } />
                 </SelectTrigger>
                 <SelectContent>
                   {availableSlots.map(({ time }) => (
