@@ -104,7 +104,14 @@ export default function Header() {
                       className={cn('nav-link px-3 py-2 rounded-full font-semibold text-sm', isActive(item.href) && 'bg-primary/10 text-foreground')}
                       onClick={(e) => {
                         e.preventDefault();
-                        navigate(item.href);
+                        if (item.href.startsWith('#')) {
+                          const element = document.getElementById(item.href.slice(1));
+                          if (element) {
+                            element.scrollIntoView({ behavior: 'smooth' });
+                          }
+                        } else {
+                          navigate(item.href);
+                        }
                       }}
                     >
                       {item.label}

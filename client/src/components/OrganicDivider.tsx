@@ -25,7 +25,7 @@ export default function OrganicDivider({
       <svg
         viewBox="0 0 1200 120"
         preserveAspectRatio="none"
-        className="w-full h-16 md:h-24 animate-pulse"
+        className="w-full h-16 md:h-24 transition-all duration-500 hover:animate-wave"
         style={{ filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.1))' }}
       >
         <path
