@@ -80,6 +80,8 @@ async function startServer() {
   // ============================================
   
   // 1. CORS ALLOWED ORIGINS (used by CORS + CSP)
+  const isDev = process.env.NODE_ENV === "development";
+
   const allowedOrigins = (process.env.ALLOWED_ORIGINS || "")
     .split(",")
     .map(origin => origin.trim())
@@ -102,7 +104,6 @@ async function startServer() {
     helmet({
       contentSecurityPolicy: {
         directives: (() => {
-          const isDev = process.env.NODE_ENV === "development";
           const connectSrc = new Set<string>([
             "'self'",
             "*.googleapis.com",
@@ -171,6 +172,9 @@ async function startServer() {
         if (!origin) return callback(null, true);
         if (hasWildcardOrigin) return callback(null, true);
         if (resolvedAllowedOrigins.includes(origin)) return callback(null, true);
+        if (isDev && /^https?:\/\/(localhost|127\.0\.0\.1):\d+$/.test(origin)) {
+          return callback(null, true);
+        }
         return callback(new Error("CORS not authorized"));
       },
       credentials: true,
