@@ -6,10 +6,9 @@ import {
   CheckCircle, 
   MessageCircle, 
   Calendar, 
-  Shield, 
   User, 
-  ChevronRight,
-  Quote
+  Shield,
+  Sparkles
 } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -17,19 +16,28 @@ import OrganicDivider from '@/components/OrganicDivider';
 import FAQSection from '@/components/FAQSection';
 import ValuesSection from '@/components/ValuesSection';
 import FadeIn from '@/components/FadeIn';
-import BackgroundBlobs from '@/components/BackgroundBlobs';
 import ProfilePhoto from '@/components/ProfilePhoto';
-import ImageGallery from '@/components/ImageGallery';
 import FloatingWhatsApp from '@/components/FloatingWhatsApp';
 import { useSiteConfig } from '@/hooks/useSiteConfig';
-import { useScrollReveal } from '@/hooks/useScrollReveal';
 import ManusDialog from '@/components/ManusDialog';
-import { trackFormSubmission } from '@/lib/analytics';
 
 export default function Home() {
   const [, setLocation] = useLocation();
   const { config } = useSiteConfig();
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.reveal-on-scroll').forEach(el => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -42,229 +50,186 @@ export default function Home() {
   const closeModal = () => setIsModalOpen(false);
 
   return (
-    <div className="min-h-screen flex flex-col bg-background selection:bg-accent/30">
+    <div className="min-h-screen flex flex-col bg-background selection:bg-accent/30 overflow-x-hidden">
       <Header />
       
       <main id="main-content" className="flex-1 relative z-10">
+        {/* Decorative Background Blobs */}
+        <div className="bg-blob w-[500px] h-[500px] top-[-100px] left-[-100px]" />
+        <div className="bg-blob w-[400px] h-[400px] bottom-[20%] right-[-50px] bg-primary/10" />
+
         {/* HERO SECTION */}
-        <section className="py-16 md:py-24 overflow-hidden">
-          <div className="container">
-            <FadeIn>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-                {/* Texto Hero */}
-                <div className="space-y-8 reveal">
-                  <div className="space-y-4">
-                    <p className="text-accent font-bold text-xs md:text-sm uppercase tracking-[0.3em]">
-                      Bem-vindo(a)
-                    </p>
-                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-                      Espaço de escuta qualificada e segura
-                    </h1>
+        <section className="relative pt-20 pb-16 md:pt-32 md:pb-24">
+          <div className="container relative z-10">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+              {/* Texto Hero */}
+              <div className="space-y-10 reveal-on-scroll">
+                <div className="space-y-6">
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20 text-accent font-bold text-xs uppercase tracking-[0.3em]">
+                    <Sparkles className="w-3 h-3" />
+                    Bem-vindo(a)
                   </div>
-                  <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-xl">
-                    {config.aboutText || 'Sou psicólogo(a) graduado(a) e ofereço um espaço acolhedor onde você pode explorar seus pensamentos, emoções e desafios com confiança e sigilo profissional.'}
-                  </p>
-                  <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                    <Button
-                      onClick={() => openModal()}
-                      className="btn-gradient h-14 px-8 text-lg"
-                      size="lg"
-                    >
-                      Agendar Consulta
-                      <ArrowRight className="ml-2 w-5 h-5" />
-                    </Button>
-                    <Button
-                      onClick={() => scrollToSection('sobre')}
-                      variant="outline"
-                      size="lg"
-                      className="btn-outline-blue h-14 px-8 text-lg"
-                    >
-                      Conhecer Mais
-                    </Button>
-                  </div>
-
-                  {/* Trust Indicators */}
-                  <div className="flex flex-wrap gap-3 pt-6 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-2 rounded-full border border-accent/20 bg-accent/5 px-4 py-2">
-                      <CheckCircle className="w-5 h-5 text-accent" />
-                      <span className="font-medium">{config.psychologistCrp || 'CRP-SP'} Ativo</span>
-                    </div>
-                    <div className="flex items-center gap-2 rounded-full border border-accent/20 bg-accent/5 px-4 py-2">
-                      <CheckCircle className="w-5 h-5 text-accent" />
-                      <span className="font-medium">Sigilo Garantido</span>
-                    </div>
-                    <div className="flex items-center gap-2 rounded-full border border-accent/20 bg-accent/5 px-4 py-2">
-                      <CheckCircle className="w-5 h-5 text-accent" />
-                      <span className="font-medium">Atendimento Online</span>
-                    </div>
-                  </div>
+                  <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] text-primary">
+                    Espaço de escuta <span className="text-accent italic">qualificada</span> e segura
+                  </h1>
+                </div>
+                <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed max-w-xl font-medium">
+                  {config.aboutText || 'Ofereço um espaço acolhedor onde você pode explorar seus pensamentos e desafios com total sigilo profissional.'}
+                </p>
+                <div className="flex flex-col sm:flex-row gap-5 pt-4">
+                  <Button
+                    onClick={() => openModal()}
+                    className="btn-premium h-16 px-10 text-xl shadow-2xl"
+                  >
+                    Agendar Consulta
+                    <ArrowRight className="w-6 h-6" />
+                  </Button>
+                  <Button
+                    onClick={() => scrollToSection('sobre')}
+                    variant="outline"
+                    className="btn-outline-blue h-16 px-10 text-xl hover:bg-primary/5"
+                  >
+                    Conhecer Mais
+                  </Button>
                 </div>
 
-                {/* Imagem Hero Envolvida pelo Quadrado Azul (hero-shell) */}
-                <div className="hidden md:block reveal delay-1">
-                  <div className="hero-shell p-8 lg:p-12">
-                    <div className="hero-media-frame shadow-2xl">
-                      <img
-                        src="/images/hero-psychologist.jpg"
-                        alt="Ambiente acolhedor de terapia"
-                        width="1200"
-                        height="800"
-                        fetchPriority="high"
-                        className="hero-media-image"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </FadeIn>
-          </div>
-        </section>
-
-        <OrganicDivider color="accent" className="mb-0" />
-
-        {/* SOBRE MIM SECTION */}
-        <section
-          id="sobre"
-          className="py-20 md:py-32 section-soft"
-        >
-          <div className="container">
-            <FadeIn>
-              <div className="max-w-5xl mx-auto space-y-16">
-                <div className="text-center space-y-4">
-                  <h2 className="text-3xl md:text-5xl font-bold title-accent-bg">
-                    Sobre Mim
-                  </h2>
-                  <p className="text-lg text-muted-foreground">
-                    Formação, experiência e compromisso ético
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-12 items-start">
-                  <div className="flex flex-col items-center space-y-6">
-                    <ProfilePhoto />
-                    <div className="text-center">
-                      <p className="font-bold text-2xl">{config.psychologistName || 'Nome do Psicólogo'}</p>
-                      <p className="text-accent font-semibold text-lg">{config.psychologistSpecialty || 'Psicólogo Clínico'}</p>
-                      <p className="text-xs text-muted-foreground mt-2 uppercase tracking-[0.2em] font-bold">{config.psychologistCrp || 'CRP 06/00000'}</p>
-                    </div>
-                  </div>
-
-                  <div className="md:col-span-2 space-y-8">
-                    <div className="prose prose-slate max-w-none">
-                      <p className="text-xl leading-relaxed text-foreground/90 font-medium">
-                        {config.psychologistBio || 'Breve biografia descrevendo sua trajetória profissional, abordagem teórica e como você auxilia seus pacientes no processo terapêutico.'}
-                      </p>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                      <div className="p-6 rounded-[18px] bg-white border border-accent/10 shadow-sm">
-                        <h4 className="font-bold text-xl mb-3 flex items-center gap-2">
-                          <div className="w-2 h-2 rounded-full bg-accent" />
-                          Formação
-                        </h4>
-                        <p className="text-muted-foreground leading-relaxed">
-                          {config.psychologistEducation || 'Graduação em Psicologia e especializações relevantes.'}
-                        </p>
-                      </div>
-                      <div className="p-6 rounded-[18px] bg-white border border-accent/10 shadow-sm">
-                        <h4 className="font-bold text-xl mb-3 flex items-center gap-2">
-                          <div className="w-2 h-2 rounded-full bg-accent" />
-                          Abordagem
-                        </h4>
-                        <p className="text-muted-foreground leading-relaxed">
-                          Trabalho fundamentado na ética profissional e no acolhimento integral do ser humano.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </FadeIn>
-          </div>
-        </section>
-
-        <OrganicDivider color="secondary" className="mb-0" />
-
-        {/* SERVICES SECTION */}
-        <section id="servicos" className="py-20 md:py-32 section-light">
-          <div className="container">
-            <FadeIn>
-              <div className="space-y-16">
-                <div className="text-center max-w-3xl mx-auto space-y-4">
-                  <h2 className="text-3xl md:text-5xl font-bold title-accent-bg">
-                    Áreas de Atuação
-                  </h2>
-                  <p className="text-lg text-muted-foreground">
-                    {config.servicesText || 'Ofereço suporte especializado para diversas demandas, sempre com foco no seu bem-estar e desenvolvimento pessoal.'}
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {/* Trust Badges Refinados */}
+                <div className="flex flex-wrap gap-4 pt-8">
                   {[
-                    {
-                      title: 'Psicoterapia Individual',
-                      desc: 'Espaço para autoconhecimento e tratamento de questões emocionais, ansiedade e depressão.',
-                      icon: <User className="w-8 h-8" />
-                    },
-                    {
-                      title: 'Atendimento Online',
-                      desc: 'Sessões por videochamada com a mesma eficácia e sigilo do presencial, no conforto do seu lar.',
-                      icon: <MessageCircle className="w-8 h-8" />
-                    },
-                    {
-                      title: 'Orientação Profissional',
-                      desc: 'Auxílio na escolha de carreira ou transição profissional baseada em seus valores e objetivos.',
-                      icon: <Calendar className="w-8 h-8" />
-                    }
-                  ].map((service, i) => (
-                    <div key={i} className="p-10 rounded-[18px] bg-white border border-accent/10 hover:border-accent/40 hover:shadow-2xl hover:shadow-accent/5 transition-all group">
-                      <div className="w-16 h-16 rounded-2xl bg-accent/10 flex items-center justify-center text-accent mb-8 group-hover:scale-110 transition-transform">
-                        {service.icon}
-                      </div>
-                      <h3 className="text-2xl font-bold mb-4">{service.title}</h3>
-                      <p className="text-muted-foreground text-lg leading-relaxed">{service.desc}</p>
+                    { icon: <Shield className="w-5 h-5" />, text: `${config.psychologistCrp || 'CRP-SP'} Ativo` },
+                    { icon: <CheckCircle className="w-5 h-5" />, text: 'Sigilo Absoluto' },
+                    { icon: <MessageCircle className="w-5 h-5" />, text: 'Atendimento Online' }
+                  ].map((badge, i) => (
+                    <div key={i} className="flex items-center gap-3 px-5 py-3 rounded-2xl bg-white/50 backdrop-blur-sm border border-accent/10 shadow-sm text-sm font-bold text-primary/80">
+                      <span className="text-accent">{badge.icon}</span>
+                      {badge.text}
                     </div>
                   ))}
                 </div>
               </div>
-            </FadeIn>
+
+              {/* Imagem Hero 3D Shell */}
+              <div className="hidden lg:block reveal-on-scroll active delay-300">
+                <div className="hero-shell">
+                  <div className="hero-media-frame">
+                    <img
+                      src="/images/hero-psychologist.jpg"
+                      alt="Consultório de Psicologia"
+                      className="w-full h-full object-cover scale-105 hover:scale-100 transition-transform duration-700"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <OrganicDivider color="accent" />
+
+        {/* SOBRE MIM SECTION */}
+        <section id="sobre" className="py-24 md:py-32 section-soft relative overflow-hidden">
+          <div className="container relative z-10">
+            <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
+              <div className="lg:col-span-4 flex flex-col items-center text-center space-y-8 reveal-on-scroll">
+                <div className="relative group">
+                  <div className="absolute inset-0 bg-accent/20 rounded-full blur-2xl group-hover:bg-accent/40 transition-all duration-500" />
+                  <ProfilePhoto />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-3xl font-bold text-primary">{config.psychologistName || 'Nome do Psicólogo'}</h3>
+                  <p className="text-accent font-bold tracking-widest uppercase text-sm">{config.psychologistSpecialty || 'Psicólogo Clínico'}</p>
+                  <div className="inline-block px-3 py-1 rounded-lg bg-primary/5 text-xs font-bold text-primary/60 mt-4 border border-primary/10">
+                    {config.psychologistCrp || 'CRP 06/00000'}
+                  </div>
+                </div>
+              </div>
+
+              <div className="lg:col-span-8 space-y-12 reveal-on-scroll delay-200">
+                <div className="space-y-6">
+                  <h2 className="text-4xl md:text-5xl font-bold title-accent-bg pb-4">Sua jornada de autoconhecimento começa aqui</h2>
+                  <p className="text-xl md:text-2xl text-foreground/80 leading-relaxed font-medium italic border-l-4 border-accent pl-6 py-2">
+                    "{config.psychologistBio || 'Acredito que a psicoterapia é um caminho de liberdade e acolhimento para as dores da alma.'}"
+                  </p>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="card-premium group">
+                    <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center text-accent mb-6 group-hover:bg-accent group-hover:text-white transition-colors">
+                      <Sparkles className="w-6 h-6" />
+                    </div>
+                    <h4 className="text-2xl font-bold mb-4">Minha Formação</h4>
+                    <p className="text-muted-foreground leading-relaxed text-lg">
+                      {config.psychologistEducation || 'Especialista em saúde mental com foco em abordagens humanistas e fenomenológicas.'}
+                    </p>
+                  </div>
+                  <div className="card-premium group">
+                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary mb-6 group-hover:bg-primary group-hover:text-white transition-colors">
+                      <Shield className="w-6 h-6" />
+                    </div>
+                    <h4 className="text-2xl font-bold mb-4">Ética e Sigilo</h4>
+                    <p className="text-muted-foreground leading-relaxed text-lg">
+                      Atendimento pautado rigorosamente pelo Código de Ética Profissional do Psicólogo, garantindo sua total segurança.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <OrganicDivider color="secondary" />
+
+        {/* SERVICES SECTION */}
+        <section id="servicos" className="py-24 md:py-32 section-light">
+          <div className="container">
+            <div className="text-center max-w-3xl mx-auto mb-20 reveal-on-scroll">
+              <h2 className="text-4xl md:text-6xl font-bold title-accent-bg mb-8">Áreas de Atuação</h2>
+              <p className="text-xl text-muted-foreground font-medium">
+                Suporte especializado para suas necessidades emocionais e desenvolvimento pessoal.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+              {[
+                { title: 'Psicoterapia Individual', icon: <User />, color: 'accent' },
+                { title: 'Atendimento Online', icon: <MessageCircle />, color: 'primary' },
+                { title: 'Orientação de Carreira', icon: <Calendar />, color: 'secondary' }
+              ].map((service, i) => (
+                <div key={i} className="card-premium group reveal-on-scroll" style={{ transitionDelay: `${i * 200}ms` }}>
+                  <div className={`w-20 h-20 rounded-2xl bg-${service.color}/10 flex items-center justify-center text-${service.color} mb-10 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-inner`}>
+                    {service.icon}
+                  </div>
+                  <h3 className="text-2xl font-bold mb-4 group-hover:text-accent transition-colors">{service.title}</h3>
+                  <p className="text-muted-foreground text-lg leading-relaxed">
+                    Processo focado em resultados reais e transformações profundas na sua qualidade de vida.
+                  </p>
+                  <ChevronRight className="mt-8 text-accent opacity-0 group-hover:opacity-100 group-hover:translate-x-2 transition-all" />
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 
         <ValuesSection />
-        
         <FAQSection />
 
-        {/* CTA SECTION */}
-        <section className="py-24 relative overflow-hidden">
-          <div className="absolute inset-0 bg-primary z-0" />
-          <div className="absolute top-0 right-0 w-1/3 h-full bg-accent/10 skew-x-12 translate-x-1/2" />
-          
-          <div className="container relative z-10">
-            <div className="max-w-4xl mx-auto text-center space-y-10">
-              <h2 className="text-4xl md:text-6xl font-bold text-white leading-tight font-serif">
-                Dê o primeiro passo em direção ao seu bem-estar emocional
-              </h2>
-              <p className="text-xl text-white/80 max-w-2xl mx-auto font-medium">
-                Agende uma sessão inicial e descubra como a psicoterapia pode transformar sua relação consigo e com o mundo.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-6 justify-center pt-6">
-                <Button 
-                  size="lg" 
-                  className="bg-accent text-white hover:bg-accent/90 px-10 h-16 text-xl font-bold rounded-full shadow-xl"
-                  onClick={() => openModal()}
-                >
-                  Agendar Consulta Agora
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="lg" 
-                  className="border-white/30 text-white hover:bg-white/10 px-10 h-16 text-xl font-bold rounded-full"
-                  onClick={() => scrollToSection('contato')}
-                >
-                  Tirar Dúvidas
-                </Button>
-              </div>
+        {/* FINAL CTA - ULTRA PREMIUM */}
+        <section className="py-32 relative overflow-hidden bg-primary">
+          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--accent)_0%,_transparent_70%)]" />
+          <div className="container relative z-10 text-center space-y-12 reveal-on-scroll">
+            <h2 className="text-5xl md:text-7xl font-bold text-white leading-tight max-w-4xl mx-auto font-serif">
+              Pronto para iniciar sua <span className="text-accent italic underline decoration-accent/30 underline-offset-8">transformação</span>?
+            </h2>
+            <p className="text-xl md:text-2xl text-white/70 max-w-2xl mx-auto font-medium">
+              Agende sua primeira conversa e sinta a diferença de um acompanhamento profissional dedicado.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-8 justify-center items-center pt-6">
+              <Button 
+                onClick={() => openModal()}
+                className="bg-accent text-white hover:bg-white hover:text-primary px-12 h-20 text-2xl font-black rounded-full shadow-[0_20px_50px_rgba(201,169,97,0.3)] transition-all duration-500 scale-110"
+              >
+                Agendar Agora
+              </Button>
             </div>
           </div>
         </section>
@@ -279,5 +244,24 @@ export default function Home() {
         title="Agendar Consulta"
       />
     </div>
+  );
+}
+
+function ChevronRight(props: any) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="m9 18 6-6-6-6" />
+    </svg>
   );
 }
