@@ -55,174 +55,184 @@ export default function Dashboard() {
     <DashboardLayout>
       <div className="flex flex-col gap-8 p-8">
         {/* Breadcrumb */}
-        <AdminBreadcrumb className="mb-2" />
+        <div className="admin-section-light rounded-lg p-6">
+          <AdminBreadcrumb className="mb-2" />
 
-        {/* Header */}
-        <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-bold title-accent-bg-solid">Dashboard</h1>
-          <p className="text-sm text-muted-foreground">
-            Bem-vindo! Aqui você visualiza o resumo de agendamentos, mensagens e atividades.
-          </p>
+          {/* Header */}
+          <div className="flex flex-col gap-2">
+            <h1 className="text-3xl font-bold title-accent-bg-solid">Dashboard</h1>
+            <p className="text-sm text-muted-foreground">
+              Bem-vindo! Aqui você visualiza o resumo de agendamentos, mensagens e atividades.
+            </p>
+          </div>
         </div>
 
         {/* Cards de Métricas - Grid 2x2 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* Card: Total de Agendamentos */}
-          <MetricCard
-            title="Agendamentos"
-            value={metrics.totalAppointments}
-            icon={<Calendar className="h-5 w-5" />}
-            color="blue"
-            loading={isLoading}
-          />
+        <div className="admin-section-dark rounded-lg p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* Card: Total de Agendamentos */}
+            <MetricCard
+              title="Agendamentos"
+              value={metrics.totalAppointments}
+              icon={<Calendar className="h-5 w-5" />}
+              color="blue"
+              loading={isLoading}
+            />
 
-          {/* Card: Agendamentos Pendentes */}
-          <MetricCard
-            title="Pendentes"
-            value={metrics.pendingAppointments}
-            icon={<Clock className="h-5 w-5" />}
-            color="amber"
-            loading={isLoading}
-            subtitle={`de ${metrics.totalAppointments}`}
-          />
+            {/* Card: Agendamentos Pendentes */}
+            <MetricCard
+              title="Pendentes"
+              value={metrics.pendingAppointments}
+              icon={<Clock className="h-5 w-5" />}
+              color="amber"
+              loading={isLoading}
+              subtitle={`de ${metrics.totalAppointments}`}
+            />
 
-          {/* Card: Agendamentos Confirmados */}
-          <MetricCard
-            title="Confirmados"
-            value={metrics.confirmedAppointments}
-            icon={<CheckCircle className="h-5 w-5" />}
-            color="green"
-            loading={isLoading}
-          />
+            {/* Card: Agendamentos Confirmados */}
+            <MetricCard
+              title="Confirmados"
+              value={metrics.confirmedAppointments}
+              icon={<CheckCircle className="h-5 w-5" />}
+              color="green"
+              loading={isLoading}
+            />
 
-          {/* Card: Mensagens Não Lidas */}
-          <MetricCard
-            title="Mensagens"
-            value={metrics.unreadMessages}
-            icon={<MessageCircle className="h-5 w-5" />}
-            color="purple"
-            badge="novo"
-            loading={isLoading}
-          />
+            {/* Card: Mensagens Não Lidas */}
+            <MetricCard
+              title="Mensagens"
+              value={metrics.unreadMessages}
+              icon={<MessageCircle className="h-5 w-5" />}
+              color="purple"
+              badge="novo"
+              loading={isLoading}
+            />
+          </div>
         </div>
 
         {/* Section: Próximos Agendamentos */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <Card className="lg:col-span-2 p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-foreground">Próximos Agendamentos</h2>
-              <Button variant="outline" size="sm">
-                Ver Todos
-              </Button>
+        <div className="admin-section-light rounded-lg p-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <Card className="lg:col-span-2 p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold text-foreground">Próximos Agendamentos</h2>
+                <Button variant="outline" size="sm">
+                  Ver Todos
+                </Button>
+              </div>
+
+              {isLoading ? (
+                <div className="space-y-3">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="h-16 bg-muted rounded animate-pulse" />
+                  ))}
+                </div>
+              ) : (appointmentsQuery.data || []).length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-8">
+                  Nenhum agendamento encontrado
+                </p>
+              ) : (
+                <div className="space-y-3">
+                  {(appointmentsQuery.data || []).slice(0, 5).map((apt) => (
+                    <AppointmentRow key={apt.id} appointment={apt} />
+                  ))}
+                </div>
+              )}
+            </Card>
+
+            {/* Sidebar: Estatísticas Rápidas */}
+            <div className="space-y-4">
+              <Card className="p-4 bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
+                <div className="flex items-start gap-3">
+                  <TrendingUp className="h-5 w-5 text-blue-600 mt-1" />
+                  <div>
+                    <p className="text-sm font-medium text-blue-900">Taxa de Confirmação</p>
+                    <p className="text-2xl font-bold text-blue-600 mt-1">
+                      {metrics.totalAppointments > 0
+                        ? Math.round(
+                            (metrics.confirmedAppointments / metrics.totalAppointments) * 100
+                          )
+                        : 0}
+                      %
+                    </p>
+                  </div>
+                </div>
+              </Card>
+
+              <Card className="p-4 bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
+                <div className="flex items-start gap-3">
+                  <MessageCircle className="h-5 w-5 text-purple-600 mt-1" />
+                  <div>
+                    <p className="text-sm font-medium text-purple-900">Mensagens Pendentes</p>
+                    <p className="text-2xl font-bold text-purple-600 mt-1">{metrics.unreadMessages}</p>
+                    <p className="text-xs text-purple-600 mt-1">de {metrics.totalMessages} total</p>
+                  </div>
+                </div>
+              </Card>
+
+              <Card className="p-4 bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="h-5 w-5 text-amber-600 mt-1" />
+                  <div>
+                    <p className="text-sm font-medium text-amber-900">Ação Necessária</p>
+                    <p className="text-2xl font-bold text-amber-600 mt-1">
+                      {metrics.pendingAppointments + metrics.unreadMessages}
+                    </p>
+                    <p className="text-xs text-amber-600 mt-1">agendamentos + mensagens</p>
+                  </div>
+                </div>
+              </Card>
             </div>
-
-            {isLoading ? (
-              <div className="space-y-3">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="h-16 bg-muted rounded animate-pulse" />
-                ))}
-              </div>
-            ) : (appointmentsQuery.data || []).length === 0 ? (
-              <p className="text-sm text-muted-foreground text-center py-8">
-                Nenhum agendamento encontrado
-              </p>
-            ) : (
-              <div className="space-y-3">
-                {(appointmentsQuery.data || []).slice(0, 5).map((apt) => (
-                  <AppointmentRow key={apt.id} appointment={apt} />
-                ))}
-              </div>
-            )}
-          </Card>
-
-          {/* Sidebar: Estatísticas Rápidas */}
-          <div className="space-y-4">
-            <Card className="p-4 bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
-              <div className="flex items-start gap-3">
-                <TrendingUp className="h-5 w-5 text-blue-600 mt-1" />
-                <div>
-                  <p className="text-sm font-medium text-blue-900">Taxa de Confirmação</p>
-                  <p className="text-2xl font-bold text-blue-600 mt-1">
-                    {metrics.totalAppointments > 0
-                      ? Math.round(
-                          (metrics.confirmedAppointments / metrics.totalAppointments) * 100
-                        )
-                      : 0}
-                    %
-                  </p>
-                </div>
-              </div>
-            </Card>
-
-            <Card className="p-4 bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
-              <div className="flex items-start gap-3">
-                <MessageCircle className="h-5 w-5 text-purple-600 mt-1" />
-                <div>
-                  <p className="text-sm font-medium text-purple-900">Mensagens Pendentes</p>
-                  <p className="text-2xl font-bold text-purple-600 mt-1">{metrics.unreadMessages}</p>
-                  <p className="text-xs text-purple-600 mt-1">de {metrics.totalMessages} total</p>
-                </div>
-              </div>
-            </Card>
-
-            <Card className="p-4 bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200">
-              <div className="flex items-start gap-3">
-                <AlertCircle className="h-5 w-5 text-amber-600 mt-1" />
-                <div>
-                  <p className="text-sm font-medium text-amber-900">Ação Necessária</p>
-                  <p className="text-2xl font-bold text-amber-600 mt-1">
-                    {metrics.pendingAppointments + metrics.unreadMessages}
-                  </p>
-                  <p className="text-xs text-amber-600 mt-1">agendamentos + mensagens</p>
-                </div>
-              </div>
-            </Card>
           </div>
         </div>
 
         {/* Section: Gráfico de Tendência Semanal */}
-        <Card className="p-6">
-          <h2 className="text-lg font-semibold text-foreground mb-4">Tendência de Agendamentos (Semana)</h2>
-          {isLoading ? (
-            <div className="h-64 bg-muted rounded animate-pulse" />
-          ) : (
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={metrics.weeklyTrend}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                <XAxis dataKey="day" stroke="#6b7280" style={{ fontSize: "0.875rem" }} />
-                <YAxis stroke="#6b7280" style={{ fontSize: "0.875rem" }} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "#1f2937",
-                    border: "1px solid #374151",
-                    borderRadius: "0.5rem",
-                  }}
-                  labelStyle={{ color: "#e5e7eb" }}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="count"
-                  stroke="#3b82f6"
-                  strokeWidth={2}
-                  dot={{ fill: "#3b82f6", r: 4 }}
-                  activeDot={{ r: 6 }}
-                  name="Agendamentos"
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          )}
-        </Card>
+        <div className="admin-section-dark rounded-lg p-6">
+          <Card className="p-6">
+            <h2 className="text-lg font-semibold text-foreground mb-4">Tendência de Agendamentos (Semana)</h2>
+            {isLoading ? (
+              <div className="h-64 bg-muted rounded animate-pulse" />
+            ) : (
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={metrics.weeklyTrend}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                  <XAxis dataKey="day" stroke="#6b7280" style={{ fontSize: "0.875rem" }} />
+                  <YAxis stroke="#6b7280" style={{ fontSize: "0.875rem" }} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "#1f2937",
+                      border: "1px solid #374151",
+                      borderRadius: "0.5rem",
+                    }}
+                    labelStyle={{ color: "#e5e7eb" }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="count"
+                    stroke="#3b82f6"
+                    strokeWidth={2}
+                    dot={{ fill: "#3b82f6", r: 4 }}
+                    activeDot={{ r: 6 }}
+                    name="Agendamentos"
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            )}
+          </Card>
+        </div>
 
         {/* Section: Ações Rápidas */}
-        <Card className="p-6 bg-gradient-to-r from-slate-50 to-slate-100">
-          <h2 className="text-lg font-semibold text-foreground mb-4">Ações Rápidas</h2>
-          <div className="flex flex-wrap gap-2">
-            <Button>Novo Agendamento</Button>
-            <Button variant="outline">Bloquear Datas</Button>
-            <Button variant="outline">Ver Mensagens</Button>
-            <Button variant="outline">Configurações</Button>
-          </div>
-        </Card>
+        <div className="admin-section-light rounded-lg p-6">
+          <Card className="p-6 bg-gradient-to-r from-slate-50 to-slate-100">
+            <h2 className="text-lg font-semibold text-foreground mb-4">Ações Rápidas</h2>
+            <div className="flex flex-wrap gap-2">
+              <Button>Novo Agendamento</Button>
+              <Button variant="outline">Bloquear Datas</Button>
+              <Button variant="outline">Ver Mensagens</Button>
+              <Button variant="outline">Configurações</Button>
+            </div>
+          </Card>
+        </div>
       </div>
     </DashboardLayout>
   );

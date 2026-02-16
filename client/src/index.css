@@ -725,6 +725,20 @@ body {
   background: #ffffff;
   border: 1px solid color-mix(in oklch, var(--accent) 20%, #ffffff 80%);
   box-shadow: var(--shadow-sm);
+  transition: all 0.3s ease;
+}
+
+.admin-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.admin-section-light {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+}
+
+.admin-section-dark {
+  background: linear-gradient(135deg, color-mix(in oklch, var(--primary) 5%, #ffffff 95%) 0%, color-mix(in oklch, var(--primary) 10%, #ffffff 90%) 100%);
 }
 
 .admin-button-primary {
@@ -732,6 +746,7 @@ body {
   color: #ffffff;
   border: none;
   box-shadow: var(--shadow-sm);
+  transition: all 0.3s ease;
 }
 
 .admin-button-primary:hover {

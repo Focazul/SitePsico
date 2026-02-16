@@ -270,199 +270,206 @@ export default function Appointments() {
     <DashboardLayout>
       <div className="space-y-6">
         {/* Breadcrumb */}
-        <AdminBreadcrumb className="mb-2" />
+        <div className="admin-section-light rounded-lg p-6">
+          <AdminBreadcrumb className="mb-2" />
 
-        {/* Header */}
-        <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-gray-900">Gestão de Agendamentos</h1>
+          {/* Header */}
+          <div className="flex justify-between items-center">
+            <h1 className="text-3xl font-bold text-gray-900">Gestão de Agendamentos</h1>
 
-          <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-            <DialogTrigger asChild>
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white gap-2">
-                <Plus size={20} />
-                Novo Agendamento
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>Novo Agendamento Manual</DialogTitle>
-                <DialogDescription>Adicione um paciente ou agendamento que não veio pelo site.</DialogDescription>
-              </DialogHeader>
-              <div className="grid grid-cols-2 gap-4 py-4">
-                <div className="space-y-2">
-                  <Label>Nome do Paciente</Label>
-                  <Input
-                    value={createForm.clientName}
-                    onChange={(e) => setCreateForm({...createForm, clientName: e.target.value})}
-                    placeholder="Ex: João Silva"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Email</Label>
-                  <Input
-                    value={createForm.clientEmail}
-                    onChange={(e) => setCreateForm({...createForm, clientEmail: e.target.value})}
-                    placeholder="joao@exemplo.com"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Telefone (opcional)</Label>
-                  <Input
-                    value={createForm.clientPhone}
-                    onChange={(e) => setCreateForm({...createForm, clientPhone: e.target.value})}
-                    placeholder="(11) 99999-9999"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Data</Label>
-                  <Input
-                    type="date"
-                    value={createForm.appointmentDate}
-                    onChange={(e) => setCreateForm({...createForm, appointmentDate: e.target.value})}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Horário</Label>
-                  <Input
-                    type="time"
-                    value={createForm.appointmentTime}
-                    onChange={(e) => setCreateForm({...createForm, appointmentTime: e.target.value})}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Modalidade</Label>
-                  <Select
-                    value={createForm.modality}
-                    onValueChange={(v) => setCreateForm({...createForm, modality: v as AppointmentType})}
-                  >
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="presencial">Presencial</SelectItem>
-                      <SelectItem value="online">Online</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label>Status</Label>
-                  <Select
-                    value={createForm.status}
-                    onValueChange={(v) => setCreateForm({...createForm, status: v as AppointmentStatus})}
-                  >
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="pendente">Pendente</SelectItem>
-                      <SelectItem value="confirmado">Confirmado</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label>Status Pagamento</Label>
-                  <Select
-                    value={createForm.paymentStatus}
-                    onValueChange={(v) => setCreateForm({...createForm, paymentStatus: v as PaymentStatus})}
-                  >
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="pendente">A Pagar</SelectItem>
-                      <SelectItem value="pago">Pago</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="col-span-2 space-y-2">
-                   <Label>Tags (separadas por vírgula)</Label>
-                   <Input
-                     value={createForm.tags}
-                     onChange={(e) => setCreateForm({...createForm, tags: e.target.value})}
-                     placeholder="Ex: retorno, primeira consulta, ansiedade"
-                   />
-                </div>
-                <div className="col-span-2 space-y-2">
-                   <Label>Notas/Observações</Label>
-                   <Textarea
-                     value={createForm.notes}
-                     onChange={(e) => setCreateForm({...createForm, notes: e.target.value})}
-                     placeholder="Observações internas..."
-                   />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setIsCreateOpen(false)}>Cancelar</Button>
-                <Button onClick={handleCreate} disabled={createManualMutation.isPending}>
-                  {createManualMutation.isPending ? "Criando..." : "Criar Agendamento"}
+            <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
+              <DialogTrigger asChild>
+                <Button className="bg-blue-600 hover:bg-blue-700 text-white gap-2">
+                  <Plus size={20} />
+                  Novo Agendamento
                 </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Novo Agendamento Manual</DialogTitle>
+                  <DialogDescription>Adicione um paciente ou agendamento que não veio pelo site.</DialogDescription>
+                </DialogHeader>
+                <div className="grid grid-cols-2 gap-4 py-4">
+                  <div className="space-y-2">
+                    <Label>Nome do Paciente</Label>
+                    <Input
+                      value={createForm.clientName}
+                      onChange={(e) => setCreateForm({...createForm, clientName: e.target.value})}
+                      placeholder="Ex: João Silva"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Email</Label>
+                    <Input
+                      value={createForm.clientEmail}
+                      onChange={(e) => setCreateForm({...createForm, clientEmail: e.target.value})}
+                      placeholder="joao@exemplo.com"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Telefone (opcional)</Label>
+                    <Input
+                      value={createForm.clientPhone}
+                      onChange={(e) => setCreateForm({...createForm, clientPhone: e.target.value})}
+                      placeholder="(11) 99999-9999"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Data</Label>
+                    <Input
+                      type="date"
+                      value={createForm.appointmentDate}
+                      onChange={(e) => setCreateForm({...createForm, appointmentDate: e.target.value})}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Horário</Label>
+                    <Input
+                      type="time"
+                      value={createForm.appointmentTime}
+                      onChange={(e) => setCreateForm({...createForm, appointmentTime: e.target.value})}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Modalidade</Label>
+                    <Select
+                      value={createForm.modality}
+                      onValueChange={(v) => setCreateForm({...createForm, modality: v as AppointmentType})}
+                    >
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="presencial">Presencial</SelectItem>
+                        <SelectItem value="online">Online</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Status</Label>
+                    <Select
+                      value={createForm.status}
+                      onValueChange={(v) => setCreateForm({...createForm, status: v as AppointmentStatus})}
+                    >
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="pendente">Pendente</SelectItem>
+                        <SelectItem value="confirmado">Confirmado</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Status Pagamento</Label>
+                    <Select
+                      value={createForm.paymentStatus}
+                      onValueChange={(v) => setCreateForm({...createForm, paymentStatus: v as PaymentStatus})}
+                    >
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="pendente">A Pagar</SelectItem>
+                        <SelectItem value="pago">Pago</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="col-span-2 space-y-2">
+                     <Label>Tags (separadas por vírgula)</Label>
+                     <Input
+                       value={createForm.tags}
+                       onChange={(e) => setCreateForm({...createForm, tags: e.target.value})}
+                       placeholder="Ex: retorno, primeira consulta, ansiedade"
+                     />
+                  </div>
+                  <div className="col-span-2 space-y-2">
+                     <Label>Notas/Observações</Label>
+                     <Textarea
+                       value={createForm.notes}
+                       onChange={(e) => setCreateForm({...createForm, notes: e.target.value})}
+                       placeholder="Observações internas..."
+                     />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setIsCreateOpen(false)}>Cancelar</Button>
+                  <Button onClick={handleCreate} disabled={createManualMutation.isPending}>
+                    {createManualMutation.isPending ? "Criando..." : "Criar Agendamento"}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
 
         {/* Estatísticas */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="p-4 border-l-4 border-l-blue-500">
-            <div className="text-sm text-gray-600">Total</div>
-            <div className="text-3xl font-bold text-gray-900">{stats.total}</div>
-          </Card>
-          <Card className="p-4 border-l-4 border-l-yellow-500">
-            <div className="text-sm text-gray-600">Pendentes</div>
-            <div className="text-3xl font-bold text-yellow-600">{stats.pending}</div>
-          </Card>
-          <Card className="p-4 border-l-4 border-l-green-500">
-            <div className="text-sm text-gray-600">Confirmados</div>
-            <div className="text-3xl font-bold text-green-600">{stats.confirmed}</div>
-          </Card>
-          <Card className="p-4 border-l-4 border-l-purple-500">
-            <div className="text-sm text-gray-600">Realizados</div>
-            <div className="text-3xl font-bold text-purple-600">{stats.completed}</div>
-          </Card>
+        <div className="admin-section-dark rounded-lg p-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <Card className="p-4 border-l-4 border-l-blue-500">
+              <div className="text-sm text-gray-600">Total</div>
+              <div className="text-3xl font-bold text-gray-900">{stats.total}</div>
+            </Card>
+            <Card className="p-4 border-l-4 border-l-yellow-500">
+              <div className="text-sm text-gray-600">Pendentes</div>
+              <div className="text-3xl font-bold text-yellow-600">{stats.pending}</div>
+            </Card>
+            <Card className="p-4 border-l-4 border-l-green-500">
+              <div className="text-sm text-gray-600">Confirmados</div>
+              <div className="text-3xl font-bold text-green-600">{stats.confirmed}</div>
+            </Card>
+            <Card className="p-4 border-l-4 border-l-purple-500">
+              <div className="text-sm text-gray-600">Realizados</div>
+              <div className="text-3xl font-bold text-purple-600">{stats.completed}</div>
+            </Card>
+          </div>
         </div>
 
         {/* View Toggle & Filtros */}
-        <div className="flex flex-wrap gap-3 items-center justify-between">
-          <div className="flex gap-2">
-            <Button
-              variant={viewMode === "list" ? "default" : "outline"}
-              onClick={() => setViewMode("list")}
-              className="gap-2"
-            >
-              <Calendar size={16} />
-              Lista
-            </Button>
-            <Button
-              variant={viewMode === "calendar" ? "default" : "outline"}
-              onClick={() => setViewMode("calendar")}
-              className="gap-2"
-            >
-              <Calendar size={16} />
-              Calendário
-            </Button>
-          </div>
+        <div className="admin-section-light rounded-lg p-6">
+          <div className="flex flex-wrap gap-3 items-center justify-between">
+            <div className="flex gap-2">
+              <Button
+                variant={viewMode === "list" ? "default" : "outline"}
+                onClick={() => setViewMode("list")}
+                className="gap-2"
+              >
+                <Calendar size={16} />
+                Lista
+              </Button>
+              <Button
+                variant={viewMode === "calendar" ? "default" : "outline"}
+                onClick={() => setViewMode("calendar")}
+                className="gap-2"
+              >
+                <Calendar size={16} />
+                Calendário
+              </Button>
+            </div>
 
-          <div className="flex flex-wrap gap-2">
-            <select
-              value={selectedStatus}
-              onChange={(e) => setSelectedStatus(e.target.value as AppointmentStatus | "all")}
-              className="px-3 py-2 border rounded-lg text-sm bg-white"
-            >
-              <option value="all">Todos os Status</option>
-              <option value="pendente">Pendentes</option>
-              <option value="confirmado">Confirmados</option>
-              <option value="concluido">Realizados</option>
-              <option value="cancelado">Cancelados</option>
-            </select>
+            <div className="flex flex-wrap gap-2">
+              <select
+                value={selectedStatus}
+                onChange={(e) => setSelectedStatus(e.target.value as AppointmentStatus | "all")}
+                className="px-3 py-2 border rounded-lg text-sm bg-white"
+              >
+                <option value="all">Todos os Status</option>
+                <option value="pendente">Pendentes</option>
+                <option value="confirmado">Confirmados</option>
+                <option value="concluido">Realizados</option>
+                <option value="cancelado">Cancelados</option>
+              </select>
 
-            <select
-              value={selectedType}
-              onChange={(e) => setSelectedType(e.target.value as AppointmentType | "all")}
-              className="px-3 py-2 border rounded-lg text-sm bg-white"
-            >
-              <option value="all">Todas as Modalidades</option>
-              <option value="presencial">Presencial</option>
-              <option value="online">Online</option>
-            </select>
+              <select
+                value={selectedType}
+                onChange={(e) => setSelectedType(e.target.value as AppointmentType | "all")}
+                className="px-3 py-2 border rounded-lg text-sm bg-white"
+              >
+                <option value="all">Todas as Modalidades</option>
+                <option value="presencial">Presencial</option>
+                <option value="online">Online</option>
+              </select>
+            </div>
           </div>
         </div>
 
         {/* Content */}
-        {viewMode === "list" ? (
+        <div className="admin-section-dark rounded-lg p-6">
+          {viewMode === "list" ? (
           <div className="space-y-4">
             {/* Próximos Agendamentos */}
             <Card className="p-6 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200">
@@ -767,6 +774,7 @@ export default function Appointments() {
             </div>
           </div>
         )}
+        </div>
       </div>
     </DashboardLayout>
   );
