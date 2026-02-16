@@ -316,7 +316,7 @@ export function ManusDialog({ open = false, onOpenChange, onSuccess }: ManusDial
               placeholder="Breve contexto ou dúvida"
               value={data.note}
               onChange={(e) => setData((d) => ({ ...d, note: e.target.value }))}
-              className="min-h-[80px] sm:min-h-[96px] text-sm"
+              className="min-h-20 sm:min-h-24 text-sm"
             />
           </div>
 
@@ -345,28 +345,8 @@ export function ManusDialog({ open = false, onOpenChange, onSuccess }: ManusDial
             Solicitar horário
           </Button>
         </DialogFooter>
-                  aria-invalid={Boolean(error) && !data.name}
-                  required
-                />
-              </div>
-            </div>
-            <div className="space-y-1">
-              <Label htmlFor="email">Email</Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="email"
-                  type="email"
-                  name="email"
-                  placeholder="seuemail@exemplo.com"
-                  className="pl-9"
-                  value={data.email}
-                  onChange={(e) => setData((d) => ({ ...d, email: e.target.value }))}
-                  aria-invalid={Boolean(error) && !data.email}
-                  required
-                />
-              </div>
-            </div>
+      </form>
+      {/* Fim do form principal */}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -461,7 +441,7 @@ export function ManusDialog({ open = false, onOpenChange, onSuccess }: ManusDial
               placeholder="Breve contexto ou dúvida"
               value={data.note}
               onChange={(e) => setData((d) => ({ ...d, note: e.target.value }))}
-              className="min-h-[96px]"
+              className="min-h-24"
             />
           </div>
 
