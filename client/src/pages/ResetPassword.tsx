@@ -132,9 +132,6 @@ export default function ResetPassword() {
   };
 
   const passwordStrength = getPasswordStrength(newPassword);
-      confirmPassword,
-    });
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 flex items-center justify-center p-4">

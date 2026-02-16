@@ -34,7 +34,7 @@ export default function Login() {
       setError('');
       setAttempts(0);
       void utils.auth.me.invalidate();
-
+      
       // Pequeno delay para garantir que a sessão seja estabelecida
       setTimeout(() => {
         setLocation('/admin/dashboard');
@@ -43,7 +43,7 @@ export default function Login() {
     onError: (error) => {
       console.error('[Login] Login failed:', error.message);
       setAttempts(prev => prev + 1);
-
+      
       // Mensagens de erro mais específicas
       if (error.message.includes('inválidos')) {
         const remaining = Math.max(0, 5 - attempts);
@@ -55,9 +55,6 @@ export default function Login() {
       }
     },
   });
-
-  const isBlocked = attempts >= 5;
-  const isLoading = loginMutation.isPending || meQuery.isLoading;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,7 +72,8 @@ export default function Login() {
 
     console.log('[Login] Attempting login with email:', email);
     loginMutation.mutate({ email, password });
-  };
+  const isBlocked = attempts >= 5;
+  const isLoading = loginMutation.isPending || meQuery.isLoading;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 flex items-center justify-center p-4">
@@ -186,4 +184,4 @@ export default function Login() {
       </Card>
     </div>
   );
-} 
+}
