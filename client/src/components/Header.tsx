@@ -3,12 +3,9 @@ import { Menu, X } from 'lucide-react';
 import { Link, useLocation } from 'wouter';
 import {
   NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuIndicator,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-  NavigationMenuTrigger,
 } from '@/components/ui/navigation-menu';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -36,7 +33,7 @@ export default function Header() {
     { label: 'Áreas de atuação', href: '#areas' },
     { label: 'Perguntas frequentes', href: '#faq' },
     { label: 'Blog', href: '/blog' },
-  ]), []);
+  ] as const), []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -49,7 +46,7 @@ export default function Header() {
 
   const isActive = (href: string) => {
     if (href === '/') return location === '/';
-    return location === href || location.startsWith(href + '/') || location.startsWith(href + '#') || (href === '/blog' && location.startsWith('/blog'));
+    return location === href || location.startsWith(`${href  }/`) || location.startsWith(`${href  }#`) || (href === '/blog' && location.startsWith('/blog'));
   };
 
   return (
@@ -94,50 +91,24 @@ export default function Header() {
               <NavigationMenuList className="gap-1">
               {navItems.map((item) => (
                 <NavigationMenuItem key={item.label}>
-                  {item.dropdown ? (
-                    <NavigationMenuTrigger className={cn('nav-link px-3 py-2 rounded-full font-semibold text-sm', isActive(item.href) && 'bg-primary/10 text-foreground')}>{item.label}</NavigationMenuTrigger>
-                  ) : (
-                    <NavigationMenuLink
-                      href={item.href}
-                      data-active={isActive(item.href)}
-                      className={cn('nav-link px-3 py-2 rounded-full font-semibold text-sm', isActive(item.href) && 'bg-primary/10 text-foreground')}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        if (item.href.startsWith('#')) {
-                          const element = document.getElementById(item.href.slice(1));
-                          if (element) {
-                            element.scrollIntoView({ behavior: 'smooth' });
-                          }
-                        } else {
-                          navigate(item.href);
+                  <NavigationMenuLink
+                    href={item.href}
+                    data-active={isActive(item.href)}
+                    className={cn('nav-link px-3 py-2 rounded-full font-semibold text-sm', isActive(item.href) && 'bg-primary/10 text-foreground')}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (item.href.startsWith('#')) {
+                        const element = document.getElementById(item.href.slice(1));
+                        if (element) {
+                          element.scrollIntoView({ behavior: 'smooth' });
                         }
-                      }}
-                    >
-                      {item.label}
-                    </NavigationMenuLink>
-                  )}
-
-                  {item.dropdown && (
-                    <NavigationMenuContent className="md:min-w-[320px] bg-background border-border/60 shadow-lg">
-                      <div className="grid gap-2 p-3">
-                        {item.dropdown.map((sub) => (
-                          <NavigationMenuLink
-                            key={sub.title}
-                            href={sub.href}
-                            data-active={isActive(sub.href)}
-                            className="font-medium nav-link"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              navigate(sub.href);
-                            }}
-                          >
-                            {sub.title}
-                          </NavigationMenuLink>
-                        ))}
-                      </div>
-                    </NavigationMenuContent>
-                  )}
-                  <NavigationMenuIndicator />
+                      } else {
+                        navigate(item.href);
+                      }
+                    }}
+                  >
+                    {item.label}
+                  </NavigationMenuLink>
                 </NavigationMenuItem>
               ))}
               </NavigationMenuList>

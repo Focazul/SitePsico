@@ -3,6 +3,7 @@ import { Link } from 'wouter';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import OrganicDivider from '@/components/OrganicDivider';
+import FloatingWhatsApp from '@/components/FloatingWhatsApp';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -14,7 +15,6 @@ import {
   Clock, 
   Filter, 
   Search, 
-  Tag as TagIcon, 
   Loader2,
   ArrowRight,
   Sparkles,
@@ -220,7 +220,7 @@ export default function Blog() {
                                 {post.title}
                               </h3>
                               <p className="text-muted-foreground line-clamp-2 leading-relaxed">
-                                {post.excerpt || post.content.substring(0, 120).replace(/[#*`]/g, '') + '...'}
+                                {post.excerpt || `${post.content.substring(0, 120).replace(/[#*`]/g, '')}...`}
                               </p>
                               <div className="pt-4 flex items-center text-primary font-bold group-hover:gap-3 transition-all">
                                 Ler artigo completo <ArrowRight className="w-5 h-5 ml-2 text-accent" />

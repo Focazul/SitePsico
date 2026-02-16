@@ -47,7 +47,7 @@ export function sanitizePhone(phone: string): string {
     if (national.length === 11 && national[2] === "9") {
       const area = national.slice(0, 2);
       const local = national.slice(3); // drop the first '9'
-      digits = "55" + area + local;
+      digits = `55${  area  }${local}`;
     }
   }
 

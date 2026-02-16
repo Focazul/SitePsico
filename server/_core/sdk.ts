@@ -203,7 +203,7 @@ class SDKServer {
     console.log('[SDK] verifySession called with:', {
       hasCookie: !!cookieValue,
       cookieLength: cookieValue?.length,
-      cookiePreview: cookieValue ? cookieValue.substring(0, 20) + '...' : 'null',
+      cookiePreview: cookieValue ? `${cookieValue.substring(0, 20)  }...` : 'null',
     });
 
     if (!cookieValue) {
@@ -282,7 +282,7 @@ class SDKServer {
 
     const sessionUserId = session.openId;
     const signedInAt = new Date();
-    let user = await db.getUserByOpenId(sessionUserId);
+    const user = await db.getUserByOpenId(sessionUserId);
 
     console.log('[SDK.authenticateRequest] User lookup result:', !!user, user?.email);
 

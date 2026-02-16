@@ -187,12 +187,12 @@ export default function Map({
           try {
             if (typeof window !== "undefined" && (window as any).gtag) {
               (window as any).gtag("event", "map_view", {
-                address: address,
-                latitude: latitude,
-                longitude: longitude,
+                address,
+                latitude,
+                longitude,
               });
             }
-          } catch (err) {
+          } catch {
             console.debug("[Maps] Analytics tracking not available");
           }
         };

@@ -84,6 +84,12 @@ export default function Appointments() {
   });
   const appointments = (appointmentsQuery.data || []) as Appointment[];
 
+  // Debug logs
+  console.log('🔍 Appointments data:', appointmentsQuery.data);
+  console.log('🔍 Appointments isLoading:', appointmentsQuery.isLoading);
+  console.log('🔍 Appointments error:', appointmentsQuery.error);
+  console.log('🔍 Appointments array:', appointments);
+
   // Mutations
   const createManualMutation = (trpc.booking as any).createManual.useMutation({
     onSuccess: () => {

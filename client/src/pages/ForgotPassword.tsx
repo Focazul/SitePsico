@@ -28,10 +28,16 @@ export default function ForgotPassword() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    setSuccess(false);
 
     if (!email) {
       setError('Por favor, digite seu email');
+      return;
+    }
+
+    // Validação básica de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError('Por favor, digite um email válido');
       return;
     }
 

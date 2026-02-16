@@ -65,7 +65,7 @@ describe("Input Sanitization", () => {
     it("should remove invalid characters", () => {
       const input = "+55<script> (11) 99999-9999";
       const result = sanitizePhone(input);
-      expect(result).toMatch(/^\+?[\d\-\s\(\)]*$/);
+      expect(result).toMatch(/^\+?[\d\s()-]*$/);
     });
   });
 
@@ -93,7 +93,7 @@ describe("Input Sanitization", () => {
     });
 
     it("should limit to 50KB", () => {
-      const input = "<p>" + "a".repeat(60000) + "</p>";
+      const input = `<p>${  "a".repeat(60000)  }</p>`;
       const result = sanitizeContent(input);
       expect(result.length).toBeLessThanOrEqual(50000);
     });

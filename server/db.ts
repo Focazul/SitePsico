@@ -374,10 +374,12 @@ export async function createAppointment(data: InsertAppointment): Promise<Appoin
 export async function getAllAppointments(): Promise<Appointment[]> {
   const db = await ensureDb();
   try {
-    return await db
+    const result = await db
       .select()
       .from(appointments)
       .orderBy(asc(appointments.appointmentDate), asc(appointments.appointmentTime));
+    console.log('🔍 getAllAppointments result:', result);
+    return result;
   } catch (error) {
     logDbError("getAllAppointments", error);
     throw error;
@@ -406,12 +408,17 @@ export async function getAppointmentsInRange(start?: Date, end?: Date): Promise<
   // @ts-ignore
   if (end) clauses.push(lte(appointments.appointmentDate, end.toISOString().slice(0, 10)));
 
+  console.log('🔍 getAppointmentsInRange - start:', start, 'end:', end);
+  console.log('🔍 Clauses:', clauses);
+
   try {
-    return await db
+    const result = await db
       .select()
       .from(appointments)
       .where(clauses.length ? and(...clauses) : undefined)
       .orderBy(asc(appointments.appointmentDate), asc(appointments.appointmentTime));
+    console.log('🔍 Query result:', result);
+    return result;
   } catch (error) {
     logDbError("getAppointmentsInRange", error);
     throw error;
@@ -811,14 +818,31 @@ export async function getTagBySlug(slug: string): Promise<Tag | null> {
   return row ?? null;
 }
 
-export async function createPost(data: InsertPost, tagIds?: number[]): Promise<Post> {
+export async function createPost(data: InsertPost, tagNames?: string[]): Promise<Post> {
   const db = await ensureDb();
   const [created] = await db.insert(posts).values(data).returning();
   if (!created) throw new Error("Failed to create post");
 
-  if (tagIds && tagIds.length > 0) {
-    const postTagValues = tagIds.map((tagId) => ({ postId: created.id, tagId }));
-    await db.insert(postTags).values(postTagValues);
+  if (tagNames && tagNames.length > 0) {
+    // Para cada tag name, encontra ou cria a tag
+    const tagIds: number[] = [];
+    for (const tagName of tagNames) {
+      let tag = await db.select().from(tags).where(eq(tags.name, tagName)).limit(1).then(rows => rows[0]);
+      if (!tag) {
+        // Cria a tag se não existir
+        const tagSlug = tagName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+        [tag] = await db.insert(tags).values({
+          name: tagName,
+          slug: tagSlug
+        }).returning();
+      }
+      if (tag) tagIds.push(tag.id);
+    }
+
+    if (tagIds.length > 0) {
+      const postTagValues = tagIds.map((tagId) => ({ postId: created.id, tagId }));
+      await db.insert(postTags).values(postTagValues);
+    }
   }
 
   return created;
@@ -1010,16 +1034,33 @@ export async function getRelatedPosts(postId: number, limit: number = 3): Promis
   );
 }
 
-export async function updatePost(id: number, data: Partial<InsertPost>, tagIds?: number[]): Promise<void> {
+export async function updatePost(id: number, data: Partial<InsertPost>, tagNames?: string[]): Promise<void> {
   const db = await ensureDb();
   // @ts-ignore - Bypass type check if schema types aren't updated yet in memory
   await db.update(posts).set(data).where(eq(posts.id, id));
 
-  if (tagIds !== undefined) {
+  if (tagNames !== undefined) {
     await db.delete(postTags).where(eq(postTags.postId, id));
-    if (tagIds.length > 0) {
-      const postTagValues = tagIds.map((tagId) => ({ postId: id, tagId }));
-      await db.insert(postTags).values(postTagValues);
+    if (tagNames.length > 0) {
+      // Para cada tag name, encontra ou cria a tag
+      const tagIds: number[] = [];
+      for (const tagName of tagNames) {
+        let tag = await db.select().from(tags).where(eq(tags.name, tagName)).limit(1).then(rows => rows[0]);
+        if (!tag) {
+          // Cria a tag se não existir
+          const tagSlug = tagName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+          [tag] = await db.insert(tags).values({
+            name: tagName,
+            slug: tagSlug
+          }).returning();
+        }
+        if (tag) tagIds.push(tag.id);
+      }
+
+      if (tagIds.length > 0) {
+        const postTagValues = tagIds.map((tagId) => ({ postId: id, tagId }));
+        await db.insert(postTags).values(postTagValues);
+      }
     }
   }
 }

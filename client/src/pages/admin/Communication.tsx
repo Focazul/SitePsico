@@ -230,23 +230,23 @@ export default function Communication() {
           <TabsContent value="messages" className="space-y-6">
             {/* Estatísticas */}
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-              <Card className="p-4 border-l-4 border-l-gray-400">
+              <Card className="admin-section-dark p-4 border-l-4 border-l-gray-400">
                 <div className="text-sm text-gray-600">Total</div>
                 <div className="text-2xl font-bold text-gray-900">{messageStats.total}</div>
               </Card>
-              <Card className="p-4 border-l-4 border-l-blue-500">
+              <Card className="admin-section-dark p-4 border-l-4 border-l-blue-500">
                 <div className="text-sm text-gray-600">Novas</div>
                 <div className="text-2xl font-bold text-blue-600">{messageStats.novo}</div>
               </Card>
-              <Card className="p-4 border-l-4 border-l-gray-300">
+              <Card className="admin-section-dark p-4 border-l-4 border-l-gray-300">
                 <div className="text-sm text-gray-600">Lidas</div>
                 <div className="text-2xl font-bold text-gray-600">{messageStats.lido}</div>
               </Card>
-              <Card className="p-4 border-l-4 border-l-green-500">
+              <Card className="admin-section-dark p-4 border-l-4 border-l-green-500">
                 <div className="text-sm text-gray-600">Respondidas</div>
                 <div className="text-2xl font-bold text-green-600">{messageStats.respondido}</div>
               </Card>
-              <Card className="p-4 border-l-4 border-l-yellow-500">
+              <Card className="admin-section-dark p-4 border-l-4 border-l-yellow-500">
                 <div className="text-sm text-gray-600">Arquivadas</div>
                 <div className="text-2xl font-bold text-yellow-600">{messageStats.arquivado}</div>
               </Card>
@@ -283,7 +283,7 @@ export default function Communication() {
             </div>
 
             {/* Lista de Mensagens */}
-            <Card className="overflow-hidden">
+            <Card className="admin-section-dark overflow-hidden">
               <div className="divide-y">
                 {filteredMessages.length > 0 ? (
                   filteredMessages.map((message) => (
@@ -387,7 +387,7 @@ export default function Communication() {
             {/* Stats Cards */}
             {stats && (
               <div className="grid gap-4 md:grid-cols-4">
-                <Card>
+                <Card className="admin-section-dark">
                   <div className="flex flex-row items-center justify-between space-y-0 p-6 pb-2">
                     <h3 className="text-sm font-medium">Total de Emails</h3>
                     <Mail className="h-4 w-4 text-muted-foreground" />
@@ -398,7 +398,7 @@ export default function Communication() {
                   </div>
                 </Card>
 
-                <Card>
+                <Card className="admin-section-dark">
                   <div className="flex flex-row items-center justify-between space-y-0 p-6 pb-2">
                     <h3 className="text-sm font-medium">Enviados</h3>
                     <CheckCircle2 className="h-4 w-4 text-green-600" />
@@ -411,7 +411,7 @@ export default function Communication() {
                   </div>
                 </Card>
 
-                <Card>
+                <Card className="admin-section-dark">
                   <div className="flex flex-row items-center justify-between space-y-0 p-6 pb-2">
                     <h3 className="text-sm font-medium">Falhados</h3>
                     <XCircle className="h-4 w-4 text-red-600" />
@@ -424,7 +424,7 @@ export default function Communication() {
                   </div>
                 </Card>
 
-                <Card>
+                <Card className="admin-section-dark">
                   <div className="flex flex-row items-center justify-between space-y-0 p-6 pb-2">
                     <h3 className="text-sm font-medium">Tipos</h3>
                     <BarChart3 className="h-4 w-4 text-muted-foreground" />
@@ -438,7 +438,7 @@ export default function Communication() {
             )}
 
             {/* Filters */}
-            <Card>
+            <Card className="admin-section-light">
               <div className="p-6 border-b">
                 <h3 className="text-lg font-semibold flex items-center gap-2">
                   <Filter className="h-5 w-5" />
@@ -521,7 +521,7 @@ export default function Communication() {
             </Card>
 
             {/* Email Logs Table */}
-            <Card>
+            <Card className="admin-section-dark">
               <div className="p-6 border-b">
                 <h3 className="text-lg font-semibold">Logs de Emails</h3>
                 <p className="text-sm text-muted-foreground">

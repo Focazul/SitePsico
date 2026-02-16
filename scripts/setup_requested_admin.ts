@@ -46,7 +46,7 @@ async function setupAdmin() {
         role: 'admin',
         createdAt: new Date(),
         updatedAt: new Date(),
-        openId: 'local_admin_' + Date.now(),
+        openId: `local_admin_${  Date.now()}`,
         loginMethod: 'local'
       });
     }

@@ -90,6 +90,19 @@ export default function ResetPassword() {
       return;
     }
 
+    // Validação de força de senha
+    const hasUpperCase = /[A-Z]/.test(newPassword);
+    const hasLowerCase = /[a-z]/.test(newPassword);
+    const hasNumbers = /\d/.test(newPassword);
+    const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(newPassword);
+
+    const strengthScore = [hasUpperCase, hasLowerCase, hasNumbers, hasSpecialChar].filter(Boolean).length;
+
+    if (strengthScore < 3) {
+      setError('Senha deve conter pelo menos 3 dos seguintes: letra maiúscula, letra minúscula, número, caractere especial');
+      return;
+    }
+
     if (newPassword !== confirmPassword) {
       setError('As senhas não coincidem');
       return;
@@ -98,6 +111,27 @@ export default function ResetPassword() {
     resetPasswordMutation.mutate({
       token,
       newPassword,
+      confirmPassword,
+    });
+  };
+
+  const getPasswordStrength = (password: string) => {
+    if (!password) return { score: 0, label: '', color: 'bg-gray-200' };
+
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumbers = /\d/.test(password);
+    const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+
+    const score = [hasUpperCase, hasLowerCase, hasNumbers, hasSpecialChar].filter(Boolean).length;
+
+    if (score < 2) return { score, label: 'Fraca', color: 'bg-red-500' };
+    if (score < 3) return { score, label: 'Média', color: 'bg-yellow-500' };
+    if (score < 4) return { score, label: 'Forte', color: 'bg-blue-500' };
+    return { score, label: 'Muito Forte', color: 'bg-green-500' };
+  };
+
+  const passwordStrength = getPasswordStrength(newPassword);
       confirmPassword,
     });
   };
@@ -149,6 +183,29 @@ export default function ResetPassword() {
                   )}
                 </button>
               </div>
+              {newPassword && (
+                <div className="mt-2">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs text-slate-600">Força da senha:</span>
+                    <span className={`text-xs font-medium ${
+                      passwordStrength.score < 2 ? 'text-red-600' :
+                      passwordStrength.score < 3 ? 'text-yellow-600' :
+                      passwordStrength.score < 4 ? 'text-blue-600' : 'text-green-600'
+                    }`}>
+                      {passwordStrength.label}
+                    </span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div
+                      className={`h-2 rounded-full transition-all duration-300 ${passwordStrength.color}`}
+                      style={{ width: `${(passwordStrength.score / 4) * 100}%` }}
+                    ></div>
+                  </div>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Use maiúsculas, minúsculas, números e caracteres especiais
+                  </p>
+                </div>
+              )}
             </div>
 
             <div className="space-y-2">

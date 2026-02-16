@@ -14,6 +14,7 @@ import AdminEmails from "@/pages/admin/Emails";
 import AdminCommunication from "@/pages/admin/Communication";
 import AdminCalendar from "@/pages/admin/Calendar";
 import AdminPages from "@/pages/admin/Pages";
+import PostEditor from "@/pages/admin/PostEditor";
 import ForgotPassword from "@/pages/ForgotPassword";
 import ResetPassword from "@/pages/ResetPassword";
 import ErrorBoundary from "./components/ErrorBoundary";
@@ -23,6 +24,15 @@ import SkipToContent from "./components/SkipToContent";
 import BackgroundBlobs from "./components/BackgroundBlobs";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { ManusDialog } from "./components/ManusDialog";
+
+// Component to redirect /admin/login to /login
+function RedirectToLogin() {
+  const [, setLocation] = useLocation();
+  React.useEffect(() => {
+    setLocation('/login');
+  }, [setLocation]);
+  return null;
+}
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { QuickBookingProvider, useQuickBooking } from "./contexts/QuickBookingContext";
 import { AnimatePresence, motion } from "framer-motion";
@@ -53,13 +63,7 @@ function Router() {
           <Route path={"/blog/:slug"} component={BlogPost} />
           <Route path={"/login"} component={Login} />
           <Route path={"/admin/login"}>
-            {() => {
-              const [, setLocation] = useLocation();
-              React.useEffect(() => {
-                setLocation('/login');
-              }, [setLocation]);
-              return null;
-            }}
+            <RedirectToLogin />
           </Route>
           <Route path={"/forgot-password"} component={ForgotPassword} />
           <Route path={"/reset-password"} component={ResetPassword} />
@@ -76,6 +80,12 @@ function Router() {
           </Route>
           <Route path={"/admin/posts"}>
             {() => <ProtectedRoute adminOnly><AdminPosts /></ProtectedRoute>}
+          </Route>
+          <Route path={"/admin/posts/new"}>
+            {() => <ProtectedRoute adminOnly><PostEditor /></ProtectedRoute>}
+          </Route>
+          <Route path={"/admin/posts/:slug"}>
+            {() => <ProtectedRoute adminOnly><PostEditor /></ProtectedRoute>}
           </Route>
           <Route path={"/admin/messages"}>
             {() => <ProtectedRoute adminOnly><AdminMessages /></ProtectedRoute>}

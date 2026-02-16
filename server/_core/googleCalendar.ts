@@ -274,7 +274,7 @@ export async function updateCalendarEvent(
     // Buscar evento existente
     const existingEvent = await calendar.events.get({
       calendarId: config.calendarId || 'primary',
-      eventId: eventId
+      eventId
     });
 
     if (!existingEvent.data) {
@@ -330,7 +330,7 @@ export async function updateCalendarEvent(
 
     await calendar.events.update({
       calendarId: config.calendarId || 'primary',
-      eventId: eventId,
+      eventId,
       requestBody: updates,
       sendUpdates: 'all' // Notifica participantes
     });
@@ -361,7 +361,7 @@ export async function cancelCalendarEvent(eventId: string): Promise<boolean> {
 
     await calendar.events.delete({
       calendarId: config.calendarId || 'primary',
-      eventId: eventId,
+      eventId,
       sendUpdates: 'all' // Notifica participantes sobre cancelamento
     });
 
@@ -422,7 +422,7 @@ export async function getUpcomingEvents(maxResults: number = 10): Promise<calend
     const response = await calendar.events.list({
       calendarId: config.calendarId || 'primary',
       timeMin: new Date().toISOString(),
-      maxResults: maxResults,
+      maxResults,
       singleEvents: true,
       orderBy: 'startTime'
     });

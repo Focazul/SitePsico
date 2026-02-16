@@ -15,7 +15,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc";
 import { useSiteConfig } from "@/hooks/useSiteConfig";
 import { Calendar as CalendarPicker } from "@/components/ui/calendar";
@@ -137,7 +136,7 @@ export function ManusDialog({ open = false, onOpenChange, onSuccess }: ManusDial
         subject,
         content: contentLines,
       });
-    } catch (err) {
+    } catch {
       setError("Não foi possível enviar. Tente novamente.");
       setLoading(false);
     }

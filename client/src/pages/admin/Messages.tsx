@@ -163,25 +163,28 @@ export default function Messages() {
     <DashboardLayout>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Mensagens</h1>
-            <p className="text-gray-600 mt-1">
-              {stats.novo > 0 ? (
-                <span className="text-blue-600 font-medium">{stats.novo} nova(s) mensagem(ns)</span>
-              ) : (
-                "Todas as mensagens lidas"
-              )}
-            </p>
+        <div className="admin-section-light rounded-lg p-6">
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Mensagens</h1>
+              <p className="text-gray-600 mt-1">
+                {stats.novo > 0 ? (
+                  <span className="text-blue-600 font-medium">{stats.novo} nova(s) mensagem(ns)</span>
+                ) : (
+                  "Todas as mensagens lidas"
+                )}
+              </p>
+            </div>
+            <Button variant="outline" className="gap-2">
+              <RefreshCw size={16} />
+              Atualizar
+            </Button>
           </div>
-          <Button variant="outline" className="gap-2">
-            <RefreshCw size={16} />
-            Atualizar
-          </Button>
         </div>
 
         {/* Estatísticas */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div className="admin-section-dark rounded-lg p-6">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           <Card className="p-4 border-l-4 border-l-gray-400">
             <div className="text-sm text-gray-600">Total</div>
             <div className="text-2xl font-bold text-gray-900">{stats.total}</div>
@@ -205,46 +208,49 @@ export default function Messages() {
         </div>
 
         {/* Filtros e Busca */}
-        <div className="flex flex-wrap gap-3 items-center justify-between">
-          <div className="flex items-center gap-2 flex-1 max-w-md">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Buscar mensagens..."
-                className="w-full pl-10 pr-4 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
+        <div className="admin-section-light rounded-lg p-6">
+          <div className="flex flex-wrap gap-3 items-center justify-between">
+            <div className="flex items-center gap-2 flex-1 max-w-md">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Buscar mensagens..."
+                  className="w-full pl-10 pr-4 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
             </div>
-          </div>
 
-          <div className="flex flex-wrap gap-2">
-            <select
-              value={selectedStatus}
-              onChange={(e) => setSelectedStatus(e.target.value as MessageStatus | "all")}
-              className="px-3 py-2 border rounded-lg text-sm bg-white"
-            >
-              <option value="all">Todos os Status</option>
-              <option value="novo">Novas</option>
-              <option value="lido">Lidas</option>
-              <option value="respondido">Respondidas</option>
-              <option value="arquivado">Arquivadas</option>
-            </select>
+            <div className="flex flex-wrap gap-2">
+              <select
+                value={selectedStatus}
+                onChange={(e) => setSelectedStatus(e.target.value as MessageStatus | "all")}
+                className="px-3 py-2 border rounded-lg text-sm bg-white"
+              >
+                <option value="all">Todos os Status</option>
+                <option value="novo">Novas</option>
+                <option value="lido">Lidas</option>
+                <option value="respondido">Respondidas</option>
+                <option value="arquivado">Arquivadas</option>
+              </select>
+            </div>
           </div>
         </div>
 
         {/* Lista de Mensagens */}
-        <Card className="overflow-hidden">
-          <div className="divide-y">
-            {filteredMessages.length > 0 ? (
-              filteredMessages.map((message) => (
-                <div
-                  key={message.id}
-                  className={`p-4 hover:bg-gray-50 transition-colors cursor-pointer ${
-                    message.status === "novo" ? "bg-blue-50/50" : ""
-                  }`}
-                  onClick={() => handleViewMessage(message)}
+        <div className="admin-section-dark rounded-lg p-6">
+          <Card className="overflow-hidden">
+            <div className="divide-y">
+              {filteredMessages.length > 0 ? (
+                filteredMessages.map((message) => (
+                  <div
+                    key={message.id}
+                    className={`p-4 hover:bg-gray-50 transition-colors cursor-pointer ${
+                      message.status === "novo" ? "bg-blue-50/50" : ""
+                    }`}
+                    onClick={() => handleViewMessage(message)}
                 >
                   <div className="flex items-start gap-4">
                     {/* Avatar/Icon */}
@@ -326,6 +332,7 @@ export default function Messages() {
             )}
           </div>
         </Card>
+        </div>
 
         {/* Dialog de Visualização Detalhada */}
         <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
@@ -447,6 +454,7 @@ export default function Messages() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+      </div>
       </div>
     </DashboardLayout>
   );

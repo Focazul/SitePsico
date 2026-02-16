@@ -107,21 +107,21 @@ export const blogRouter = router({
         content: z.string().min(50),
         coverImage: z.string().url().optional(),
         categoryId: z.number().int().optional(),
-        tagIds: z.array(z.number().int()).default([]),
+        tagNames: z.array(z.string()).default([]),
         publishedAt: z.date().optional(),
       })
     )
     .mutation(async ({ input }) => {
-      const { tagIds, ...postData } = input;
-      
+      const { tagNames, ...postData } = input;
+
       // Se slug não foi fornecido, gera automaticamente a partir do título
       let finalSlug = postData.slug;
       if (!finalSlug) {
         const baseSlug = generateSlug(postData.title);
         finalSlug = await generateUniqueSlug(baseSlug, postExists);
       }
-      
-      const post = await createPost({ ...postData, slug: finalSlug }, tagIds);
+
+      const post = await createPost({ ...postData, slug: finalSlug }, tagNames);
       return post;
     }),
 
@@ -135,13 +135,13 @@ export const blogRouter = router({
         content: z.string().min(50).optional(),
         coverImage: z.string().url().optional(),
         categoryId: z.number().int().optional(),
-        tagIds: z.array(z.number().int()).optional(),
+        tagNames: z.array(z.string()).optional(),
         publishedAt: z.date().optional(),
       })
     )
     .mutation(async ({ input }) => {
-      const { id, tagIds, ...postData } = input;
-      await updatePost(id, postData, tagIds);
+      const { id, tagNames, ...postData } = input;
+      await updatePost(id, postData, tagNames);
       return { success: true };
     }),
 

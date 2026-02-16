@@ -112,7 +112,7 @@ export function trackAppointmentCompleted(modality: 'presencial' | 'online') {
   if (!isGAInitialized()) return;
 
   window.gtag!('event', 'appointment_completed', {
-    modality: modality,
+    modality,
     value: 1, // Conversão
   });
 
@@ -148,7 +148,7 @@ export function trackWhatsAppClick(location: string) {
   if (!isGAInitialized()) return;
 
   window.gtag!('event', 'whatsapp_click', {
-    location: location,
+    location,
   });
 
   console.log('[Analytics] WhatsApp click tracked');
@@ -209,7 +209,7 @@ export function trackScroll(percentage: number, pagePath: string) {
     page_path: pagePath,
   });
 
-  console.log('[Analytics] Scroll tracked:', percentage + '%');
+  console.log('[Analytics] Scroll tracked:', `${percentage  }%`);
 }
 
 /**
@@ -224,7 +224,7 @@ export function trackReadingTime(postSlug: string, timeInSeconds: number) {
     time_category: timeInSeconds < 30 ? 'quick' : timeInSeconds < 120 ? 'medium' : 'deep',
   });
 
-  console.log('[Analytics] Reading time tracked:', timeInSeconds + 's');
+  console.log('[Analytics] Reading time tracked:', `${timeInSeconds  }s`);
 }
 
 /**

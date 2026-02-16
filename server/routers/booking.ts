@@ -204,15 +204,27 @@ export const bookingRouter = router({
       .optional()
     )
     .query(async ({ input }) => {
+      console.log('🔍 Booking list query input:', input);
       if (input?.status) {
+        console.log('🔍 Buscando por status:', input.status);
         return await getAppointmentsByStatus(input.status);
       }
+
+      // Se não há filtros de data, buscar todos os agendamentos
+      if (!input?.startDate && !input?.endDate) {
+        console.log('🔍 Buscando todos os agendamentos');
+        return await getAllAppointments();
+      }
+
       // @ts-ignore
       const start = input?.startDate ? new Date(`${input.startDate}T00:00:00.000Z`) : undefined;
       // @ts-ignore
       const end = input?.endDate ? new Date(`${input.endDate}T23:59:59.999Z`) : undefined;
+      console.log('🔍 Buscando agendamentos no range:', { start, end });
       // @ts-ignore
-      return await getAppointmentsInRange(start, end);
+      const result = await getAppointmentsInRange(start, end);
+      console.log('🔍 Resultado da busca:', result);
+      return result;
     }),
 
   blockDate: adminProcedure

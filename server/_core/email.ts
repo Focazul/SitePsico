@@ -126,7 +126,7 @@ export async function sendEmail(options: SendEmailOptions): Promise<SendEmailRes
     to: options.to,
     subject: options.subject,
     text: text || "",
-    html: html,
+    html,
   });
 
   // Registrar log (não bloquear em caso de erro)

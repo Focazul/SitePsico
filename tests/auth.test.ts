@@ -83,7 +83,7 @@ describe("Authentication Functions", () => {
     });
 
     it("should reject emails longer than 320 chars", () => {
-      const longEmail = "a".repeat(300) + "@example.com";
+      const longEmail = `${"a".repeat(300)  }@example.com`;
       expect(isValidEmail(longEmail)).toBe(false);
     });
   });

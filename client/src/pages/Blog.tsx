@@ -325,7 +325,7 @@ export default function Blog() {
                             {post.title}
                           </h3>
                           <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
-                             {post.excerpt || post.content.substring(0, 150) + '...'}
+                             {post.excerpt || `${post.content.substring(0, 150)  }...`}
                           </p>
                           <div className="flex flex-wrap gap-2 pt-2">
                             {post.tags.map((t) => (

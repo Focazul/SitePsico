@@ -44,7 +44,6 @@ export default function AppointmentForm() {
   });
 
   const selectedDate = watch('appointmentDate');
-  const selectedModality = watch('modality');
 
   // Get available slots for selected date
   const availableSlotsQuery = trpc.booking.getAvailableSlots.useQuery(

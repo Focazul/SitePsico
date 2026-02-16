@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { 
   ArrowRight, 
@@ -15,14 +14,12 @@ import Footer from '@/components/Footer';
 import OrganicDivider from '@/components/OrganicDivider';
 import FAQSection from '@/components/FAQSection';
 import ValuesSection from '@/components/ValuesSection';
-import FadeIn from '@/components/FadeIn';
 import ProfilePhoto from '@/components/ProfilePhoto';
 import FloatingWhatsApp from '@/components/FloatingWhatsApp';
 import { useSiteConfig } from '@/hooks/useSiteConfig';
 import ManusDialog from '@/components/ManusDialog';
 
 export default function Home() {
-  const [, setLocation] = useLocation();
   const { config } = useSiteConfig();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
