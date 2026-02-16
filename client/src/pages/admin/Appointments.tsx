@@ -525,7 +525,8 @@ export default function Appointments() {
 
             {/* Lista Completa de Agendamentos */}
             <Card className="overflow-hidden">
-              <div className="overflow-x-auto">
+              {/* Desktop Table View */}
+              <div className="hidden md:block overflow-x-auto">
                 <table className="w-full">
                   <thead className="bg-gray-50 border-b">
                     <tr>
@@ -728,6 +729,209 @@ export default function Appointments() {
                     )}
                   </tbody>
                 </table>
+              </div>
+
+              {/* Mobile Card View */}
+              <div className="md:hidden space-y-4 p-4">
+                {filteredAppointments.length > 0 ? (
+                  filteredAppointments.map((apt) => (
+                    <Card key={apt.id} className="p-4">
+                      <div className="space-y-3">
+                        {/* Header with patient info */}
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-medium text-gray-900 text-sm">{apt.clientName}</h3>
+                            <p className="text-xs text-gray-600 mt-1">{apt.clientEmail}</p>
+                            {apt.tags && (
+                              <div className="flex gap-1 mt-2 flex-wrap">
+                                {apt.tags.split(",").slice(0, 3).map(t => (
+                                  <span key={t} className="text-[10px] bg-gray-100 px-1.5 py-0.5 rounded text-gray-600">{t.trim()}</span>
+                                ))}
+                                {apt.tags.split(",").length > 3 && (
+                                  <span className="text-[10px] bg-gray-100 px-1.5 py-0.5 rounded text-gray-600">
+                                    +{apt.tags.split(",").length - 3}
+                                  </span>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Date and time */}
+                        <div className="flex items-center gap-2 text-xs text-gray-600">
+                          <Calendar size={12} />
+                          <span>{new Date(apt.appointmentDate).toLocaleDateString("pt-BR")}</span>
+                          <Clock size={12} />
+                          <span>{apt.appointmentTime}</span>
+                        </div>
+
+                        {/* Status and type row */}
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Badge variant="outline" className="text-xs">
+                              {typeConfig[apt.modality].label}
+                            </Badge>
+                            <Badge className={`${statusConfig[apt.status].bgColor} text-xs`}>
+                              <span className={statusConfig[apt.status].color}>
+                                {statusConfig[apt.status].label}
+                              </span>
+                            </Badge>
+                          </div>
+                          {apt.paymentStatus && paymentConfig[apt.paymentStatus] && (
+                            <Badge className={`${paymentConfig[apt.paymentStatus].bgColor} text-xs`}>
+                              <span className={paymentConfig[apt.paymentStatus].color}>
+                                {paymentConfig[apt.paymentStatus].label}
+                              </span>
+                            </Badge>
+                          )}
+                        </div>
+
+                        {/* Actions */}
+                        <div className="flex items-center justify-end pt-2 border-t">
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="h-8 px-3 text-xs"
+                                onClick={() => {
+                                  setSelectedAppointment(apt);
+                                  setEditNotes(apt.notes || "");
+                                  setEditTags(apt.tags || "");
+                                  setEditPaymentStatus((apt.paymentStatus as PaymentStatus) || "pendente");
+                                }}
+                              >
+                                Detalhes
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-md">
+                              <DialogHeader>
+                                <DialogTitle>Detalhes do Agendamento</DialogTitle>
+                              </DialogHeader>
+                              {selectedAppointment && (
+                                <div className="space-y-4">
+                                  <div>
+                                    <label className="text-sm font-medium text-gray-700">Paciente</label>
+                                    <div className="mt-1 text-gray-900 font-medium">
+                                      {selectedAppointment.clientName}
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <label className="text-sm font-medium text-gray-700">Email</label>
+                                    <div className="mt-1 text-gray-900">{selectedAppointment.clientEmail}</div>
+                                  </div>
+                                  <div>
+                                    <label className="text-sm font-medium text-gray-700">Telefone</label>
+                                    <div className="mt-1 text-gray-900">{selectedAppointment.clientPhone}</div>
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                      <label className="text-sm font-medium text-gray-700">Data</label>
+                                      <div className="mt-1 text-gray-900">
+                                        {new Date(selectedAppointment.appointmentDate).toLocaleDateString("pt-BR")}
+                                      </div>
+                                    </div>
+                                    <div>
+                                      <label className="text-sm font-medium text-gray-700">Hora</label>
+                                      <div className="mt-1 text-gray-900">{selectedAppointment.appointmentTime}</div>
+                                    </div>
+                                  </div>
+
+                                  <div>
+                                    <label className="text-sm font-medium text-gray-700">Status Pagamento</label>
+                                    <Select
+                                        value={editPaymentStatus}
+                                        onValueChange={(v) => setEditPaymentStatus(v as PaymentStatus)}
+                                    >
+                                        <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+                                        <SelectContent>
+                                        <SelectItem value="pendente">A Pagar</SelectItem>
+                                        <SelectItem value="pago">Pago</SelectItem>
+                                        <SelectItem value="reembolsado">Reembolsado</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                  </div>
+
+                                  <div>
+                                    <label className="text-sm font-medium text-gray-700">Tags</label>
+                                    <Input
+                                      value={editTags}
+                                      onChange={(e) => setEditTags(e.target.value)}
+                                      className="mt-1"
+                                      placeholder="Ex: ansiedade, retorno"
+                                    />
+                                  </div>
+
+                                  <div>
+                                    <label className="text-sm font-medium text-gray-700">Notas</label>
+                                    <textarea
+                                      value={editNotes}
+                                      onChange={(e) => setEditNotes(e.target.value)}
+                                      className="w-full mt-1 px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                      rows={3}
+                                    />
+                                  </div>
+                                  <div className="flex gap-2 flex-wrap">
+                                    {selectedAppointment.status === "pendente" && (
+                                      <Button 
+                                        className="flex-1 bg-green-600 hover:bg-green-700 gap-2"
+                                        onClick={() => {
+                                          confirmMutation.mutate({ 
+                                            id: selectedAppointment.id, 
+                                            status: "confirmado" 
+                                          });
+                                        }}
+                                        disabled={confirmMutation.isPending}
+                                      >
+                                        <Check size={16} />
+                                        {confirmMutation.isPending ? "..." : "Confirmar"}
+                                      </Button>
+                                    )}
+                                    {["pendente", "confirmado"].includes(selectedAppointment.status) && (
+                                      <Button 
+                                        variant="outline" 
+                                        className="flex-1 gap-2 text-red-600 border-red-300 hover:bg-red-50"
+                                        onClick={() => {
+                                          cancelMutation.mutate({ id: selectedAppointment.id });
+                                        }}
+                                        disabled={cancelMutation.isPending}
+                                      >
+                                        <X size={16} />
+                                        {cancelMutation.isPending ? "..." : "Cancelar"}
+                                      </Button>
+                                    )}
+                                    {selectedAppointment.status === "confirmado" && (
+                                      <Button 
+                                        className="flex-1 bg-purple-600 hover:bg-purple-700 gap-2"
+                                        onClick={() => {
+                                          confirmMutation.mutate({ 
+                                            id: selectedAppointment.id, 
+                                            status: "concluido" 
+                                          });
+                                        }}
+                                        disabled={confirmMutation.isPending}
+                                      >
+                                        <Check size={16} />
+                                        {confirmMutation.isPending ? "..." : "Realizado"}
+                                      </Button>
+                                    )}
+                                    <Button className="flex-1" onClick={handleSaveDetails} disabled={updateMutation.isPending}>
+                                      {updateMutation.isPending ? "Salvando..." : "Salvar Notas/Tags"}
+                                    </Button>
+                                  </div>
+                                </div>
+                              )}
+                            </DialogContent>
+                          </Dialog>
+                        </div>
+                      </div>
+                    </Card>
+                  ))
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    Nenhum agendamento encontrado
+                  </div>
+                )}
               </div>
             </Card>
           </div>

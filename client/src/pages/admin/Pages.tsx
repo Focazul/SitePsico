@@ -268,7 +268,8 @@ export default function Pages() {
         {/* Pages Table */}
         {!isLoading && (
           <Card className="overflow-hidden">
-            <div className="overflow-x-auto">
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto">
               <table className="w-full">
                 <thead>
                   <tr className="border-b bg-gray-50">
@@ -362,6 +363,90 @@ export default function Pages() {
                   ))}
                 </tbody>
               </table>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="md:hidden space-y-4 p-4">
+              {filteredPages.map((page: Page) => (
+                <Card key={page.id} className="p-4">
+                  <div className="space-y-3">
+                    {/* Header with title and status */}
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-medium text-gray-900 text-sm leading-tight">{page.title}</h3>
+                        <p className="text-xs text-gray-500 mt-1 line-clamp-2">{page.metaDescription}</p>
+                      </div>
+                      <Badge variant={page.status === "published" ? "default" : "secondary"} className="text-xs ml-2 flex-shrink-0">
+                        {page.status === "published" ? "Publicada" : "Rascunho"}
+                      </Badge>
+                    </div>
+
+                    {/* Slug */}
+                    <div className="text-xs text-gray-600">
+                      <code className="rounded bg-gray-100 px-2 py-1 text-gray-700">
+                        /{page.slug}
+                      </code>
+                    </div>
+
+                    {/* Date and Actions */}
+                    <div className="flex items-center justify-between pt-2 border-t">
+                      <div className="text-xs text-gray-600">
+                        Atualizado em {new Date(page.updatedAt).toLocaleDateString("pt-BR")}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleTogglePublish(page)}
+                          title={page.status === "published" ? "Despublicar" : "Publicar"}
+                          disabled={updateMutation.isPending}
+                          className="h-8 w-8 p-0"
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleEditPage(page)}
+                          className="h-8 w-8 p-0"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        {deleteConfirmId !== page.id ? (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setDeleteConfirmId(page.id)}
+                            className="h-8 w-8 p-0"
+                          >
+                            <Trash2 className="h-4 w-4 text-red-500" />
+                          </Button>
+                        ) : (
+                          <div className="flex gap-1">
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={() => handleDeletePage(page.id)}
+                              disabled={deleteMutation.isPending}
+                              className="h-8 px-3 text-xs"
+                            >
+                              Sim
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => setDeleteConfirmId(null)}
+                              className="h-8 px-3 text-xs"
+                            >
+                              Não
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              ))}
             </div>
 
             {filteredPages.length === 0 && (

@@ -177,27 +177,174 @@ export function ManusDialog({ open = false, onOpenChange, onSuccess }: ManusDial
 
   return (
     <Dialog open={dialogOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="max-w-lg p-0 overflow-hidden">
-        <DialogHeader className="px-6 pt-6 pb-2 text-left">
-          <DialogTitle className="text-xl font-semibold text-foreground">Agendamento rápido</DialogTitle>
-          <DialogDescription className="text-sm text-muted-foreground">
+      <DialogContent className="max-w-lg w-[95vw] max-h-[90vh] overflow-y-auto p-0">
+        <DialogHeader className="px-4 sm:px-6 pt-4 sm:pt-6 pb-2 text-left">
+          <DialogTitle className="text-lg sm:text-xl font-semibold text-foreground">Agendamento rápido</DialogTitle>
+          <DialogDescription className="text-xs sm:text-sm text-muted-foreground">
             Informe dados essenciais e escolha um horário. Confirmação real será feita na fase de backend.
           </DialogDescription>
         </DialogHeader>
 
-        <form id="quick-booking-form" onSubmit={handleSubmit} className="px-6 pb-4 space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <form id="quick-booking-form" onSubmit={handleSubmit} className="px-4 sm:px-6 pb-4 space-y-3 sm:space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1">
-              <Label htmlFor="name">Nome completo</Label>
+              <Label htmlFor="name" className="text-sm">Nome completo</Label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="name"
                   name="name"
                   placeholder="Seu nome"
-                  className="pl-9"
+                  className="pl-9 h-10"
                   value={data.name}
                   onChange={(e) => setData((d) => ({ ...d, name: e.target.value }))}
+                  required
+                />
+              </div>
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="email" className="text-sm">Email</Label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="seu@email.com"
+                  className="pl-9 h-10"
+                  value={data.email}
+                  onChange={(e) => setData((d) => ({ ...d, email: e.target.value }))}
+                  required
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-1">
+            <Label htmlFor="phone" className="text-sm">Telefone</Label>
+            <div className="relative">
+              <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                id="phone"
+                name="phone"
+                type="tel"
+                placeholder="(11) 99999-9999"
+                className="pl-9 h-10"
+                value={data.phone}
+                onChange={(e) => setData((d) => ({ ...d, phone: e.target.value }))}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label className="text-sm">Modalidade</Label>
+            <div className="grid grid-cols-2 gap-2">
+              {[
+                { value: "presencial", label: "Presencial" },
+                { value: "online", label: "Online" },
+              ].map((opt) => (
+                <Button
+                  key={opt.value}
+                  type="button"
+                  variant={data.modality === opt.value ? "default" : "outline"}
+                  className="h-10 text-sm"
+                  onClick={() => setData((d) => ({ ...d, modality: opt.value as Modality }))}
+                >
+                  {opt.label}
+                </Button>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="space-y-1">
+              <Label htmlFor="date" className="text-sm">Data</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full justify-between h-10 text-sm"
+                  >
+                    {data.date ? format(new Date(`${data.date}T00:00:00`), "dd/MM/yyyy") : "Selecione"}
+                    <CalendarIcon className="w-4 h-4 opacity-70" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="p-0 w-auto" align="start">
+                  <CalendarPicker
+                    mode="single"
+                    selected={selectedDate}
+                    onSelect={(day) => setSelectedDate(day ?? undefined)}
+                    disabled={(day) => !!(availabilityDisabledDays && availabilityDisabledDays.has(day.getDay()))}
+                    initialFocus
+                    className="rounded-md border"
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="time" className="text-sm">Horário</Label>
+              <div className="relative">
+                <Clock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <select
+                  id="time"
+                  name="time"
+                  className="pl-9 pr-3 h-10 w-full rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                  value={data.time}
+                  onChange={(e) => setData((d) => ({ ...d, time: e.target.value }))}
+                  aria-invalid={Boolean(error) && !data.time}
+                  required
+                >
+                  {!data.date && <option value="">Escolha uma data para ver horários</option>}
+                  {data.date && <option value="">Selecione</option>}
+                  {data.date && isLoadingSlots && <option value="" disabled>Carregando horários...</option>}
+                  {data.date && slotOptions.map(({ time }) => (
+                    <option key={time} value={time}>{time}</option>
+                  ))}
+                  {noSlots && <option value="" disabled>Nenhum horário disponível</option>}
+                  {slotsQuery.error && <option value="" disabled>Erro ao carregar horários</option>}
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-1">
+            <Label htmlFor="note" className="text-sm">Observações (opcional)</Label>
+            <Textarea
+              id="note"
+              name="note"
+              placeholder="Breve contexto ou dúvida"
+              value={data.note}
+              onChange={(e) => setData((d) => ({ ...d, note: e.target.value }))}
+              className="min-h-[80px] sm:min-h-[96px] text-sm"
+            />
+          </div>
+
+          {error ? <p className="text-sm text-red-600" role="alert" aria-live="assertive">{error}</p> : null}
+          {submitted ? <p className="text-sm text-green-600" role="status" aria-live="polite">Pedido enviado! Você verá na Comunicação &gt; Mensagens.</p> : null}
+        </form>
+
+        <DialogFooter className="px-4 sm:px-6 pb-4 sm:pb-6 gap-2 sm:gap-3">
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full sm:w-auto"
+            onClick={() => handleOpenChange(false)}
+            disabled={loading}
+          >
+            Cancelar
+          </Button>
+          <Button
+            type="submit"
+            form="quick-booking-form"
+            className="w-full sm:w-auto"
+            isLoading={loading}
+            loadingText="Enviando..."
+            disabled={loading || isRequiredMissing}
+          >
+            Solicitar horário
+          </Button>
+        </DialogFooter>
                   aria-invalid={Boolean(error) && !data.name}
                   required
                 />

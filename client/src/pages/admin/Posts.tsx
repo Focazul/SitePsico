@@ -409,7 +409,8 @@ export default function Posts() {
 
         {/* Lista de Posts */}
         <Card className="overflow-hidden">
-          <div className="overflow-x-auto">
+          {/* Desktop Table View */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gray-50 border-b">
                 <tr>
@@ -518,6 +519,105 @@ export default function Posts() {
                 )}
               </tbody>
             </table>
+          </div>
+
+          {/* Mobile Card View */}
+          <div className="md:hidden space-y-4 p-4">
+            {filteredPosts.length > 0 ? (
+              filteredPosts.map((post) => (
+                <Card key={post.id} className="p-4">
+                  <div className="space-y-3">
+                    {/* Header with image and title */}
+                    <div className="flex items-start gap-3">
+                      {post.cover_image ? (
+                        <div className="w-16 h-16 rounded-lg bg-gray-200 flex-shrink-0 overflow-hidden">
+                          <img src={post.cover_image} alt="" className="w-full h-full object-cover" />
+                        </div>
+                      ) : (
+                        <div className="w-16 h-16 rounded bg-gray-100 flex-shrink-0 flex items-center justify-center">
+                          <Image size={24} className="text-gray-400" />
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-medium text-gray-900 text-sm leading-tight">{post.title}</h3>
+                        <p className="text-xs text-gray-500 mt-1 line-clamp-2">{post.excerpt}</p>
+                      </div>
+                    </div>
+
+                    {/* Metadata row */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Badge variant="outline" className="text-xs">{post.category}</Badge>
+                        <Badge className={`${statusConfig[post.status].bgColor} text-xs`}>
+                          <span className={statusConfig[post.status].color}>
+                            {statusConfig[post.status].label}
+                          </span>
+                        </Badge>
+                      </div>
+                      <div className="flex items-center gap-1 text-gray-600 text-xs">
+                        <Eye size={12} />
+                        <span>{post.views}</span>
+                      </div>
+                    </div>
+
+                    {/* Date and Actions */}
+                    <div className="flex items-center justify-between pt-2 border-t">
+                      <div className="text-xs text-gray-600">
+                        {post.status === "scheduled" && post.scheduled_at ? (
+                          <div className="flex items-center gap-1">
+                            <Calendar size={12} />
+                            {new Date(post.scheduled_at).toLocaleDateString("pt-BR")}
+                          </div>
+                        ) : post.published_at ? (
+                          new Date(post.published_at).toLocaleDateString("pt-BR")
+                        ) : (
+                          new Date(post.created_at).toLocaleDateString("pt-BR")
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleEditPost(post)}
+                          className="h-8 px-3 text-xs gap-1"
+                        >
+                          <Edit size={12} />
+                          Editar
+                        </Button>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
+                              <MoreVertical size={14} />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => window.open(`/blog/${post.slug}`, "_blank")}>
+                              <Eye size={14} className="mr-2" />
+                              Visualizar
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              onClick={() => setDeleteConfirmId(post.id)}
+                              className="text-red-600"
+                            >
+                              <Trash2 size={14} className="mr-2" />
+                              Excluir
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              ))
+            ) : (
+              <div className="text-center py-8 text-gray-500">
+                <FileText size={48} className="mx-auto mb-4 text-gray-300" />
+                <p>Nenhum artigo encontrado</p>
+                <Button onClick={handleNewPost} variant="outline" className="mt-4">
+                  Criar primeiro artigo
+                </Button>
+              </div>
+            )}
           </div>
         </Card>
 
