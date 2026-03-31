@@ -159,7 +159,7 @@ export default function Pages() {
                 Nova Página
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl">
+            <DialogContent className="max-w-2xl w-[96vw] max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>{editingPage ? "Editar Página" : "Nova Página"}</DialogTitle>
               </DialogHeader>
@@ -213,7 +213,7 @@ export default function Pages() {
                     placeholder="Escreva o conteúdo da página..."
                     value={formData.content}
                     onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                    className="mt-1 min-h-[300px]"
+                    className="mt-1 min-h-75"
                   />
                 </div>
 
@@ -376,7 +376,7 @@ export default function Pages() {
                         <h3 className="font-medium text-gray-900 text-sm leading-tight">{page.title}</h3>
                         <p className="text-xs text-gray-500 mt-1 line-clamp-2">{page.metaDescription}</p>
                       </div>
-                      <Badge variant={page.status === "published" ? "default" : "secondary"} className="text-xs ml-2 flex-shrink-0">
+                      <Badge variant={page.status === "published" ? "default" : "secondary"} className="text-xs ml-2 shrink-0">
                         {page.status === "published" ? "Publicada" : "Rascunho"}
                       </Badge>
                     </div>
@@ -400,7 +400,7 @@ export default function Pages() {
                           onClick={() => handleTogglePublish(page)}
                           title={page.status === "published" ? "Despublicar" : "Publicar"}
                           disabled={updateMutation.isPending}
-                          className="h-8 w-8 p-0"
+                          className="h-10 w-10 p-0"
                         >
                           <Eye className="h-4 w-4" />
                         </Button>
@@ -408,7 +408,7 @@ export default function Pages() {
                           variant="ghost"
                           size="sm"
                           onClick={() => handleEditPage(page)}
-                          className="h-8 w-8 p-0"
+                          className="h-10 w-10 p-0"
                         >
                           <Edit className="h-4 w-4" />
                         </Button>
@@ -417,7 +417,7 @@ export default function Pages() {
                             variant="ghost"
                             size="sm"
                             onClick={() => setDeleteConfirmId(page.id)}
-                            className="h-8 w-8 p-0"
+                            className="h-10 w-10 p-0"
                           >
                             <Trash2 className="h-4 w-4 text-red-500" />
                           </Button>
@@ -428,7 +428,7 @@ export default function Pages() {
                               variant="destructive"
                               onClick={() => handleDeletePage(page.id)}
                               disabled={deleteMutation.isPending}
-                              className="h-8 px-3 text-xs"
+                              className="h-10 px-3 text-sm"
                             >
                               Sim
                             </Button>
@@ -436,7 +436,7 @@ export default function Pages() {
                               size="sm"
                               variant="outline"
                               onClick={() => setDeleteConfirmId(null)}
-                              className="h-8 px-3 text-xs"
+                              className="h-10 px-3 text-sm"
                             >
                               Não
                             </Button>
@@ -459,7 +459,7 @@ export default function Pages() {
 
         {/* Stats */}
         {!isLoading && (
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <Card className="p-6">
               <p className="text-sm font-medium text-gray-600">Total de Páginas</p>
               <p className="mt-2 text-2xl font-bold text-gray-900">{pages.length}</p>

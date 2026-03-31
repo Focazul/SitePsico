@@ -768,3 +768,34 @@ body {
   border: 1px solid var(--accent);
   color: white;
 }
+
+@media (max-width: 768px) {
+  html,
+  body {
+    overflow-x: hidden;
+  }
+
+  .container {
+    width: min(1200px, 95vw);
+  }
+
+  button,
+  input,
+  select,
+  textarea,
+  [role="tab"] {
+    font-size: 16px;
+  }
+
+  button,
+  [role="button"],
+  [role="tab"],
+  .admin-menu-active,
+  [data-slot="dropdown-menu-item"] {
+    min-height: 2.5rem;
+  }
+
+  [data-slot="dialog-content"] {
+    max-height: calc(100dvh - 1rem);
+  }
+}

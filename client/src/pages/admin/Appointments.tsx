@@ -603,7 +603,7 @@ export default function Appointments() {
                   <DialogTitle>Novo Agendamento Manual</DialogTitle>
                   <DialogDescription>Adicione um paciente ou agendamento que não veio pelo site.</DialogDescription>
                 </DialogHeader>
-                <div className="grid grid-cols-2 gap-4 py-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
                   <div className="space-y-2">
                     <Label>Nome do Paciente</Label>
                     <Input
@@ -802,12 +802,12 @@ export default function Appointments() {
               </div>
 
               <div className="flex flex-wrap gap-2">
-                <Button size="sm" variant={quickFilter === "all" ? "default" : "outline"} onClick={() => setQuickFilter("all")}>Todos</Button>
-                <Button size="sm" variant={quickFilter === "today" ? "default" : "outline"} onClick={() => setQuickFilter("today")}>Hoje</Button>
-                <Button size="sm" variant={quickFilter === "week" ? "default" : "outline"} onClick={() => setQuickFilter("week")}>Esta semana</Button>
-                <Button size="sm" variant={quickFilter === "unpaid" ? "default" : "outline"} onClick={() => setQuickFilter("unpaid")}>Não pagos</Button>
-                <Button size="sm" variant={quickFilter === "falta" ? "default" : "outline"} onClick={() => setQuickFilter("falta")}>Faltas</Button>
-                <Button size="sm" variant={quickFilter === "reagendado" ? "default" : "outline"} onClick={() => setQuickFilter("reagendado")}>Reagendados</Button>
+                <Button size="sm" className="h-10" variant={quickFilter === "all" ? "default" : "outline"} onClick={() => setQuickFilter("all")}>Todos</Button>
+                <Button size="sm" className="h-10" variant={quickFilter === "today" ? "default" : "outline"} onClick={() => setQuickFilter("today")}>Hoje</Button>
+                <Button size="sm" className="h-10" variant={quickFilter === "week" ? "default" : "outline"} onClick={() => setQuickFilter("week")}>Esta semana</Button>
+                <Button size="sm" className="h-10" variant={quickFilter === "unpaid" ? "default" : "outline"} onClick={() => setQuickFilter("unpaid")}>Não pagos</Button>
+                <Button size="sm" className="h-10" variant={quickFilter === "falta" ? "default" : "outline"} onClick={() => setQuickFilter("falta")}>Faltas</Button>
+                <Button size="sm" className="h-10" variant={quickFilter === "reagendado" ? "default" : "outline"} onClick={() => setQuickFilter("reagendado")}>Reagendados</Button>
               </div>
             </div>
 
@@ -842,7 +842,7 @@ export default function Appointments() {
                 <select
                   value={selectedStatus}
                   onChange={(e) => setSelectedStatus(e.target.value as AppointmentStatus | "all")}
-                  className="px-3 py-2 border rounded-lg text-sm bg-white"
+                  className="h-10 px-3 py-2 border rounded-lg text-sm bg-white"
                 >
                   <option value="all">Todos os Status</option>
                   <option value="pendente">Pendentes</option>
@@ -857,7 +857,7 @@ export default function Appointments() {
                 <select
                   value={selectedType}
                   onChange={(e) => setSelectedType(e.target.value as AppointmentType | "all")}
-                  className="px-3 py-2 border rounded-lg text-sm bg-white"
+                  className="h-10 px-3 py-2 border rounded-lg text-sm bg-white"
                 >
                   <option value="all">Todas as Modalidades</option>
                   <option value="presencial">Presencial</option>
@@ -1001,7 +1001,7 @@ export default function Appointments() {
               <div className="space-y-3">
                 {upcomingAppointments.length > 0 ? (
                   upcomingAppointments.map((apt) => (
-                    <div key={apt.id} className="flex items-center justify-between bg-white p-3 rounded-lg border">
+                    <div key={apt.id} className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between bg-white p-3 rounded-lg border">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
                           <div className="font-semibold text-gray-900">{apt.clientName}</div>
@@ -1121,7 +1121,7 @@ export default function Appointments() {
                                     Detalhes
                                   </Button>
                                 </DialogTrigger>
-                                <DialogContent className="max-w-md">
+                                <DialogContent className="max-w-md w-[95vw] max-h-[88vh] overflow-y-auto">
                                   <DialogHeader>
                                     <DialogTitle>Detalhes do Agendamento</DialogTitle>
                                   </DialogHeader>
@@ -1393,7 +1393,7 @@ export default function Appointments() {
                               <Button
                                 size="sm"
                                 variant="outline"
-                                className="h-8 px-3 text-xs"
+                                className="h-10 px-3 text-sm"
                                 onClick={() => {
                                   setSelectedAppointment(apt);
                                   setEditNotes(apt.notes || "");
@@ -1404,7 +1404,7 @@ export default function Appointments() {
                                 Detalhes
                               </Button>
                             </DialogTrigger>
-                            <DialogContent className="max-w-md">
+                            <DialogContent className="max-w-md w-[95vw] max-h-[88vh] overflow-y-auto">
                               <DialogHeader>
                                 <DialogTitle>Detalhes do Agendamento</DialogTitle>
                               </DialogHeader>
@@ -1615,13 +1615,13 @@ export default function Appointments() {
             {/* Calendário Header */}
             <Card className="p-4">
               <div className="flex justify-between items-center mb-4">
-                <Button variant="outline" size="sm" onClick={previousMonth}>
+                <Button variant="outline" size="sm" className="h-10 w-10 p-0" onClick={previousMonth}>
                   <ChevronLeft size={20} />
                 </Button>
                 <h2 className="text-lg font-semibold text-gray-900">
                   {currentDate.toLocaleDateString("pt-BR", { month: "long", year: "numeric" })}
                 </h2>
-                <Button variant="outline" size="sm" onClick={nextMonth}>
+                <Button variant="outline" size="sm" className="h-10 w-10 p-0" onClick={nextMonth}>
                   <ChevronRight size={20} />
                 </Button>
               </div>

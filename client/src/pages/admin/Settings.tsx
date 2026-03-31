@@ -116,7 +116,7 @@ export default function Settings() {
   };
 
   const SaveButton = ({ onClick, loading }: any) => (
-    <Button onClick={onClick} disabled={loading} className="bg-blue-600 hover:bg-blue-700 gap-2">
+    <Button onClick={onClick} disabled={loading} className="bg-blue-600 hover:bg-blue-700 gap-2 h-10 px-4">
       <Save size={18} /> {loading ? "Salvando..." : "Salvar"}
     </Button>
   );
@@ -130,21 +130,21 @@ export default function Settings() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="bg-gray-100 p-1 rounded-lg flex flex-wrap gap-1">
-            <TabsTrigger value="profile" className="gap-2"><User size={16} /><span className="hidden sm:inline">Perfil</span></TabsTrigger>
-            <TabsTrigger value="contact" className="gap-2"><Phone size={16} /><span className="hidden sm:inline">Contato</span></TabsTrigger>
-            <TabsTrigger value="hours" className="gap-2"><Clock size={16} /><span className="hidden sm:inline">Horários</span></TabsTrigger>
-            <TabsTrigger value="pricing" className="gap-2"><DollarSign size={16} /><span className="hidden sm:inline">Valores</span></TabsTrigger>
-            <TabsTrigger value="content" className="gap-2"><FileText size={16} /><span className="hidden sm:inline">Conteúdo</span></TabsTrigger>
-            <TabsTrigger value="map" className="gap-2"><MapPin size={16} /><span className="hidden sm:inline">Mapa</span></TabsTrigger>
-            <TabsTrigger value="integrations" className="gap-2"><Link size={16} /><span className="hidden sm:inline">Integrações</span></TabsTrigger>
-            <TabsTrigger value="security" className="gap-2"><Shield size={16} /><span className="hidden sm:inline">Segurança</span></TabsTrigger>
+          <TabsList className="bg-gray-100 p-1 rounded-lg flex w-full gap-1 overflow-x-auto whitespace-nowrap">
+            <TabsTrigger value="profile" className="gap-2 min-h-10 px-3 shrink-0"><User size={16} /><span className="hidden sm:inline">Perfil</span></TabsTrigger>
+            <TabsTrigger value="contact" className="gap-2 min-h-10 px-3 shrink-0"><Phone size={16} /><span className="hidden sm:inline">Contato</span></TabsTrigger>
+            <TabsTrigger value="hours" className="gap-2 min-h-10 px-3 shrink-0"><Clock size={16} /><span className="hidden sm:inline">Horários</span></TabsTrigger>
+            <TabsTrigger value="pricing" className="gap-2 min-h-10 px-3 shrink-0"><DollarSign size={16} /><span className="hidden sm:inline">Valores</span></TabsTrigger>
+            <TabsTrigger value="content" className="gap-2 min-h-10 px-3 shrink-0"><FileText size={16} /><span className="hidden sm:inline">Conteúdo</span></TabsTrigger>
+            <TabsTrigger value="map" className="gap-2 min-h-10 px-3 shrink-0"><MapPin size={16} /><span className="hidden sm:inline">Mapa</span></TabsTrigger>
+            <TabsTrigger value="integrations" className="gap-2 min-h-10 px-3 shrink-0"><Link size={16} /><span className="hidden sm:inline">Integrações</span></TabsTrigger>
+            <TabsTrigger value="security" className="gap-2 min-h-10 px-3 shrink-0"><Shield size={16} /><span className="hidden sm:inline">Segurança</span></TabsTrigger>
           </TabsList>
 
           {/* PERFIL */}
           <TabsContent value="profile">
             <Card className="p-6 space-y-6">
-              <div className="flex justify-between items-center">
+              <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center">
                 <h2 className="text-xl font-semibold">Perfil Profissional</h2>
                 <SaveButton onClick={handleSaveProfile} loading={bulkUpdateMutation.isPending} />
               </div>
@@ -161,7 +161,7 @@ export default function Settings() {
           {/* CONTATO */}
           <TabsContent value="contact">
             <Card className="p-6 space-y-6">
-              <div className="flex justify-between items-center">
+              <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center">
                 <h2 className="text-xl font-semibold">Contato</h2>
                 <SaveButton onClick={handleSaveContact} loading={bulkUpdateMutation.isPending} />
               </div>
@@ -197,7 +197,7 @@ export default function Settings() {
           {/* HORÁRIOS */}
           <TabsContent value="hours">
             <Card className="p-6 space-y-6">
-              <div className="flex justify-between items-center">
+              <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center">
                 <h2 className="text-xl font-semibold">Horários</h2>
                 <SaveButton onClick={handleSaveSchedule} loading={bulkUpdateMutation.isPending} />
               </div>
@@ -209,15 +209,15 @@ export default function Settings() {
                 <h3 className="font-semibold mb-3">Disponibilidade Semanal</h3>
                 <div className="space-y-2">
                   {availability.map((slot, idx) => (
-                    <div key={slot.day} className="flex items-center gap-2 p-2 bg-gray-50 rounded">
+                    <div key={slot.day} className="flex flex-col items-start gap-2 p-3 bg-gray-50 rounded sm:flex-row sm:items-center">
                       <input type="checkbox" checked={slot.enabled} onChange={e => handleAvailabilityChange(idx, "enabled", e.target.checked)} className="w-4 h-4" />
-                      <span className="w-32 text-sm">{slot.dayLabel}</span>
+                      <span className="sm:w-32 text-sm font-medium">{slot.dayLabel}</span>
                       {slot.enabled && (
-                        <>
+                        <div className="flex items-center gap-2 w-full sm:w-auto">
                           <input type="time" value={slot.start} onChange={e => handleAvailabilityChange(idx, "start", e.target.value)} className="px-2 py-1 border rounded text-sm" />
                           <span>até</span>
                           <input type="time" value={slot.end} onChange={e => handleAvailabilityChange(idx, "end", e.target.value)} className="px-2 py-1 border rounded text-sm" />
-                        </>
+                        </div>
                       )}
                     </div>
                   ))}
@@ -229,7 +229,7 @@ export default function Settings() {
           {/* VALORES */}
           <TabsContent value="pricing">
             <Card className="p-6 space-y-6">
-              <div className="flex justify-between items-center">
+              <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center">
                 <h2 className="text-xl font-semibold">Valores de Consulta</h2>
                 <SaveButton onClick={handleSavePricing} loading={bulkUpdateMutation.isPending} />
               </div>
@@ -246,7 +246,7 @@ export default function Settings() {
           {/* CONTEÚDO */}
           <TabsContent value="content">
             <Card className="p-6 space-y-6">
-              <div className="flex justify-between items-center">
+              <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center">
                 <h2 className="text-xl font-semibold">Conteúdo do Site</h2>
                 <SaveButton onClick={handleSaveContent} loading={bulkUpdateMutation.isPending} />
               </div>
@@ -260,7 +260,7 @@ export default function Settings() {
           {/* MAPA */}
           <TabsContent value="map">
             <Card className="p-6 space-y-6">
-              <div className="flex justify-between items-center">
+              <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center">
                 <h2 className="text-xl font-semibold">Configuração do Mapa</h2>
                 <SaveButton onClick={handleSaveMap} loading={bulkUpdateMutation.isPending} />
               </div>
@@ -282,7 +282,7 @@ export default function Settings() {
           {/* INTEGRAÇÕES */}
           <TabsContent value="integrations">
             <Card className="p-6 space-y-6">
-              <div className="flex justify-between items-center">
+              <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center">
                 <h2 className="text-xl font-semibold">Integrações</h2>
                 <SaveButton onClick={handleSaveIntegrations} loading={bulkUpdateMutation.isPending} />
               </div>
@@ -295,7 +295,7 @@ export default function Settings() {
           <TabsContent value="security">
             <Card className="p-6 space-y-6">
               <h2 className="text-xl font-semibold">Alterar Senha</h2>
-              <div><label className="block text-sm font-medium mb-1">Senha Atual</label><div className="relative"><input type={showPassword ? "text" : "password"} value={security.currentPassword} onChange={e => setSecurity(s => ({ ...s, currentPassword: e.target.value }))} className="w-full px-3 py-2 border rounded-lg pr-10" /><button onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-2.5">{showPassword ? <EyeOff size={18} /> : <Eye size={18} />}</button></div></div>
+              <div><label className="block text-sm font-medium mb-1">Senha Atual</label><div className="relative"><input type={showPassword ? "text" : "password"} value={security.currentPassword} onChange={e => setSecurity(s => ({ ...s, currentPassword: e.target.value }))} className="w-full px-3 py-2 border rounded-lg pr-10" /><button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-2.5 p-1">{showPassword ? <EyeOff size={18} /> : <Eye size={18} />}</button></div></div>
               <div><label className="block text-sm font-medium mb-1">Nova Senha</label><input type="password" value={security.newPassword} onChange={e => setSecurity(s => ({ ...s, newPassword: e.target.value }))} className="w-full px-3 py-2 border rounded-lg" /></div>
               <div><label className="block text-sm font-medium mb-1">Confirmar Senha</label><input type="password" value={security.confirmPassword} onChange={e => setSecurity(s => ({ ...s, confirmPassword: e.target.value }))} className="w-full px-3 py-2 border rounded-lg" /></div>
               <Button onClick={handlePasswordChange} disabled={changePasswordMutation.isPending} className="bg-red-600 hover:bg-red-700">

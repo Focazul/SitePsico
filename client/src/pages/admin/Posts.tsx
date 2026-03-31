@@ -595,14 +595,14 @@ export default function Posts() {
                           size="sm"
                           variant="outline"
                           onClick={() => handleEditPost(post)}
-                          className="h-8 px-3 text-xs gap-1"
+                          className="h-10 px-3 text-sm gap-1"
                         >
                           <Edit size={12} />
                           Editar
                         </Button>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
+                            <Button size="sm" variant="ghost" className="h-10 w-10 p-0">
                               <MoreVertical size={14} />
                             </Button>
                           </DropdownMenuTrigger>
@@ -639,7 +639,7 @@ export default function Posts() {
 
         {/* Dialog de Confirmação de Exclusão */}
         <Dialog open={!!deleteConfirmId} onOpenChange={() => setDeleteConfirmId(null)}>
-          <DialogContent className="max-w-sm">
+          <DialogContent className="max-w-sm w-[95vw]">
             <DialogHeader>
               <DialogTitle>Confirmar Exclusão</DialogTitle>
               <DialogDescription>
@@ -662,7 +662,7 @@ export default function Posts() {
 
         {/* Dialog de Editor */}
         <Dialog open={isEditorOpen} onOpenChange={setIsEditorOpen}>
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogContent className="max-w-4xl w-[96vw] max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
                 {editingPost ? "Editar Artigo" : "Novo Artigo"}

@@ -337,7 +337,7 @@ export default function Communication() {
                       }`}
                       onClick={() => handleViewMessage(message)}
                     >
-                      <div className="flex items-start gap-4">
+                      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-4">
                         <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${
                           message.status === "novo" ? "bg-blue-100" : "bg-gray-100"
                         }`}>
@@ -367,11 +367,11 @@ export default function Communication() {
                           </div>
                         </div>
 
-                        <div className="flex flex-col items-end gap-2 shrink-0">
+                        <div className="flex items-center justify-between gap-2 sm:flex-col sm:items-end sm:justify-start shrink-0">
                           <Button
                             size="sm"
                             variant="outline"
-                            className="h-8 gap-1"
+                            className="h-10 sm:h-8 gap-1"
                             onClick={(e) => {
                               e.stopPropagation();
                               handleCreateAppointment(message);
@@ -386,7 +386,7 @@ export default function Communication() {
                           </span>
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                              <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
+                              <Button size="sm" variant="ghost" className="h-10 w-10 sm:h-8 sm:w-8 p-0">
                                 <MoreVertical size={16} />
                               </Button>
                             </DropdownMenuTrigger>
@@ -558,8 +558,8 @@ export default function Communication() {
                   </div>
                 </div>
 
-                <div className="flex gap-2 mt-4">
-                  <Button onClick={() => refetchLogs()} size="sm">
+                <div className="flex flex-wrap gap-2 mt-4">
+                  <Button onClick={() => refetchLogs()} size="sm" className="h-10">
                     Aplicar Filtros
                   </Button>
                   <Button 
@@ -572,6 +572,7 @@ export default function Communication() {
                     }} 
                     variant="outline" 
                     size="sm"
+                    className="h-10"
                   >
                     Limpar Filtros
                   </Button>
@@ -760,7 +761,7 @@ export default function Communication() {
 
         {/* Dialog de Confirmação de Exclusão */}
         <Dialog open={!!deleteConfirmId} onOpenChange={() => setDeleteConfirmId(null)}>
-          <DialogContent className="max-w-sm">
+          <DialogContent className="max-w-sm w-[95vw]">
             <DialogHeader>
               <DialogTitle>Confirmar Exclusão</DialogTitle>
               <DialogDescription>
