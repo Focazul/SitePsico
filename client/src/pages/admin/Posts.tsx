@@ -88,7 +88,7 @@ export default function Posts() {
   });
 
   // Fetch posts from API (apenas dados reais)
-  const postsQuery = trpc.blog.getPosts.useQuery({
+  const postsQuery = trpc.blog.getAdminPosts.useQuery({
     limit: 100,
     offset: 0,
   });
@@ -178,11 +178,12 @@ export default function Posts() {
         excerpt: p.excerpt || "",
         content: p.content,
         cover_image: p.coverImage || undefined,
-        category: "Geral",
-        tags: [],
-        status: p.publishedAt ? "published" as const : "draft" as const,
+        category: p.category?.name || "Sem categoria",
+        tags: p.tags?.map((t) => t.name) || [],
+        status: !p.publishedAt ? "draft" as const : (new Date(p.publishedAt) > new Date() ? "scheduled" as const : "published" as const),
         published_at: p.publishedAt?.toISOString(),
-        views: 0,
+        scheduled_at: p.publishedAt && new Date(p.publishedAt) > new Date() ? p.publishedAt.toISOString() : undefined,
+        views: p.views || 0,
         meta_title: undefined,
         meta_description: undefined,
         created_at: p.createdAt.toISOString(),
@@ -252,6 +253,17 @@ export default function Posts() {
       return;
     }
 
+    const selectedCategoryId = postsQuery.data?.posts
+      ?.map((p) => p.category)
+      .find((c) => c?.name === formData.category)?.id;
+
+    const publishDate =
+      formData.status === "published"
+        ? new Date()
+        : formData.status === "scheduled" && formData.scheduled_at
+          ? new Date(formData.scheduled_at)
+          : undefined;
+
     if (editingPost) {
       // Update existing post
       updateMutation.mutate({
@@ -260,8 +272,10 @@ export default function Posts() {
         slug: formData.slug,
         excerpt: formData.excerpt,
         content: formData.content,
-        coverImage: formData.cover_image,
-        publishedAt: formData.status === "published" ? new Date() : undefined,
+        coverImage: formData.cover_image || undefined,
+        categoryId: selectedCategoryId,
+        tagNames: formData.tags,
+        publishedAt: publishDate,
       });
     } else {
       // Create new post
@@ -271,7 +285,9 @@ export default function Posts() {
         excerpt: formData.excerpt,
         content: formData.content,
         coverImage: formData.cover_image || undefined,
-        publishedAt: formData.status === "published" ? new Date() : undefined,
+        categoryId: selectedCategoryId,
+        tagNames: formData.tags,
+        publishedAt: publishDate,
       });
     }
   };
@@ -429,11 +445,11 @@ export default function Posts() {
                       <td className="px-6 py-4">
                         <div className="flex items-start gap-3">
                           {post.cover_image ? (
-                            <div className="w-16 h-12 rounded bg-gray-200 flex-shrink-0 overflow-hidden">
+                            <div className="w-16 h-12 rounded bg-gray-200 shrink-0 overflow-hidden">
                               <img src={post.cover_image} alt="" className="w-full h-full object-cover" />
                             </div>
                           ) : (
-                            <div className="w-16 h-12 rounded bg-gray-100 flex-shrink-0 flex items-center justify-center">
+                            <div className="w-16 h-12 rounded bg-gray-100 shrink-0 flex items-center justify-center">
                               <Image size={20} className="text-gray-400" />
                             </div>
                           )}
@@ -530,11 +546,11 @@ export default function Posts() {
                     {/* Header with image and title */}
                     <div className="flex items-start gap-3">
                       {post.cover_image ? (
-                        <div className="w-16 h-16 rounded-lg bg-gray-200 flex-shrink-0 overflow-hidden">
+                        <div className="w-16 h-16 rounded-lg bg-gray-200 shrink-0 overflow-hidden">
                           <img src={post.cover_image} alt="" className="w-full h-full object-cover" />
                         </div>
                       ) : (
-                        <div className="w-16 h-16 rounded bg-gray-100 flex-shrink-0 flex items-center justify-center">
+                        <div className="w-16 h-16 rounded bg-gray-100 shrink-0 flex items-center justify-center">
                           <Image size={24} className="text-gray-400" />
                         </div>
                       )}
@@ -810,7 +826,7 @@ export default function Posts() {
 
               {/* Tags */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center justify-between">
+                <label className="text-sm font-medium text-gray-700 mb-2 flex items-center justify-between">
                   <span>Tags</span>
                   <Dialog open={isNewTagDialogOpen} onOpenChange={setIsNewTagDialogOpen}>
                     <DialogTrigger asChild>

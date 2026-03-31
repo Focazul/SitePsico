@@ -14,6 +14,9 @@ interface SEOConfig {
   ogImage?: string;
   ogUrl?: string;
   ogType?: string;
+  ogLocale?: string;
+  articlePublishedTime?: string;
+  articleModifiedTime?: string;
   twitterCard?: string;
   twitterTitle?: string;
   twitterDescription?: string;
@@ -78,6 +81,15 @@ export function useSEO(config: SEOConfig = {}) {
     }
     if (merged.ogType) {
       updateMetaTag("og:type", merged.ogType);
+    }
+    if (merged.ogLocale) {
+      updateMetaTag("og:locale", merged.ogLocale);
+    }
+    if (merged.articlePublishedTime) {
+      updateMetaTag("article:published_time", merged.articlePublishedTime);
+    }
+    if (merged.articleModifiedTime) {
+      updateMetaTag("article:modified_time", merged.articleModifiedTime);
     }
 
     // Atualizar Twitter Card

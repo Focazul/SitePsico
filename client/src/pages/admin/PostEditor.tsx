@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { X, Save, Eye, ArrowLeft } from 'lucide-react';
+import { X, Save, Eye, ArrowLeft, CheckCircle2, AlertCircle } from 'lucide-react';
 import RichTextEditor from '@/components/RichTextEditor';
 import { trpc } from '@/lib/trpc';
 import { useSiteConfig } from '@/hooks/useSiteConfig';
@@ -42,6 +42,46 @@ export default function PostEditor() {
 
   const [tagInput, setTagInput] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+
+  const seoChecks = [
+    {
+      id: 'title',
+      label: 'Título entre 30 e 60 caracteres',
+      ok: formData.title.trim().length >= 30 && formData.title.trim().length <= 60,
+    },
+    {
+      id: 'slug',
+      label: 'Slug válido e amigável',
+      ok: /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(formData.slug.trim()),
+    },
+    {
+      id: 'excerpt',
+      label: 'Resumo entre 120 e 160 caracteres',
+      ok: formData.excerpt.trim().length >= 120 && formData.excerpt.trim().length <= 160,
+    },
+    {
+      id: 'content',
+      label: 'Conteúdo com pelo menos 300 palavras',
+      ok: formData.content.replace(/<[^>]*>/g, ' ').trim().split(/\s+/).filter(Boolean).length >= 300,
+    },
+    {
+      id: 'cover',
+      label: 'Imagem de capa definida',
+      ok: Boolean(formData.coverImage.trim()),
+    },
+    {
+      id: 'category',
+      label: 'Categoria selecionada',
+      ok: Boolean(formData.categoryId),
+    },
+    {
+      id: 'tags',
+      label: 'Pelo menos 3 tags',
+      ok: formData.tags.length >= 3,
+    },
+  ] as const;
+
+  const seoScore = Math.round((seoChecks.filter((c) => c.ok).length / seoChecks.length) * 100);
 
   // Queries
   const categoriesQuery = trpc.blog.getCategories.useQuery();
@@ -112,15 +152,20 @@ export default function PostEditor() {
   const handleSave = async (publish: boolean = false) => {
     setIsSaving(true);
     try {
+      const parsedCategoryId = formData.categoryId ? Number(formData.categoryId) : undefined;
+      const computedPublishDate = publish
+        ? (formData.publishedAt ? new Date(formData.publishedAt) : new Date())
+        : undefined;
+
       const postData = {
         title: formData.title,
         slug: formData.slug,
         excerpt: formData.excerpt,
         content: formData.content,
-        categoryId: parseInt(formData.categoryId),
+        categoryId: Number.isFinite(parsedCategoryId as number) ? parsedCategoryId : undefined,
         tagNames: formData.tags,
         coverImage: formData.coverImage || undefined,
-        publishedAt: publish && formData.publishedAt ? new Date(formData.publishedAt) : undefined
+        publishedAt: computedPublishDate,
       };
 
       if (isEditing) {
@@ -346,6 +391,33 @@ export default function PostEditor() {
                   </div>
                 </div>
               )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Checklist SEO</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Score SEO</span>
+                <Badge variant={seoScore >= 80 ? 'default' : 'secondary'}>{seoScore}%</Badge>
+              </div>
+              <div className="space-y-2">
+                {seoChecks.map((check) => (
+                  <div key={check.id} className="flex items-center gap-2 text-sm">
+                    {check.ok ? (
+                      <CheckCircle2 className="w-4 h-4 text-green-600" />
+                    ) : (
+                      <AlertCircle className="w-4 h-4 text-amber-600" />
+                    )}
+                    <span className={check.ok ? 'text-green-700' : 'text-gray-700'}>{check.label}</span>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Recomendação: publicar com score acima de 80% para melhor indexação e compartilhamento.
+              </p>
             </CardContent>
           </Card>
         </div>

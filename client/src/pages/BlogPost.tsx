@@ -10,6 +10,7 @@ import { trpc } from '@/lib/trpc';
 import { ArrowLeft, BookOpen, Calendar, Clock, Link2, Linkedin, MessageCircle, Share2, User, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { useSEO } from '@/hooks/useSEO';
 
 type BlogPostParams = {
   params: {
@@ -25,6 +26,34 @@ export default function BlogPost({ params }: BlogPostParams) {
   );
 
   const [shareUrl, setShareUrl] = useState('');
+
+  const seoDescription = useMemo(() => {
+    if (!post) return undefined;
+    const fallback = post.content.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+    return (post.excerpt || fallback).slice(0, 160);
+  }, [post]);
+
+  const canonicalUrl = useMemo(() => {
+    if (typeof window === 'undefined') return undefined;
+    return `${window.location.origin}/blog/${params.slug}`;
+  }, [params.slug]);
+
+  useSEO({
+    title: post ? `${post.title} | Blog` : undefined,
+    description: seoDescription,
+    ogTitle: post?.title,
+    ogDescription: seoDescription,
+    ogType: 'article',
+    ogLocale: 'pt_BR',
+    articlePublishedTime: post?.publishedAt ? new Date(post.publishedAt).toISOString() : undefined,
+    articleModifiedTime: post?.updatedAt ? new Date(post.updatedAt).toISOString() : undefined,
+    ogImage: post?.coverImage || undefined,
+    ogUrl: canonicalUrl,
+    twitterTitle: post?.title,
+    twitterDescription: seoDescription,
+    twitterImage: post?.coverImage || undefined,
+    canonicalUrl,
+  });
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -191,7 +220,7 @@ export default function BlogPost({ params }: BlogPostParams) {
                 {related.map((item) => (
                   <Link key={item.slug} href={`/blog/${item.slug}`} className="block group">
                     <Card className="h-full border-border/60 hover:border-accent transition-all duration-200">
-                      <div className="aspect-[16/9] bg-muted overflow-hidden">
+                      <div className="aspect-video bg-muted overflow-hidden">
                         {item.coverImage ? (
                           <img
                             src={item.coverImage}

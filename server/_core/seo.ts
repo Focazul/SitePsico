@@ -3,7 +3,13 @@
  * Gerencia sitemap, robots.txt e utilitários de SEO
  */
 
-const BASE_URL = process.env.VITE_FRONTEND_URL || "http://localhost:5173";
+import { getPublishedPosts } from "../db";
+
+const BASE_URL =
+  process.env.FRONTEND_URL ||
+  process.env.VITE_APP_URL ||
+  process.env.VITE_FRONTEND_URL ||
+  "http://localhost:5173";
 const SITE_NAME = "Consultório de Psicologia";
 
 interface SitemapEntry {
@@ -26,51 +32,34 @@ export async function generateSitemap(): Promise<string> {
       priority: 1.0,
     },
     {
-      url: `${BASE_URL}/about`,
-      changefreq: "monthly",
-      priority: 0.9,
-    },
-    {
-      url: `${BASE_URL}/services`,
-      changefreq: "monthly",
-      priority: 0.9,
-    },
-    {
       url: `${BASE_URL}/blog`,
       changefreq: "weekly",
       priority: 0.8,
     },
-    {
-      url: `${BASE_URL}/contact`,
-      changefreq: "never",
-      priority: 0.7,
-    },
-    {
-      url: `${BASE_URL}/booking`,
-      changefreq: "weekly",
-      priority: 0.9,
-    },
   ];
 
-  // Gerar URLs para posts de blog (placeholder)
-  const blogPosts = [
-    "o-que-e-psicoterapia",
-    "como-saber-se-preciso-de-terapia",
-    "o-que-esperar-da-primeira-sessao",
-    "diferenca-entre-profissionais",
-    "terapia-online-beneficios",
-    "como-escolher-um-psicologo",
-    "ansiedade-sinais-e-quando-buscar-ajuda",
-    "saude-mental-no-trabalho",
-  ];
+  // Gerar URLs dos posts publicados reais
+  const limit = 100;
+  let offset = 0;
+  let total = 0;
 
-  blogPosts.forEach((slug) => {
-    entries.push({
-      url: `${BASE_URL}/blog/${slug}`,
-      changefreq: "monthly",
-      priority: 0.7,
+  do {
+    const { posts, count } = await getPublishedPosts(limit, offset);
+    total = count;
+
+    posts.forEach((post) => {
+      const updated = post.updatedAt || post.publishedAt || post.createdAt;
+      entries.push({
+        url: `${BASE_URL}/blog/${post.slug}`,
+        lastmod: updated ? new Date(updated).toISOString() : undefined,
+        changefreq: "monthly",
+        priority: 0.7,
+      });
     });
-  });
+
+    offset += posts.length;
+    if (posts.length === 0) break;
+  } while (offset < total);
 
   // Construir XML
   const xmlHeader = `<?xml version="1.0" encoding="UTF-8"?>

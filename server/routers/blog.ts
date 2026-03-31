@@ -6,7 +6,9 @@ import {
   deletePost,
   getCategories,
   getPostBySlug,
+  getPostById,
   getPublishedPosts,
+  getAdminPosts,
   getRelatedPosts,
   getTags,
   searchPosts,
@@ -15,6 +17,7 @@ import {
 } from "../db";
 import { adminProcedure, publicProcedure, router } from "../_core/trpc";
 import { generateSlug, generateUniqueSlug } from "../_core/slug";
+import { notifySearchConsoleOnPublish } from "../_core/searchConsole";
 
 const slug = z.string().regex(/^[a-z0-9-]+$/, "Slug deve conter apenas letras, números e hífens");
 
@@ -72,6 +75,17 @@ export const blogRouter = router({
       return posts;
     }),
 
+  getAdminPosts: adminProcedure
+    .input(
+      z.object({
+        limit: z.number().int().positive().default(100),
+        offset: z.number().int().nonnegative().default(0),
+      })
+    )
+    .query(async ({ input }) => {
+      return await getAdminPosts(input.limit, input.offset);
+    }),
+
   // Admin endpoints
   createCategory: adminProcedure
     .input(
@@ -104,7 +118,7 @@ export const blogRouter = router({
         title: z.string().min(5),
         slug: slug.optional(),
         excerpt: z.string().max(500).optional(),
-        content: z.string().min(50),
+        content: z.string().min(10),
         coverImage: z.string().url().optional(),
         categoryId: z.number().int().optional(),
         tagNames: z.array(z.string()).default([]),
@@ -122,6 +136,9 @@ export const blogRouter = router({
       }
 
       const post = await createPost({ ...postData, slug: finalSlug }, tagNames);
+
+      // Best-effort notification after publish; does not block request completion.
+      void notifySearchConsoleOnPublish(post.publishedAt ?? null);
       return post;
     }),
 
@@ -132,7 +149,7 @@ export const blogRouter = router({
         title: z.string().min(5).optional(),
         slug: slug.optional(),
         excerpt: z.string().max(500).optional(),
-        content: z.string().min(50).optional(),
+        content: z.string().min(10).optional(),
         coverImage: z.string().url().optional(),
         categoryId: z.number().int().optional(),
         tagNames: z.array(z.string()).optional(),
@@ -141,7 +158,11 @@ export const blogRouter = router({
     )
     .mutation(async ({ input }) => {
       const { id, tagNames, ...postData } = input;
+      const existing = await getPostById(id);
       await updatePost(id, postData, tagNames);
+
+      const effectivePublishedAt = postData.publishedAt ?? existing?.publishedAt ?? null;
+      void notifySearchConsoleOnPublish(effectivePublishedAt);
       return { success: true };
     }),
 

@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, gte, inArray, lte, sql } from "drizzle-orm";
+import { and, asc, desc, eq, gte, inArray, lte, ne, sql } from "drizzle-orm";
 import { drizzle, PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as schema from "../drizzle/schema";
@@ -231,8 +231,8 @@ export async function clearPasswordResetToken(userId: number): Promise<void> {
 }
 
 // --- Booking domain helpers ---
-const BOOKED_STATUSES = ["pendente", "confirmado", "concluido"] as const;
-const ALLOWED_STATUSES = [...BOOKED_STATUSES, "cancelado"] as const;
+const BOOKED_STATUSES = ["pendente", "confirmado", "adiado", "reagendado"] as const;
+const ALLOWED_STATUSES = [...BOOKED_STATUSES, "concluido", "cancelado", "falta"] as const;
 type AllowedStatus = (typeof ALLOWED_STATUSES)[number];
 
 const dailyLimit =
@@ -484,7 +484,61 @@ export async function createManualAppointment(data: InsertAppointment): Promise<
 
 export async function updateAppointmentDetails(id: number, data: Partial<InsertAppointment>): Promise<void> {
   const db = await ensureDb();
-  await db.update(appointments).set(data).where(eq(appointments.id, id));
+
+  const normalized: Partial<InsertAppointment> = { ...data };
+
+  if (data.appointmentDate !== undefined) {
+    normalized.appointmentDate =
+      typeof data.appointmentDate === "string"
+        ? data.appointmentDate
+        : (data.appointmentDate as Date).toISOString().slice(0, 10);
+  }
+
+  if (data.appointmentTime !== undefined) {
+    const rawTime =
+      typeof data.appointmentTime === "string"
+        ? data.appointmentTime.slice(0, 8)
+        : (data.appointmentTime as Date).toISOString().slice(11, 19);
+    normalized.appointmentTime = toSqlTime(rawTime.slice(0, 5));
+  }
+
+  const hasDate = normalized.appointmentDate !== undefined;
+  const hasTime = normalized.appointmentTime !== undefined;
+
+  if (hasDate || hasTime) {
+    const current = await getAppointmentById(id);
+    if (!current) throw new Error("Agendamento não encontrado");
+
+    const nextDate =
+      (normalized.appointmentDate as string | undefined) ||
+      (typeof current.appointmentDate === "string"
+        ? current.appointmentDate
+        : current.appointmentDate.toISOString().slice(0, 10));
+    const nextTime =
+      (normalized.appointmentTime as string | undefined) ||
+      (typeof current.appointmentTime === "string"
+        ? current.appointmentTime
+        : current.appointmentTime.toISOString().slice(11, 19));
+
+    const [conflict] = await db
+      .select({ id: appointments.id })
+      .from(appointments)
+      .where(
+        and(
+          eq(appointments.appointmentDate, nextDate as any),
+          eq(appointments.appointmentTime, nextTime),
+          inArray(appointments.status, BOOKED_STATUSES as unknown as AllowedStatus[]),
+          ne(appointments.id, id)
+        )
+      )
+      .limit(1);
+
+    if (conflict) {
+      throw new Error("Já existe outro agendamento nesse dia e horário.");
+    }
+  }
+
+  await db.update(appointments).set(normalized).where(eq(appointments.id, id));
 }
 
 export async function updateAppointmentStatus(id: number, status: AllowedStatus): Promise<void> {
@@ -585,6 +639,8 @@ export async function getBlockedDate(dateValue: Date): Promise<BlockedDate | nul
 }
 
 export type AvailableSlot = { time: string };
+
+export type SuggestedSlot = { date: string; time: string };
 
 export async function getAvailableSlots(dateStr: string): Promise<AvailableSlot[]> {
   const db = await getDb();
@@ -780,6 +836,70 @@ export async function getAvailableSlots(dateStr: string): Promise<AvailableSlot[
 
   return buildSlots(startM, endM, slotMinutes, bookedTimes);
 }
+
+export async function suggestNextAvailableSlots(
+  preferredDate: string,
+  preferredTime: string,
+  daysToScan: number = 21,
+  maxSuggestions: number = 8
+): Promise<SuggestedSlot[]> {
+  const suggestions: SuggestedSlot[] = [];
+  const targetMinutes = Number(preferredTime.slice(0, 2)) * 60 + Number(preferredTime.slice(3, 5));
+
+  for (let offset = 0; offset <= daysToScan && suggestions.length < maxSuggestions; offset += 1) {
+    const date = new Date(`${preferredDate}T00:00:00.000Z`);
+    date.setUTCDate(date.getUTCDate() + offset);
+    const dateKey = date.toISOString().slice(0, 10);
+
+    const daySlots = await getAvailableSlots(dateKey);
+    const filtered = daySlots
+      .map((s) => s.time.slice(0, 5))
+      .filter((time) => {
+        const mins = Number(time.slice(0, 2)) * 60 + Number(time.slice(3, 5));
+        if (offset === 0) return mins >= targetMinutes;
+        return true;
+      });
+
+    for (const time of filtered) {
+      suggestions.push({ date: dateKey, time });
+      if (suggestions.length >= maxSuggestions) break;
+    }
+  }
+
+  return suggestions;
+}
+
+export async function getAppointmentsByClient(input: {
+  clientEmail?: string;
+  clientPhone?: string;
+  clientName?: string;
+  limit?: number;
+}): Promise<Appointment[]> {
+  const db = await ensureDb();
+  const clauses = [] as any[];
+
+  if (input.clientEmail) {
+    clauses.push(eq(appointments.clientEmail, input.clientEmail));
+  }
+  if (input.clientPhone) {
+    clauses.push(eq(appointments.clientPhone, input.clientPhone));
+  }
+  if (!clauses.length && input.clientName) {
+    clauses.push(eq(appointments.clientName, input.clientName));
+  }
+
+  if (!clauses.length) return [];
+
+  const where = clauses.length === 1 ? clauses[0] : and(...clauses);
+  const limit = input.limit && input.limit > 0 ? Math.min(input.limit, 200) : 50;
+
+  return db
+    .select()
+    .from(appointments)
+    .where(where)
+    .orderBy(desc(appointments.appointmentDate), desc(appointments.appointmentTime))
+    .limit(limit);
+}
 // --- Blog domain helpers ---
 
 export async function createCategory(data: InsertCategory): Promise<Category> {
@@ -873,6 +993,12 @@ export async function getPostBySlug(slug: string): Promise<(Post & { tags: Tag[]
   };
 }
 
+export async function getPostById(id: number): Promise<Post | null> {
+  const db = await ensureDb();
+  const [post] = await db.select().from(posts).where(eq(posts.id, id)).limit(1);
+  return post ?? null;
+}
+
 export async function postExists(slug: string): Promise<boolean> {
   const db = await ensureDb();
   const [post] = await db.select({ id: posts.id }).from(posts).where(eq(posts.slug, slug)).limit(1);
@@ -880,6 +1006,42 @@ export async function postExists(slug: string): Promise<boolean> {
 }
 
 export type PostWithRelations = Post & { tags: Tag[]; category: Category | null };
+
+export async function getAdminPosts(
+  limit: number = 100,
+  offset: number = 0
+): Promise<{ posts: PostWithRelations[]; count: number }> {
+  const db = await ensureDb();
+
+  const [{ count } = { count: 0 }] = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(posts);
+
+  const results = await db
+    .select()
+    .from(posts)
+    .orderBy(desc(posts.updatedAt), desc(posts.createdAt))
+    .limit(limit)
+    .offset(offset);
+
+  const mapped = await Promise.all(
+    results.map(async (post) => {
+      const tagRows = await db
+        .select({ tag: tags })
+        .from(postTags)
+        .innerJoin(tags, eq(postTags.tagId, tags.id))
+        .where(eq(postTags.postId, post.id));
+
+      const category = post.categoryId
+        ? await db.select().from(categories).where(eq(categories.id, post.categoryId)).limit(1).then((rows) => rows[0] ?? null)
+        : null;
+
+      return { ...post, tags: tagRows.map((r) => r.tag), category };
+    })
+  );
+
+  return { posts: mapped, count: Number(count) };
+}
 
 export async function getPublishedPosts(
   limit: number = 10,

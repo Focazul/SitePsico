@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Mail, MessageSquare, MailOpen, Reply, Trash2, Archive, Search, Filter, Clock, Phone, User, ChevronLeft, MoreVertical, Check, X, RefreshCw, BarChart3, CheckCircle2, XCircle } from "lucide-react";
+import { Mail, MessageSquare, MailOpen, Reply, Trash2, Archive, Search, Filter, Clock, Phone, User, ChevronLeft, MoreVertical, Check, X, RefreshCw, BarChart3, CheckCircle2, XCircle, CalendarPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +15,7 @@ import DashboardLayout from "@/components/DashboardLayout";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { useLocation } from "wouter";
 
 type MessageStatus = "novo" | "lido" | "respondido" | "arquivado";
 
@@ -47,6 +48,7 @@ const emailTypeLabels: Record<string, string> = {
 };
 
 export default function Communication() {
+  const [, setLocation] = useLocation();
   const [activeTab, setActiveTab] = useState("messages");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStatus, setSelectedStatus] = useState<MessageStatus | "all">("all");
@@ -173,6 +175,47 @@ export default function Communication() {
 
   const handleDelete = (id: string) => {
     deleteMutation.mutate({ id: Number(id) });
+  };
+
+  const extractBookingPrefill = (message: Message) => {
+    const getField = (label: string) => {
+      const pattern = new RegExp(`${label}:\\s*(.+)`, "i");
+      const match = message.content.match(pattern);
+      return match?.[1]?.trim() ?? "";
+    };
+
+    const normalizeDate = (value: string) => {
+      const date = value.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+      if (!date) return "";
+      const [, day, month, year] = date;
+      return `${year}-${month}-${day}`;
+    };
+
+    const modalityRaw = getField("Modalidade").toLowerCase();
+    const modality = modalityRaw === "online" ? "online" : "presencial";
+
+    return {
+      clientName: getField("Nome") || message.name || "",
+      clientEmail: getField("Email") || message.email || "",
+      clientPhone: getField("Telefone") || message.phone || "",
+      appointmentDate: normalizeDate(getField("Data")),
+      appointmentTime: getField("Horário") || "",
+      modality,
+      notes: `Criado a partir da Comunicação (mensagem #${message.id}).`,
+      sourceMessageId: message.id,
+    };
+  };
+
+  const handleCreateAppointment = (message: Message) => {
+    const prefill = extractBookingPrefill(message);
+    const params = new URLSearchParams();
+
+    Object.entries(prefill).forEach(([key, value]) => {
+      if (value) params.set(key, value);
+    });
+
+    setIsDetailOpen(false);
+    setLocation(`/admin/appointments?${params.toString()}`);
   };
 
   const formatDate = (dateString: string) => {
@@ -325,6 +368,18 @@ export default function Communication() {
                         </div>
 
                         <div className="flex flex-col items-end gap-2 shrink-0">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-8 gap-1"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleCreateAppointment(message);
+                            }}
+                          >
+                            <CalendarPlus size={14} />
+                            <span className="hidden sm:inline">Criar Agendamento</span>
+                          </Button>
                           <span className="text-xs text-gray-500 flex items-center gap-1">
                             <Clock size={12} />
                             {formatDate(message.createdAt)}
@@ -339,6 +394,10 @@ export default function Communication() {
                               <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleReply(message); }}>
                                 <Reply size={14} className="mr-2" />
                                 Responder
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleCreateAppointment(message); }}>
+                                <CalendarPlus size={14} className="mr-2" />
+                                Criar Agendamento
                               </DropdownMenuItem>
                               <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleMarkAsReplied(message.id); }}>
                                 <Check size={14} className="mr-2" />
@@ -658,6 +717,13 @@ export default function Communication() {
                 </div>
 
                 <DialogFooter className="gap-2 border-t pt-4 flex-wrap">
+                  <Button
+                    variant="secondary"
+                    onClick={() => handleCreateAppointment(selectedMessage)}
+                    className="gap-2"
+                  >
+                    Criar Agendamento
+                  </Button>
                   <Button
                     variant="outline"
                     onClick={() => setDeleteConfirmId(selectedMessage.id)}

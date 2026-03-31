@@ -1,5 +1,5 @@
-import { useState, useMemo } from "react";
-import { Calendar, MapPin, Clock, Trash2, Check, X, Plus, ChevronLeft, ChevronRight, Filter, DollarSign, Tag } from "lucide-react";
+import { useState, useMemo, useEffect } from "react";
+import { Calendar, MapPin, Clock, Trash2, Check, X, Plus, ChevronLeft, ChevronRight, Filter, DollarSign, Tag, UserX, PauseCircle, Repeat, Circle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -14,9 +14,9 @@ import { AdminBreadcrumb } from "@/components/AdminBreadcrumb";
 import { toast } from "sonner";
 
 // Define types that match DB strings but used as unions in UI
-type AppointmentStatus = "pendente" | "confirmado" | "concluido" | "cancelado";
+type AppointmentStatus = "pendente" | "confirmado" | "concluido" | "cancelado" | "falta" | "adiado" | "reagendado";
 type AppointmentType = "presencial" | "online";
-type PaymentStatus = "pendente" | "pago" | "reembolsado";
+type PaymentStatus = "pendente" | "pago" | "parcial" | "isento" | "reembolsado";
 
 interface Appointment {
   id: number;
@@ -33,18 +33,65 @@ interface Appointment {
   createdAt?: string | Date;
 }
 
+interface ConflictState {
+  appointmentId: number;
+  desiredDate: string;
+  desiredTime: string;
+  suggestions: Array<{ date: string; time: string }>;
+}
+
 const statusConfig: Record<string, { label: string; color: string; bgColor: string }> = {
   pendente: { label: "Pendente", color: "text-yellow-700", bgColor: "bg-yellow-100" },
   confirmado: { label: "Confirmado", color: "text-blue-700", bgColor: "bg-blue-100" },
   concluido: { label: "Realizado", color: "text-green-700", bgColor: "bg-green-100" },
+  falta: { label: "Falta", color: "text-rose-700", bgColor: "bg-rose-100" },
+  adiado: { label: "Adiado", color: "text-orange-700", bgColor: "bg-orange-100" },
+  reagendado: { label: "Reagendado", color: "text-indigo-700", bgColor: "bg-indigo-100" },
   cancelado: { label: "Cancelado", color: "text-red-700", bgColor: "bg-red-100" },
 };
 
 const paymentConfig: Record<string, { label: string; color: string; bgColor: string }> = {
   pendente: { label: "A Pagar", color: "text-orange-700", bgColor: "bg-orange-100" },
   pago: { label: "Pago", color: "text-emerald-700", bgColor: "bg-emerald-100" },
+  parcial: { label: "Parcial", color: "text-amber-700", bgColor: "bg-amber-100" },
+  isento: { label: "Isento", color: "text-slate-700", bgColor: "bg-slate-200" },
   reembolsado: { label: "Reembolsado", color: "text-gray-700", bgColor: "bg-gray-200" },
 };
+
+function toDateKey(value: string | Date): string {
+  if (value instanceof Date) return value.toISOString().slice(0, 10);
+  return String(value).slice(0, 10);
+}
+
+function toTimeLabel(value: string): string {
+  return String(value).slice(0, 5);
+}
+
+function getStartOfWeek(reference: Date): Date {
+  const d = new Date(reference);
+  d.setHours(0, 0, 0, 0);
+  const day = d.getDay();
+  d.setDate(d.getDate() - day);
+  return d;
+}
+
+function shiftDateISO(dateInput: string | Date, days: number): string {
+  const d = new Date(toDateKey(dateInput));
+  d.setDate(d.getDate() + days);
+  return d.toISOString().slice(0, 10);
+}
+
+const weekTimeSlots = Array.from({ length: 12 }).map((_, idx) => {
+  const hour = 8 + idx;
+  return `${String(hour).padStart(2, "0")}:00`;
+});
+
+function getStatusIcon(status: string) {
+  if (status === "falta") return UserX;
+  if (status === "adiado") return PauseCircle;
+  if (status === "reagendado") return Repeat;
+  return Circle;
+}
 
 const typeConfig: Record<string, { label: string; icon: typeof MapPin }> = {
   presencial: { label: "Presencial", icon: MapPin },
@@ -53,9 +100,14 @@ const typeConfig: Record<string, { label: string; icon: typeof MapPin }> = {
 
 export default function Appointments() {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [viewMode, setViewMode] = useState<"calendar" | "list">("list");
+  const [viewMode, setViewMode] = useState<"week" | "month" | "list">("week");
   const [selectedStatus, setSelectedStatus] = useState<AppointmentStatus | "all">("all");
   const [selectedType, setSelectedType] = useState<AppointmentType | "all">("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [quickFilter, setQuickFilter] = useState<"all" | "today" | "week" | "unpaid" | "falta" | "reagendado">("all");
+  const [weekReference, setWeekReference] = useState(new Date());
+  const [dragOverSlot, setDragOverSlot] = useState<string | null>(null);
+  const [conflictState, setConflictState] = useState<ConflictState | null>(null);
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
 
   // Edit states
@@ -65,6 +117,8 @@ export default function Appointments() {
 
   // Create Manual State
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [recurrenceMode, setRecurrenceMode] = useState<"none" | "weekly" | "biweekly" | "monthly">("none");
+  const [recurrenceCount, setRecurrenceCount] = useState(1);
   const [createForm, setCreateForm] = useState({
     clientName: "",
     clientEmail: "",
@@ -78,10 +132,49 @@ export default function Appointments() {
     tags: ""
   });
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const hasPrefill = [
+      "clientName",
+      "clientEmail",
+      "clientPhone",
+      "appointmentDate",
+      "appointmentTime",
+      "modality",
+      "notes",
+      "sourceMessageId",
+    ].some((key) => params.has(key));
+
+    if (!hasPrefill) return;
+
+    const modality = params.get("modality") === "online" ? "online" : "presencial";
+    const sourceMessageId = params.get("sourceMessageId");
+    const notesFromParam = params.get("notes") || "";
+    const noteWithSource = sourceMessageId
+      ? `${notesFromParam}\nMensagem origem: #${sourceMessageId}`.trim()
+      : notesFromParam;
+
+    setCreateForm((prev) => ({
+      ...prev,
+      clientName: params.get("clientName") || prev.clientName,
+      clientEmail: params.get("clientEmail") || prev.clientEmail,
+      clientPhone: params.get("clientPhone") || prev.clientPhone,
+      appointmentDate: params.get("appointmentDate") || prev.appointmentDate,
+      appointmentTime: params.get("appointmentTime") || prev.appointmentTime,
+      modality,
+      notes: noteWithSource || prev.notes,
+      status: "confirmado",
+      paymentStatus: "pendente",
+    }));
+
+    setIsCreateOpen(true);
+
+    const cleanPath = window.location.pathname;
+    window.history.replaceState({}, "", cleanPath);
+  }, []);
+
   // Fetch appointments
-  const appointmentsQuery = trpc.booking.list.useQuery({
-    status: selectedStatus === "all" ? undefined : selectedStatus,
-  });
+  const appointmentsQuery = trpc.booking.list.useQuery({});
   const appointments = (appointmentsQuery.data || []) as Appointment[];
 
   // Debug logs
@@ -92,24 +185,6 @@ export default function Appointments() {
 
   // Mutations
   const createManualMutation = (trpc.booking as any).createManual.useMutation({
-    onSuccess: () => {
-      toast.success("Agendamento criado com sucesso!");
-      setIsCreateOpen(false);
-      appointmentsQuery.refetch();
-      // Reset form
-      setCreateForm({
-        clientName: "",
-        clientEmail: "",
-        clientPhone: "",
-        appointmentDate: new Date().toISOString().slice(0, 10),
-        appointmentTime: "09:00",
-        modality: "presencial",
-        status: "confirmado",
-        paymentStatus: "pendente",
-        notes: "",
-        tags: ""
-      });
-    },
     onError: (error: any) => {
       toast.error(error.message || "Erro ao criar agendamento");
     },
@@ -125,6 +200,19 @@ export default function Appointments() {
       toast.error(error.message || "Erro ao atualizar agendamento");
     },
   });
+
+  const suggestAlternativesQuery = trpc.booking.suggestAlternatives.useMutation();
+  const patientHistoryQuery = trpc.booking.historyByClient.useQuery(
+    selectedAppointment
+      ? {
+          clientEmail: selectedAppointment.clientEmail,
+          clientPhone: selectedAppointment.clientPhone,
+          clientName: selectedAppointment.clientName,
+          limit: 60,
+        }
+      : { limit: 60 },
+    { enabled: !!selectedAppointment }
+  );
 
   // Alias for compatibility
   const confirmMutation = updateMutation;
@@ -147,9 +235,40 @@ export default function Appointments() {
     return displayAppointments.filter((apt) => {
       if (selectedStatus !== "all" && apt.status !== selectedStatus) return false;
       if (selectedType !== "all" && apt.modality !== selectedType) return false;
+
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase();
+        const haystack = [
+          apt.clientName,
+          apt.clientEmail,
+          apt.clientPhone,
+          apt.tags || "",
+          apt.notes || "",
+        ]
+          .join(" ")
+          .toLowerCase();
+        if (!haystack.includes(q)) return false;
+      }
+
+      const todayKey = new Date().toISOString().slice(0, 10);
+      const aptDate = toDateKey(apt.appointmentDate);
+      const payment = apt.paymentStatus || "pendente";
+
+      if (quickFilter === "today" && aptDate !== todayKey) return false;
+      if (quickFilter === "unpaid" && !["pendente", "parcial"].includes(payment)) return false;
+      if (quickFilter === "falta" && apt.status !== "falta") return false;
+      if (quickFilter === "reagendado" && apt.status !== "reagendado") return false;
+      if (quickFilter === "week") {
+        const start = getStartOfWeek(weekReference);
+        const end = new Date(start);
+        end.setDate(end.getDate() + 6);
+        const d = new Date(aptDate);
+        if (d < start || d > end) return false;
+      }
+
       return true;
     });
-  }, [displayAppointments, selectedStatus, selectedType]);
+  }, [displayAppointments, selectedStatus, selectedType, searchQuery, quickFilter, weekReference]);
 
   // Agendamentos do mês selecionado
   const monthAppointments = useMemo(() => {
@@ -167,15 +286,36 @@ export default function Appointments() {
   const appointmentsByDate = useMemo(() => {
     const grouped: Record<string, Appointment[]> = {};
     monthAppointments.forEach((apt) => {
-      const dateKey = apt.appointmentDate instanceof Date
-        ? apt.appointmentDate.toISOString().slice(0, 10)
-        : String(apt.appointmentDate).slice(0, 10);
+      const dateKey = toDateKey(apt.appointmentDate);
 
       if (!grouped[dateKey]) grouped[dateKey] = [];
       grouped[dateKey].push(apt);
     });
     return grouped;
   }, [monthAppointments]);
+
+  const weekDays = useMemo(() => {
+    const start = getStartOfWeek(weekReference);
+    return Array.from({ length: 7 }).map((_, idx) => {
+      const d = new Date(start);
+      d.setDate(start.getDate() + idx);
+      return d;
+    });
+  }, [weekReference]);
+
+  const weekAppointmentsByDate = useMemo(() => {
+    const grouped: Record<string, Appointment[]> = {};
+    weekDays.forEach((day) => {
+      grouped[day.toISOString().slice(0, 10)] = [];
+    });
+    filteredAppointments.forEach((apt) => {
+      const key = toDateKey(apt.appointmentDate);
+      if (!grouped[key]) return;
+      grouped[key].push(apt);
+    });
+    Object.values(grouped).forEach((items) => items.sort((a, b) => toTimeLabel(a.appointmentTime).localeCompare(toTimeLabel(b.appointmentTime))));
+    return grouped;
+  }, [filteredAppointments, weekDays]);
 
   // Próximos agendamentos (próximos 7 dias)
   const upcomingAppointments = useMemo(() => {
@@ -203,6 +343,8 @@ export default function Appointments() {
       pending: filteredAppointments.filter((a) => a.status === "pendente").length,
       confirmed: filteredAppointments.filter((a) => a.status === "confirmado").length,
       completed: filteredAppointments.filter((a) => a.status === "concluido").length,
+      missed: filteredAppointments.filter((a) => a.status === "falta").length,
+      unpaid: filteredAppointments.filter((a) => ["pendente", "parcial"].includes(a.paymentStatus || "pendente")).length,
     };
   }, [filteredAppointments]);
 
@@ -215,6 +357,18 @@ export default function Appointments() {
     setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
   };
 
+  const previousWeek = () => {
+    const next = new Date(weekReference);
+    next.setDate(next.getDate() - 7);
+    setWeekReference(next);
+  };
+
+  const nextWeek = () => {
+    const next = new Date(weekReference);
+    next.setDate(next.getDate() + 7);
+    setWeekReference(next);
+  };
+
   const handleSaveDetails = () => {
     if (!selectedAppointment) return;
     updateMutation.mutate({
@@ -225,8 +379,162 @@ export default function Appointments() {
     });
   };
 
-  const handleCreate = () => {
-    createManualMutation.mutate(createForm);
+  const handleCreate = async () => {
+    const occurrences = Math.max(1, Math.min(24, recurrenceCount));
+    const dayStep = recurrenceMode === "weekly" ? 7 : recurrenceMode === "biweekly" ? 15 : recurrenceMode === "monthly" ? 30 : 0;
+
+    try {
+      const payload = { ...createForm };
+      for (let i = 0; i < occurrences; i += 1) {
+        const appointmentDate = dayStep > 0 ? shiftDateISO(payload.appointmentDate, dayStep * i) : payload.appointmentDate;
+        await createManualMutation.mutateAsync({
+          ...payload,
+          appointmentDate,
+          notes: occurrences > 1 ? `${payload.notes || ""}\nRecorrência ${i + 1}/${occurrences}`.trim() : payload.notes,
+        });
+      }
+
+      toast.success(occurrences > 1 ? `${occurrences} sessões criadas com sucesso!` : "Agendamento criado com sucesso!");
+      setIsCreateOpen(false);
+      setRecurrenceMode("none");
+      setRecurrenceCount(1);
+      setCreateForm({
+        clientName: "",
+        clientEmail: "",
+        clientPhone: "",
+        appointmentDate: new Date().toISOString().slice(0, 10),
+        appointmentTime: "09:00",
+        modality: "presencial",
+        status: "confirmado",
+        paymentStatus: "pendente",
+        notes: "",
+        tags: ""
+      });
+      appointmentsQuery.refetch();
+    } catch {
+      // Error already handled by mutation onError
+    }
+  };
+
+  const handleQuickReschedule = (apt: Appointment, days: number) => {
+    const newDate = shiftDateISO(apt.appointmentDate, days);
+    void updateAppointmentWithConflictHandling(apt, {
+      id: apt.id,
+      appointmentDate: newDate,
+      appointmentTime: toTimeLabel(apt.appointmentTime),
+      status: "reagendado",
+      notes: `${apt.notes || ""}\nRemarcado +${days} dias em ${new Date().toLocaleDateString("pt-BR")}`.trim(),
+    });
+  };
+
+  const handleGenerateNextSession = async (source: Appointment, days: number = 7) => {
+    const nextDate = shiftDateISO(source.appointmentDate, days);
+    const payload = {
+      clientName: source.clientName,
+      clientEmail: source.clientEmail,
+      clientPhone: source.clientPhone,
+      appointmentDate: nextDate,
+      appointmentTime: toTimeLabel(source.appointmentTime),
+      modality: (source.modality as AppointmentType) || "presencial",
+      status: "pendente" as AppointmentStatus,
+      paymentStatus: "pendente" as PaymentStatus,
+      notes: `${source.notes || ""}\nPróxima sessão gerada automaticamente da sessão #${source.id}`.trim(),
+      tags: source.tags || "",
+    };
+
+    try {
+      await createManualMutation.mutateAsync(payload);
+      toast.success("Próxima sessão gerada com sucesso.");
+      appointmentsQuery.refetch();
+      patientHistoryQuery.refetch();
+    } catch (error: any) {
+      const message = String(error?.message || "");
+      if (!message.includes("Horário já ocupado")) return;
+
+      const alternatives = await suggestAlternativesQuery.mutateAsync({
+        date: payload.appointmentDate,
+        time: payload.appointmentTime,
+        maxSuggestions: 1,
+        daysToScan: 30,
+      });
+      const first = alternatives.suggestions?.[0];
+      if (!first) {
+        toast.error("Não foi possível gerar próxima sessão: sem horário livre sugerido.");
+        return;
+      }
+
+      await createManualMutation.mutateAsync({
+        ...payload,
+        appointmentDate: first.date,
+        appointmentTime: first.time,
+        status: "reagendado",
+        notes: `${payload.notes}\nConflito detectado, criado em horário sugerido.`.trim(),
+      });
+      toast.success(`Próxima sessão criada em horário sugerido: ${new Date(first.date).toLocaleDateString("pt-BR")} ${first.time}.`);
+      appointmentsQuery.refetch();
+      patientHistoryQuery.refetch();
+    }
+  };
+
+  const updateAppointmentWithConflictHandling = async (
+    appointment: Appointment,
+    payload: {
+      id: number;
+      status?: AppointmentStatus;
+      paymentStatus?: PaymentStatus;
+      appointmentDate?: string;
+      appointmentTime?: string;
+      modality?: AppointmentType;
+      tags?: string;
+      notes?: string;
+    }
+  ) => {
+    try {
+      await updateMutation.mutateAsync(payload);
+      setConflictState(null);
+    } catch (error: any) {
+      const message = String(error?.message || "");
+      const desiredDate = payload.appointmentDate || toDateKey(appointment.appointmentDate);
+      const desiredTime = payload.appointmentTime || toTimeLabel(appointment.appointmentTime);
+
+      if (message.includes("Já existe outro agendamento")) {
+        const response = await suggestAlternativesQuery.mutateAsync({
+          date: desiredDate,
+          time: desiredTime,
+          maxSuggestions: 8,
+          daysToScan: 30,
+        });
+
+        setConflictState({
+          appointmentId: appointment.id,
+          desiredDate,
+          desiredTime,
+          suggestions: response.suggestions || [],
+        });
+
+        toast.error("Horário ocupado. Escolha uma das sugestões abaixo.");
+        return;
+      }
+
+      throw error;
+    }
+  };
+
+  const handleDropToSlot = (appointmentId: number, targetDate: string, targetTime: string) => {
+    const apt = filteredAppointments.find((item) => item.id === appointmentId);
+    if (!apt) return;
+
+    const currentDate = toDateKey(apt.appointmentDate);
+    const currentTime = toTimeLabel(apt.appointmentTime);
+    if (currentDate === targetDate && currentTime === targetTime) return;
+
+    void updateAppointmentWithConflictHandling(apt, {
+      id: apt.id,
+      appointmentDate: targetDate,
+      appointmentTime: targetTime,
+      status: "reagendado",
+      notes: `${apt.notes || ""}\nArrastado para ${new Date(targetDate).toLocaleDateString("pt-BR")} às ${targetTime}`.trim(),
+    });
   };
 
   // Render calendário
@@ -258,7 +566,7 @@ export default function Appointments() {
                 key={apt.id}
                 className={`text-xs px-2 py-1 rounded truncate cursor-pointer ${statusConfig[apt.status].bgColor} ${statusConfig[apt.status].color}`}
               >
-                {apt.appointmentTime} - {apt.clientName}
+                {toTimeLabel(apt.appointmentTime)} - {apt.clientName}
               </div>
             ))}
             {dayAppointments.length > 2 && (
@@ -359,6 +667,9 @@ export default function Appointments() {
                       <SelectContent>
                         <SelectItem value="pendente">Pendente</SelectItem>
                         <SelectItem value="confirmado">Confirmado</SelectItem>
+                        <SelectItem value="adiado">Adiado</SelectItem>
+                        <SelectItem value="reagendado">Reagendado</SelectItem>
+                        <SelectItem value="falta">Falta</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -372,8 +683,34 @@ export default function Appointments() {
                       <SelectContent>
                         <SelectItem value="pendente">A Pagar</SelectItem>
                         <SelectItem value="pago">Pago</SelectItem>
+                        <SelectItem value="parcial">Parcial</SelectItem>
+                        <SelectItem value="isento">Isento</SelectItem>
+                        <SelectItem value="reembolsado">Reembolsado</SelectItem>
                       </SelectContent>
                     </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Recorrência</Label>
+                    <Select value={recurrenceMode} onValueChange={(v) => setRecurrenceMode(v as "none" | "weekly" | "biweekly" | "monthly")}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">Somente esta sessão</SelectItem>
+                        <SelectItem value="weekly">Semanal</SelectItem>
+                        <SelectItem value="biweekly">Quinzenal</SelectItem>
+                        <SelectItem value="monthly">Mensal</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Quantidade de Sessões</Label>
+                    <Input
+                      type="number"
+                      min={1}
+                      max={24}
+                      value={recurrenceCount}
+                      onChange={(e) => setRecurrenceCount(Number(e.target.value || 1))}
+                      disabled={recurrenceMode === "none"}
+                    />
                   </div>
                   <div className="col-span-2 space-y-2">
                      <Label>Tags (separadas por vírgula)</Label>
@@ -405,7 +742,7 @@ export default function Appointments() {
 
         {/* Estatísticas */}
         <div className="admin-section-dark rounded-lg p-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
             <Card className="p-4 border-l-4 border-l-blue-500">
               <div className="text-sm text-gray-600">Total</div>
               <div className="text-3xl font-bold text-gray-900">{stats.total}</div>
@@ -422,63 +759,244 @@ export default function Appointments() {
               <div className="text-sm text-gray-600">Realizados</div>
               <div className="text-3xl font-bold text-purple-600">{stats.completed}</div>
             </Card>
+            <Card className="p-4 border-l-4 border-l-rose-500">
+              <div className="text-sm text-gray-600">Faltas</div>
+              <div className="text-3xl font-bold text-rose-600">{stats.missed}</div>
+            </Card>
+            <Card className="p-4 border-l-4 border-l-orange-500">
+              <div className="text-sm text-gray-600">Não Pagos</div>
+              <div className="text-3xl font-bold text-orange-600">{stats.unpaid}</div>
+            </Card>
           </div>
         </div>
 
         {/* View Toggle & Filtros */}
         <div className="admin-section-light rounded-lg p-6">
-          <div className="flex flex-wrap gap-3 items-center justify-between">
-            <div className="flex gap-2">
-              <Button
-                variant={viewMode === "list" ? "default" : "outline"}
-                onClick={() => setViewMode("list")}
-                className="gap-2"
-              >
-                <Calendar size={16} />
-                Lista
-              </Button>
-              <Button
-                variant={viewMode === "calendar" ? "default" : "outline"}
-                onClick={() => setViewMode("calendar")}
-                className="gap-2"
-              >
-                <Calendar size={16} />
-                Calendário
-              </Button>
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-wrap gap-2 items-center justify-between">
+              <div className="flex gap-2">
+                <Button
+                  variant={viewMode === "week" ? "default" : "outline"}
+                  onClick={() => setViewMode("week")}
+                  className="gap-2"
+                >
+                  <Calendar size={16} />
+                  Semana
+                </Button>
+                <Button
+                  variant={viewMode === "month" ? "default" : "outline"}
+                  onClick={() => setViewMode("month")}
+                  className="gap-2"
+                >
+                  <Calendar size={16} />
+                  Mês
+                </Button>
+                <Button
+                  variant={viewMode === "list" ? "default" : "outline"}
+                  onClick={() => setViewMode("list")}
+                  className="gap-2"
+                >
+                  <Calendar size={16} />
+                  Lista
+                </Button>
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                <Button size="sm" variant={quickFilter === "all" ? "default" : "outline"} onClick={() => setQuickFilter("all")}>Todos</Button>
+                <Button size="sm" variant={quickFilter === "today" ? "default" : "outline"} onClick={() => setQuickFilter("today")}>Hoje</Button>
+                <Button size="sm" variant={quickFilter === "week" ? "default" : "outline"} onClick={() => setQuickFilter("week")}>Esta semana</Button>
+                <Button size="sm" variant={quickFilter === "unpaid" ? "default" : "outline"} onClick={() => setQuickFilter("unpaid")}>Não pagos</Button>
+                <Button size="sm" variant={quickFilter === "falta" ? "default" : "outline"} onClick={() => setQuickFilter("falta")}>Faltas</Button>
+                <Button size="sm" variant={quickFilter === "reagendado" ? "default" : "outline"} onClick={() => setQuickFilter("reagendado")}>Reagendados</Button>
+              </div>
             </div>
 
-            <div className="flex flex-wrap gap-2">
-              <select
-                value={selectedStatus}
-                onChange={(e) => setSelectedStatus(e.target.value as AppointmentStatus | "all")}
-                className="px-3 py-2 border rounded-lg text-sm bg-white"
-              >
-                <option value="all">Todos os Status</option>
-                <option value="pendente">Pendentes</option>
-                <option value="confirmado">Confirmados</option>
-                <option value="concluido">Realizados</option>
-                <option value="cancelado">Cancelados</option>
-              </select>
+            <div className="flex flex-wrap gap-3 items-center justify-between">
+              <Input
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Buscar por paciente, email, telefone, tags..."
+                className="max-w-xl"
+              />
 
-              <select
-                value={selectedType}
-                onChange={(e) => setSelectedType(e.target.value as AppointmentType | "all")}
-                className="px-3 py-2 border rounded-lg text-sm bg-white"
-              >
-                <option value="all">Todas as Modalidades</option>
-                <option value="presencial">Presencial</option>
-                <option value="online">Online</option>
-              </select>
+              <div className="flex flex-wrap gap-2">
+              <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={previousWeek}
+                  className="gap-2"
+                >
+                  <ChevronLeft size={14} />
+                  Semana Anterior
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={nextWeek}
+                  className="gap-2"
+                >
+                  Próxima Semana
+                  <ChevronRight size={14} />
+                </Button>
+
+                <select
+                  value={selectedStatus}
+                  onChange={(e) => setSelectedStatus(e.target.value as AppointmentStatus | "all")}
+                  className="px-3 py-2 border rounded-lg text-sm bg-white"
+                >
+                  <option value="all">Todos os Status</option>
+                  <option value="pendente">Pendentes</option>
+                  <option value="confirmado">Confirmados</option>
+                  <option value="concluido">Realizados</option>
+                  <option value="falta">Falta</option>
+                  <option value="adiado">Adiado</option>
+                  <option value="reagendado">Reagendado</option>
+                  <option value="cancelado">Cancelados</option>
+                </select>
+
+                <select
+                  value={selectedType}
+                  onChange={(e) => setSelectedType(e.target.value as AppointmentType | "all")}
+                  className="px-3 py-2 border rounded-lg text-sm bg-white"
+                >
+                  <option value="all">Todas as Modalidades</option>
+                  <option value="presencial">Presencial</option>
+                  <option value="online">Online</option>
+                </select>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Content */}
         <div className="admin-section-dark rounded-lg p-6">
-          {viewMode === "list" ? (
+          {conflictState && (
+            <Card className="p-4 mb-4 border-orange-300 bg-orange-50">
+              <div className="text-sm font-semibold text-orange-900">Conflito detectado</div>
+              <div className="text-sm text-orange-800 mb-3">
+                Horário solicitado: {new Date(conflictState.desiredDate).toLocaleDateString("pt-BR")} às {conflictState.desiredTime}
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {conflictState.suggestions.length > 0 ? (
+                  conflictState.suggestions.map((slot) => (
+                    <Button
+                      key={`${slot.date}-${slot.time}`}
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        const apt = filteredAppointments.find((a) => a.id === conflictState.appointmentId);
+                        if (!apt) return;
+                        void updateAppointmentWithConflictHandling(apt, {
+                          id: apt.id,
+                          appointmentDate: slot.date,
+                          appointmentTime: slot.time,
+                          status: "reagendado",
+                          notes: `${apt.notes || ""}\nSugestão aplicada em ${new Date().toLocaleDateString("pt-BR")}`.trim(),
+                        });
+                      }}
+                    >
+                      {new Date(slot.date).toLocaleDateString("pt-BR")} {slot.time}
+                    </Button>
+                  ))
+                ) : (
+                  <span className="text-sm text-orange-700">Nenhuma sugestão encontrada no período.</span>
+                )}
+                <Button size="sm" variant="ghost" onClick={() => setConflictState(null)}>Fechar</Button>
+              </div>
+            </Card>
+          )}
+
+          {viewMode === "week" ? (
+          <div className="space-y-4">
+            <Card className="p-4">
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-lg font-semibold text-gray-900">Visão Semanal</h2>
+                <div className="text-sm text-gray-600">
+                  {weekDays[0].toLocaleDateString("pt-BR")} - {weekDays[6].toLocaleDateString("pt-BR")}
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-7 gap-3">
+                {weekDays.map((day) => {
+                  const dateKey = day.toISOString().slice(0, 10);
+                  const dayList = weekAppointmentsByDate[dateKey] || [];
+                  const isToday = dateKey === new Date().toISOString().slice(0, 10);
+                  return (
+                    <div key={dateKey} className={`rounded-lg border p-3 min-h-52 ${isToday ? "bg-blue-50 border-blue-300" : "bg-white"}`}>
+                      <div className="mb-2">
+                        <div className="text-xs text-gray-500">{day.toLocaleDateString("pt-BR", { weekday: "short" })}</div>
+                        <div className="font-semibold text-gray-900">{day.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" })}</div>
+                      </div>
+
+                      <div className="space-y-1">
+                        {weekTimeSlots.map((slotTime) => {
+                          const slotKey = `${dateKey}_${slotTime}`;
+                          const slotAppointments = dayList.filter((apt) => toTimeLabel(apt.appointmentTime) === slotTime);
+                          const isOver = dragOverSlot === slotKey;
+
+                          return (
+                            <div
+                              key={slotKey}
+                              className={`rounded border px-2 py-1 min-h-10 ${isOver ? "bg-blue-100 border-blue-400" : "bg-white"}`}
+                              onDragOver={(e) => {
+                                e.preventDefault();
+                                setDragOverSlot(slotKey);
+                              }}
+                              onDragLeave={() => setDragOverSlot((prev) => (prev === slotKey ? null : prev))}
+                              onDrop={(e) => {
+                                e.preventDefault();
+                                const appointmentId = Number(e.dataTransfer.getData("appointment-id"));
+                                setDragOverSlot(null);
+                                if (Number.isFinite(appointmentId)) {
+                                  handleDropToSlot(appointmentId, dateKey, slotTime);
+                                }
+                              }}
+                            >
+                              <div className="text-[10px] text-gray-500 mb-1">{slotTime}</div>
+                              {slotAppointments.length > 0 ? (
+                                slotAppointments.map((apt) => {
+                                  const StatusIcon = getStatusIcon(apt.status);
+                                  return (
+                                    <div
+                                      key={apt.id}
+                                      className="rounded border p-2 bg-gray-50 cursor-move"
+                                      draggable
+                                      onDragStart={(e) => {
+                                        e.dataTransfer.setData("appointment-id", String(apt.id));
+                                        e.dataTransfer.effectAllowed = "move";
+                                      }}
+                                    >
+                                      <div className="text-xs font-medium text-gray-900 truncate">{toTimeLabel(apt.appointmentTime)} - {apt.clientName}</div>
+                                      <div className="mt-1 flex items-center gap-1 flex-wrap">
+                                        <Badge className={statusConfig[apt.status]?.bgColor || "bg-gray-100"}>
+                                          <span className={`flex items-center gap-1 ${statusConfig[apt.status]?.color || "text-gray-700"}`}>
+                                            <StatusIcon size={12} />
+                                            {statusConfig[apt.status]?.label || apt.status}
+                                          </span>
+                                        </Badge>
+                                        {apt.paymentStatus && paymentConfig[apt.paymentStatus] && (
+                                          <Badge className={paymentConfig[apt.paymentStatus].bgColor}>
+                                            <span className={paymentConfig[apt.paymentStatus].color}>{paymentConfig[apt.paymentStatus].label}</span>
+                                          </Badge>
+                                        )}
+                                      </div>
+                                    </div>
+                                  );
+                                })
+                              ) : null}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </Card>
+          </div>
+          ) : viewMode === "list" ? (
           <div className="space-y-4">
             {/* Próximos Agendamentos */}
-            <Card className="p-6 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200">
+            <Card className="p-6 bg-linear-to-r from-blue-50 to-indigo-50 border border-blue-200">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Próximos 7 Dias</h2>
               <div className="space-y-3">
                 {upcomingAppointments.length > 0 ? (
@@ -503,7 +1021,7 @@ export default function Appointments() {
                           </span>
                           <span className="flex items-center gap-1">
                             <Clock size={14} />
-                            {apt.appointmentTime}
+                            {toTimeLabel(apt.appointmentTime)}
                           </span>
                           <span className="flex items-center gap-1">
                             {typeConfig[apt.modality].icon === MapPin ? (
@@ -559,7 +1077,7 @@ export default function Appointments() {
                             <div className="text-sm text-gray-900">
                               {new Date(apt.appointmentDate).toLocaleDateString("pt-BR")}
                             </div>
-                            <div className="text-sm text-gray-600">{apt.appointmentTime}</div>
+                            <div className="text-sm text-gray-600">{toTimeLabel(apt.appointmentTime)}</div>
                           </td>
                           <td className="px-6 py-4">
                             <Badge variant="outline">
@@ -581,7 +1099,13 @@ export default function Appointments() {
                              )}
                           </td>
                           <td className="px-6 py-4">
-                            <div className="flex gap-2">
+                            <div className="flex gap-2 flex-wrap">
+                              <Button size="sm" variant="outline" onClick={() => handleQuickReschedule(apt, 7)}>+7d</Button>
+                              <Button size="sm" variant="outline" onClick={() => handleQuickReschedule(apt, 15)}>+15d</Button>
+                              <Button size="sm" variant="outline" onClick={() => handleQuickReschedule(apt, 30)}>+30d</Button>
+                              <Button size="sm" variant="outline" onClick={() => void updateAppointmentWithConflictHandling(apt, { id: apt.id, status: "falta" })}>Falta</Button>
+                              <Button size="sm" variant="outline" onClick={() => void updateAppointmentWithConflictHandling(apt, { id: apt.id, status: "adiado" })}>Adiar</Button>
+                              <Button size="sm" variant="outline" onClick={() => void updateAppointmentWithConflictHandling(apt, { id: apt.id, paymentStatus: "pago" })}>Pago</Button>
                               <Dialog>
                                 <DialogTrigger asChild>
                                   <Button
@@ -626,7 +1150,7 @@ export default function Appointments() {
                                         </div>
                                         <div>
                                           <label className="text-sm font-medium text-gray-700">Hora</label>
-                                          <div className="mt-1 text-gray-900">{selectedAppointment.appointmentTime}</div>
+                                          <div className="mt-1 text-gray-900">{toTimeLabel(selectedAppointment.appointmentTime)}</div>
                                         </div>
                                       </div>
 
@@ -640,6 +1164,8 @@ export default function Appointments() {
                                             <SelectContent>
                                             <SelectItem value="pendente">A Pagar</SelectItem>
                                             <SelectItem value="pago">Pago</SelectItem>
+                                            <SelectItem value="parcial">Parcial</SelectItem>
+                                            <SelectItem value="isento">Isento</SelectItem>
                                             <SelectItem value="reembolsado">Reembolsado</SelectItem>
                                             </SelectContent>
                                         </Select>
@@ -663,6 +1189,45 @@ export default function Appointments() {
                                           className="w-full mt-1 px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                           rows={3}
                                         />
+                                      </div>
+
+                                      <div>
+                                        <div className="flex items-center justify-between gap-2">
+                                          <label className="text-sm font-medium text-gray-700">Linha do Tempo do Paciente</label>
+                                          <Button
+                                            size="sm"
+                                            variant="outline"
+                                            onClick={() => selectedAppointment && handleGenerateNextSession(selectedAppointment, 7)}
+                                          >
+                                            Gerar próxima sessão
+                                          </Button>
+                                        </div>
+                                        <div className="mt-2 border rounded-lg p-3 max-h-52 overflow-y-auto space-y-2 bg-gray-50">
+                                          {patientHistoryQuery.isLoading ? (
+                                            <div className="text-sm text-gray-500">Carregando histórico...</div>
+                                          ) : (patientHistoryQuery.data || []).length === 0 ? (
+                                            <div className="text-sm text-gray-500">Sem histórico anterior.</div>
+                                          ) : (
+                                            (patientHistoryQuery.data || []).map((item: Appointment) => (
+                                              <div key={item.id} className="text-xs border-b pb-2 last:border-b-0">
+                                                <div className="font-medium text-gray-900">
+                                                  {new Date(item.appointmentDate).toLocaleDateString("pt-BR")} {toTimeLabel(item.appointmentTime)}
+                                                </div>
+                                                <div className="flex gap-2 mt-1 flex-wrap">
+                                                  <Badge className={statusConfig[item.status]?.bgColor || "bg-gray-100"}>
+                                                    <span className={statusConfig[item.status]?.color || "text-gray-700"}>{statusConfig[item.status]?.label || item.status}</span>
+                                                  </Badge>
+                                                  {item.paymentStatus && paymentConfig[item.paymentStatus] && (
+                                                    <Badge className={paymentConfig[item.paymentStatus].bgColor}>
+                                                      <span className={paymentConfig[item.paymentStatus].color}>{paymentConfig[item.paymentStatus].label}</span>
+                                                    </Badge>
+                                                  )}
+                                                </div>
+                                                {item.notes ? <div className="text-gray-600 mt-1 line-clamp-2">{item.notes}</div> : null}
+                                              </div>
+                                            ))
+                                          )}
+                                        </div>
                                       </div>
                                       <div className="flex gap-2 flex-wrap">
                                         {selectedAppointment.status === "pendente" && (
@@ -708,6 +1273,41 @@ export default function Appointments() {
                                             {confirmMutation.isPending ? "..." : "Realizado"}
                                           </Button>
                                         )}
+                                        <Button
+                                          variant="outline"
+                                          className="flex-1"
+                                          onClick={() => confirmMutation.mutate({ id: selectedAppointment.id, status: "falta" })}
+                                        >
+                                          Falta
+                                        </Button>
+                                        <Button
+                                          variant="outline"
+                                          className="flex-1"
+                                          onClick={() => confirmMutation.mutate({ id: selectedAppointment.id, status: "adiado" })}
+                                        >
+                                          Adiado
+                                        </Button>
+                                        <Button
+                                          variant="outline"
+                                          className="flex-1"
+                                          onClick={() => handleQuickReschedule(selectedAppointment, 7)}
+                                        >
+                                          Reag +7d
+                                        </Button>
+                                        <Button
+                                          variant="outline"
+                                          className="flex-1"
+                                          onClick={() => handleQuickReschedule(selectedAppointment, 15)}
+                                        >
+                                          Reag +15d
+                                        </Button>
+                                        <Button
+                                          variant="outline"
+                                          className="flex-1"
+                                          onClick={() => handleQuickReschedule(selectedAppointment, 30)}
+                                        >
+                                          Reag +30d
+                                        </Button>
                                         <Button className="flex-1" onClick={handleSaveDetails} disabled={updateMutation.isPending}>
                                           {updateMutation.isPending ? "Salvando..." : "Salvar Notas/Tags"}
                                         </Button>
@@ -762,7 +1362,7 @@ export default function Appointments() {
                           <Calendar size={12} />
                           <span>{new Date(apt.appointmentDate).toLocaleDateString("pt-BR")}</span>
                           <Clock size={12} />
-                          <span>{apt.appointmentTime}</span>
+                          <span>{toTimeLabel(apt.appointmentTime)}</span>
                         </div>
 
                         {/* Status and type row */}
@@ -833,7 +1433,7 @@ export default function Appointments() {
                                     </div>
                                     <div>
                                       <label className="text-sm font-medium text-gray-700">Hora</label>
-                                      <div className="mt-1 text-gray-900">{selectedAppointment.appointmentTime}</div>
+                                      <div className="mt-1 text-gray-900">{toTimeLabel(selectedAppointment.appointmentTime)}</div>
                                     </div>
                                   </div>
 
@@ -847,6 +1447,8 @@ export default function Appointments() {
                                         <SelectContent>
                                         <SelectItem value="pendente">A Pagar</SelectItem>
                                         <SelectItem value="pago">Pago</SelectItem>
+                                        <SelectItem value="parcial">Parcial</SelectItem>
+                                        <SelectItem value="isento">Isento</SelectItem>
                                         <SelectItem value="reembolsado">Reembolsado</SelectItem>
                                         </SelectContent>
                                     </Select>
@@ -870,6 +1472,44 @@ export default function Appointments() {
                                       className="w-full mt-1 px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                       rows={3}
                                     />
+                                  </div>
+                                  <div>
+                                    <div className="flex items-center justify-between gap-2">
+                                      <label className="text-sm font-medium text-gray-700">Linha do Tempo do Paciente</label>
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={() => selectedAppointment && handleGenerateNextSession(selectedAppointment, 7)}
+                                      >
+                                        Gerar próxima sessão
+                                      </Button>
+                                    </div>
+                                    <div className="mt-2 border rounded-lg p-3 max-h-52 overflow-y-auto space-y-2 bg-gray-50">
+                                      {patientHistoryQuery.isLoading ? (
+                                        <div className="text-sm text-gray-500">Carregando histórico...</div>
+                                      ) : (patientHistoryQuery.data || []).length === 0 ? (
+                                        <div className="text-sm text-gray-500">Sem histórico anterior.</div>
+                                      ) : (
+                                        (patientHistoryQuery.data || []).map((item: Appointment) => (
+                                          <div key={item.id} className="text-xs border-b pb-2 last:border-b-0">
+                                            <div className="font-medium text-gray-900">
+                                              {new Date(item.appointmentDate).toLocaleDateString("pt-BR")} {toTimeLabel(item.appointmentTime)}
+                                            </div>
+                                            <div className="flex gap-2 mt-1 flex-wrap">
+                                              <Badge className={statusConfig[item.status]?.bgColor || "bg-gray-100"}>
+                                                <span className={statusConfig[item.status]?.color || "text-gray-700"}>{statusConfig[item.status]?.label || item.status}</span>
+                                              </Badge>
+                                              {item.paymentStatus && paymentConfig[item.paymentStatus] && (
+                                                <Badge className={paymentConfig[item.paymentStatus].bgColor}>
+                                                  <span className={paymentConfig[item.paymentStatus].color}>{paymentConfig[item.paymentStatus].label}</span>
+                                                </Badge>
+                                              )}
+                                            </div>
+                                            {item.notes ? <div className="text-gray-600 mt-1 line-clamp-2">{item.notes}</div> : null}
+                                          </div>
+                                        ))
+                                      )}
+                                    </div>
                                   </div>
                                   <div className="flex gap-2 flex-wrap">
                                     {selectedAppointment.status === "pendente" && (
@@ -915,6 +1555,41 @@ export default function Appointments() {
                                         {confirmMutation.isPending ? "..." : "Realizado"}
                                       </Button>
                                     )}
+                                    <Button
+                                      variant="outline"
+                                      className="flex-1"
+                                      onClick={() => confirmMutation.mutate({ id: selectedAppointment.id, status: "falta" })}
+                                    >
+                                      Falta
+                                    </Button>
+                                    <Button
+                                      variant="outline"
+                                      className="flex-1"
+                                      onClick={() => confirmMutation.mutate({ id: selectedAppointment.id, status: "adiado" })}
+                                    >
+                                      Adiado
+                                    </Button>
+                                    <Button
+                                      variant="outline"
+                                      className="flex-1"
+                                      onClick={() => handleQuickReschedule(selectedAppointment, 7)}
+                                    >
+                                      Reag +7d
+                                    </Button>
+                                    <Button
+                                      variant="outline"
+                                      className="flex-1"
+                                      onClick={() => handleQuickReschedule(selectedAppointment, 15)}
+                                    >
+                                      Reag +15d
+                                    </Button>
+                                    <Button
+                                      variant="outline"
+                                      className="flex-1"
+                                      onClick={() => handleQuickReschedule(selectedAppointment, 30)}
+                                    >
+                                      Reag +30d
+                                    </Button>
                                     <Button className="flex-1" onClick={handleSaveDetails} disabled={updateMutation.isPending}>
                                       {updateMutation.isPending ? "Salvando..." : "Salvar Notas/Tags"}
                                     </Button>
@@ -935,7 +1610,7 @@ export default function Appointments() {
               </div>
             </Card>
           </div>
-        ) : (
+        ) : viewMode === "month" ? (
           <div className="space-y-4">
             {/* Calendário Header */}
             <Card className="p-4">
@@ -983,7 +1658,7 @@ export default function Appointments() {
               ))}
             </div>
           </div>
-        )}
+        ) : null}
         </div>
       </div>
     </DashboardLayout>

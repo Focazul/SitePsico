@@ -7,15 +7,18 @@ import {
   updateAppointmentDetails,
   getAllAppointments,
   getAppointmentsByStatus,
+  getAppointmentsByClient,
   getAppointmentsInRange,
   getAvailableSlots,
+  suggestNextAvailableSlots,
 } from "../db";
 import { adminProcedure, publicProcedure, router, rateLimitedProcedure } from "../_core/trpc";
 
 const dateStr = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Data deve estar no formato AAAA-MM-DD");
 const timeStr = z.string().regex(/^\d{2}:\d{2}$/, "Horário deve estar no formato HH:mm");
 const modality = z.enum(["presencial", "online"]);
-const statusEnum = z.enum(["pendente", "confirmado", "cancelado", "concluido"]);
+const statusEnum = z.enum(["pendente", "confirmado", "cancelado", "concluido", "falta", "adiado", "reagendado"]);
+const paymentStatusEnum = z.enum(["pendente", "pago", "parcial", "isento", "reembolsado"]);
 
 export const bookingRouter = router({
   getAvailableSlots: publicProcedure
@@ -100,7 +103,7 @@ export const bookingRouter = router({
       appointmentTime: timeStr,
       modality,
       status: statusEnum,
-      paymentStatus: z.enum(["pendente", "pago", "reembolsado"]).optional(),
+      paymentStatus: paymentStatusEnum.optional(),
       tags: z.string().optional(),
       notes: z.string().optional(),
     }))
@@ -127,7 +130,10 @@ export const bookingRouter = router({
     .input(z.object({
       id: z.number(),
       status: statusEnum.optional(),
-      paymentStatus: z.enum(["pendente", "pago", "reembolsado"]).optional(),
+      paymentStatus: paymentStatusEnum.optional(),
+      appointmentDate: dateStr.optional(),
+      appointmentTime: timeStr.optional(),
+      modality: modality.optional(),
       tags: z.string().optional(),
       notes: z.string().optional(),
     }))
@@ -144,6 +150,9 @@ export const bookingRouter = router({
       await updateAppointmentDetails(input.id, {
         ...(input.status ? { status: input.status } : {}),
         ...(input.paymentStatus ? { paymentStatus: input.paymentStatus } : {}),
+        ...(input.appointmentDate ? { appointmentDate: input.appointmentDate } : {}),
+        ...(input.appointmentTime ? { appointmentTime: `${input.appointmentTime}:00` } : {}),
+        ...(input.modality ? { modality: input.modality } : {}),
         ...(input.tags !== undefined ? { tags: input.tags } : {}),
         ...(input.notes !== undefined ? { notes: input.notes } : {}),
       });
@@ -232,6 +241,39 @@ export const bookingRouter = router({
     .mutation(async ({ input }) => {
       await addBlockedDate({ date: input.date, reason: input.reason });
       return { success: true } as const;
+    }),
+
+  suggestAlternatives: adminProcedure
+    .input(
+      z.object({
+        date: dateStr,
+        time: timeStr,
+        daysToScan: z.number().int().min(1).max(45).optional(),
+        maxSuggestions: z.number().int().min(1).max(20).optional(),
+      })
+    )
+    .query(async ({ input }) => {
+      const suggestions = await suggestNextAvailableSlots(
+        input.date,
+        input.time,
+        input.daysToScan ?? 21,
+        input.maxSuggestions ?? 8
+      );
+      return { suggestions };
+    }),
+
+  historyByClient: adminProcedure
+    .input(
+      z.object({
+        clientEmail: z.string().email().optional(),
+        clientPhone: z.string().optional(),
+        clientName: z.string().optional(),
+        limit: z.number().int().min(1).max(200).optional(),
+      })
+    )
+    .query(async ({ input }) => {
+      const history = await getAppointmentsByClient(input);
+      return history;
     }),
 });
 
